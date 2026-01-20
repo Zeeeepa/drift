@@ -120,3 +120,54 @@ export function createConfigDetectors() {
     createEnvironmentDetectionDetector(),
   ];
 }
+
+// ============================================================================
+// Learning-Based Detectors
+// ============================================================================
+
+// Feature Flags Learning Detector
+export {
+  FeatureFlagsLearningDetector,
+  createFeatureFlagsLearningDetector,
+  type FeatureFlagConventions,
+} from './feature-flags-learning.js';
+
+// Env Naming Learning Detector
+export {
+  EnvNamingLearningDetector,
+  createEnvNamingLearningDetector,
+  type EnvNamingConventions,
+} from './env-naming-learning.js';
+
+// Config Validation Learning Detector
+export {
+  ConfigValidationLearningDetector,
+  createConfigValidationLearningDetector,
+  type ConfigValidationConventions,
+  type ValidationLibrary,
+} from './config-validation-learning.js';
+
+// Default Values Learning Detector
+export {
+  DefaultValuesLearningDetector,
+  createDefaultValuesLearningDetector,
+  type DefaultValuesConventions,
+  type DefaultValueStyle,
+} from './default-values-learning.js';
+
+// Environment Detection Learning Detector
+export {
+  EnvironmentDetectionLearningDetector,
+  createEnvironmentDetectionLearningDetector,
+  type EnvironmentDetectionConventions,
+  type EnvAccessMethod,
+  type EnvCheckStyle,
+} from './environment-detection-learning.js';
+
+// Required/Optional Learning Detector
+export {
+  RequiredOptionalLearningDetector,
+  createRequiredOptionalLearningDetector,
+  type RequiredOptionalConventions,
+  type RequiredMarking,
+} from './required-optional-learning.js';

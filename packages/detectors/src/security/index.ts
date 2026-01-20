@@ -156,3 +156,67 @@ export function createSecurityDetectors() {
     createRateLimitingDetector(),
   ];
 }
+
+// ============================================================================
+// Learning-Based Detectors
+// ============================================================================
+
+// Input Sanitization Learning Detector
+export {
+  InputSanitizationLearningDetector,
+  createInputSanitizationLearningDetector,
+  type InputSanitizationConventions,
+  type SanitizationLibrary,
+} from './input-sanitization-learning.js';
+
+// Rate Limiting Learning Detector
+export {
+  RateLimitingLearningDetector,
+  createRateLimitingLearningDetector,
+  type RateLimitingConventions,
+  type RateLimitLibrary,
+} from './rate-limiting-learning.js';
+
+// CSRF Protection Learning Detector
+export {
+  CSRFProtectionLearningDetector,
+  createCSRFProtectionLearningDetector,
+  type CSRFProtectionConventions,
+  type CSRFLibrary,
+} from './csrf-protection-learning.js';
+
+// SQL Injection Learning Detector
+export {
+  SQLInjectionLearningDetector,
+  createSQLInjectionLearningDetector,
+  type SQLInjectionConventions,
+  type QueryMethod,
+  type ORMType,
+} from './sql-injection-learning.js';
+
+// XSS Prevention Learning Detector
+export {
+  XSSPreventionLearningDetector,
+  createXSSPreventionLearningDetector,
+  type XSSPreventionConventions,
+  type SanitizationMethod,
+  type OutputEncoding,
+} from './xss-prevention-learning.js';
+
+// CSP Headers Learning Detector
+export {
+  CSPHeadersLearningDetector,
+  createCSPHeadersLearningDetector,
+  type CSPHeadersConventions,
+  type CSPMode,
+  type ScriptSrcMethod,
+} from './csp-headers-learning.js';
+
+// Secret Management Learning Detector
+export {
+  SecretManagementLearningDetector,
+  createSecretManagementLearningDetector,
+  type SecretManagementConventions,
+  type SecretStorage,
+  type SecretNaming,
+} from './secret-management-learning.js';

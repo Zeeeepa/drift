@@ -302,3 +302,65 @@ export function createTypesDetectors(): TypesDetector[] {
     new AnyUsageDetector(),
   ];
 }
+
+// ============================================================================
+// Learning-Based Detectors
+// ============================================================================
+
+// Interface vs Type Learning Detector
+export {
+  InterfaceVsTypeLearningDetector,
+  createInterfaceVsTypeLearningDetector,
+  type InterfaceVsTypeConventions,
+  type TypeDefinitionStyle,
+  type TypeUsageContext,
+} from './interface-vs-type-learning.js';
+
+// Type Naming Conventions Learning Detector
+export {
+  TypeNamingConventionsLearningDetector,
+  createTypeNamingConventionsLearningDetector,
+  type TypeNamingConventions,
+  type TypeNamingStyle,
+} from './naming-conventions-learning.js';
+
+// Utility Types Learning Detector
+export {
+  UtilityTypesLearningDetector,
+  createUtilityTypesLearningDetector,
+  type UtilityTypesConventions,
+  type UtilityTypeCategory,
+} from './utility-types-learning.js';
+
+// Generic Patterns Learning Detector
+export {
+  GenericPatternsLearningDetector,
+  createGenericPatternsLearningDetector,
+  type GenericPatternsConventions,
+  type GenericNamingStyle,
+} from './generic-patterns-learning.js';
+
+// Any Usage Learning Detector
+export {
+  AnyUsageLearningDetector,
+  createAnyUsageLearningDetector,
+  type AnyUsageConventions,
+  type AnyAlternative,
+} from './any-usage-learning.js';
+
+// Type File Location Learning Detector
+export {
+  TypeFileLocationLearningDetector,
+  createTypeFileLocationLearningDetector,
+  type TypeFileLocationConventions,
+  type TypeFileLocation,
+} from './file-location-learning.js';
+
+// Type Assertions Learning Detector
+export {
+  TypeAssertionsLearningDetector,
+  createTypeAssertionsLearningDetector,
+  type TypeAssertionsConventions,
+  type AssertionSyntax,
+  type NonNullUsage,
+} from './type-assertions-learning.js';

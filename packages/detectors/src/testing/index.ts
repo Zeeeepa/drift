@@ -165,3 +165,64 @@ export function createAllTestingDetectors() {
     setupTeardown: createSetupTeardownDetector(),
   };
 }
+
+// ============================================================================
+// Learning-Based Detectors
+// ============================================================================
+
+// Describe Naming Learning Detector
+export {
+  DescribeNamingLearningDetector,
+  createDescribeNamingLearningDetector,
+  type DescribeNamingConventions,
+  type DescribeNamingStyle,
+} from './describe-naming-learning.js';
+
+// Test Structure Learning Detector
+export {
+  TestStructureLearningDetector,
+  createTestStructureLearningDetector,
+  type TestStructureConventions,
+  type TestFramework,
+} from './test-structure-learning.js';
+
+// Mock Patterns Learning Detector
+export {
+  MockPatternsLearningDetector,
+  createMockPatternsLearningDetector,
+  type MockPatternsConventions,
+  type MockLibrary,
+} from './mock-patterns-learning.js';
+
+// Fixture Patterns Learning Detector
+export {
+  FixturePatternsLearningDetector,
+  createFixturePatternsLearningDetector,
+  type FixturePatternsConventions,
+  type FixtureStyle,
+} from './fixture-patterns-learning.js';
+
+// Setup/Teardown Learning Detector
+export {
+  SetupTeardownLearningDetector,
+  createSetupTeardownLearningDetector,
+  type SetupTeardownConventions,
+  type SetupStyle,
+} from './setup-teardown-learning.js';
+
+// Test File Naming Learning Detector
+export {
+  TestFileNamingLearningDetector,
+  createTestFileNamingLearningDetector,
+  type TestFileNamingConventions,
+  type TestFileSuffix,
+  type TestFileLocation,
+} from './file-naming-learning.js';
+
+// Test Co-location Learning Detector
+export {
+  TestCoLocationLearningDetector,
+  createTestCoLocationLearningDetector,
+  type TestCoLocationConventions,
+  type TestCoLocationStyle,
+} from './co-location-learning.js';

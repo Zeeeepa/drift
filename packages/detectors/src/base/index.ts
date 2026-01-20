@@ -51,5 +51,15 @@ export {
   type PathMatchOptions,
 } from './structural-detector.js';
 
+// Export Learning detector class and related types
+export {
+  LearningDetector,
+  ValueDistribution,
+  DEFAULT_PATTERN_LEARNING_CONFIG,
+  type LearnedConvention,
+  type PatternLearningConfig,
+  type LearningResult,
+} from './learning-detector.js';
+
 // Export types from types.ts (for backward compatibility)
 export * from './types.js';

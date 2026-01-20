@@ -276,3 +276,65 @@ export {
   REF_HOOKS,
   DOM_ELEMENTS_WITH_REFS,
 } from './ref-forwarding.js';
+
+// ============================================================================
+// Learning-Based Detectors
+// ============================================================================
+
+// Component Structure Learning Detector
+export {
+  ComponentStructureLearningDetector,
+  createComponentStructureLearningDetector,
+  type ComponentStructureConventions,
+  type ComponentStyle,
+  type ExportStyle,
+} from './component-structure-learning.js';
+
+// Props Patterns Learning Detector
+export {
+  PropsPatternsLearningDetector,
+  createPropsPatternsLearningDetector,
+  type PropsPatternsConventions,
+  type PropsTypingStyle,
+  type PropsNamingSuffix,
+} from './props-patterns-learning.js';
+
+// State Patterns Learning Detector
+export {
+  StatePatternsLearningDetector,
+  createStatePatternsLearningDetector,
+  type StatePatternsConventions,
+  type StateLibrary,
+} from './state-patterns-learning.js';
+
+// Composition Learning Detector
+export {
+  CompositionLearningDetector,
+  createCompositionLearningDetector,
+  type CompositionConventions,
+  type CompositionStyle,
+} from './composition-learning.js';
+
+// Duplicate Detection Learning Detector
+export {
+  DuplicateDetectionLearningDetector,
+  createDuplicateDetectionLearningDetector,
+  type DuplicateDetectionConventions,
+  type AbstractionStyle,
+} from './duplicate-detection-learning.js';
+
+// Near Duplicate Learning Detector
+export {
+  NearDuplicateLearningDetector,
+  createNearDuplicateLearningDetector,
+  type NearDuplicateConventions,
+  type VariationStyle,
+} from './near-duplicate-learning.js';
+
+// Ref Forwarding Learning Detector
+export {
+  RefForwardingLearningDetector,
+  createRefForwardingLearningDetector,
+  type RefForwardingConventions,
+  type RefForwardingStyle,
+} from './ref-forwarding-learning.js';

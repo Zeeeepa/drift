@@ -153,3 +153,66 @@ export function createAllLoggingDetectors() {
     healthChecks: createHealthChecksDetector(),
   };
 }
+
+// ============================================================================
+// Learning-Based Detectors
+// ============================================================================
+
+// Log Levels Learning Detector
+export {
+  LogLevelsLearningDetector,
+  createLogLevelsLearningDetector,
+  type LogLevelConventions,
+  type LoggerLibrary,
+} from './log-levels-learning.js';
+
+// Metric Naming Learning Detector
+export {
+  MetricNamingLearningDetector,
+  createMetricNamingLearningDetector,
+  type MetricNamingConventions,
+  type MetricNamingStyle,
+} from './metric-naming-learning.js';
+
+// Structured Format Learning Detector
+export {
+  StructuredFormatLearningDetector,
+  createStructuredFormatLearningDetector,
+  type StructuredFormatConventions,
+  type LoggingLibrary,
+  type LogFormat,
+} from './structured-format-learning.js';
+
+// Context Fields Learning Detector
+export {
+  ContextFieldsLearningDetector,
+  createContextFieldsLearningDetector,
+  type ContextFieldsConventions,
+  type ContextFieldStyle,
+} from './context-fields-learning.js';
+
+// Correlation IDs Learning Detector
+export {
+  CorrelationIdsLearningDetector,
+  createCorrelationIdsLearningDetector,
+  type CorrelationIdsConventions,
+  type CorrelationIdName,
+} from './correlation-ids-learning.js';
+
+// Health Checks Learning Detector
+export {
+  HealthChecksLearningDetector,
+  createHealthChecksLearningDetector,
+  type HealthChecksConventions,
+  type HealthCheckType,
+  type ResponseFormat,
+} from './health-checks-learning.js';
+
+// PII Redaction Learning Detector
+export {
+  PIIRedactionLearningDetector,
+  createPIIRedactionLearningDetector,
+  type PIIRedactionConventions,
+  type RedactionMethod,
+  type PIIFieldPattern,
+} from './pii-redaction-learning.js';

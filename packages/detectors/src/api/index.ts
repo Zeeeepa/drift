@@ -269,3 +269,66 @@ export {
   MAX_RETRY_PATTERNS,
   NON_IDEMPOTENT_PATTERNS,
 } from './retry-patterns.js';
+
+// ============================================================================
+// Learning-Based Detectors
+// ============================================================================
+
+// Route Structure Learning Detector
+export {
+  RouteStructureLearningDetector,
+  createRouteStructureLearningDetector,
+  type RouteConventions,
+  type UrlCasingConvention as LearningUrlCasingConvention,
+  type ResourceNamingConvention,
+} from './route-structure-learning.js';
+
+// Client Patterns Learning Detector
+export {
+  ClientPatternsLearningDetector,
+  createClientPatternsLearningDetector,
+  type ClientConventions,
+  type ClientPatternType as LearningClientPatternType,
+} from './client-patterns-learning.js';
+
+// Error Format Learning Detector
+export {
+  ErrorFormatLearningDetector,
+  createErrorFormatLearningDetector,
+  type ErrorConventions,
+  type ErrorFormat as LearningErrorFormat,
+  type ErrorCodeConvention,
+} from './error-format-learning.js';
+
+// HTTP Methods Learning Detector
+export {
+  HttpMethodsLearningDetector,
+  createHttpMethodsLearningDetector,
+  type HttpMethodConventions,
+  type HttpMethod as LearningHttpMethod,
+  type OperationType,
+} from './http-methods-learning.js';
+
+// Pagination Learning Detector
+export {
+  PaginationLearningDetector,
+  createPaginationLearningDetector,
+  type PaginationConventions,
+  type PaginationType as LearningPaginationType,
+} from './pagination-learning.js';
+
+// Response Envelope Learning Detector
+export {
+  ResponseEnvelopeLearningDetector,
+  createResponseEnvelopeLearningDetector,
+  type EnvelopeConventions,
+  type ResponseEnvelopeFormat as LearningResponseEnvelopeFormat,
+} from './response-envelope-learning.js';
+
+// Retry Patterns Learning Detector
+export {
+  RetryPatternsLearningDetector,
+  createRetryPatternsLearningDetector,
+  type RetryConventions,
+  type RetryStrategy,
+} from './retry-patterns-learning.js';

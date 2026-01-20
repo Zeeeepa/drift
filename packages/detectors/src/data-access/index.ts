@@ -214,3 +214,63 @@ export function createAllDataAccessDetectors() {
     connectionPooling: createConnectionPoolingDetector(),
   };
 }
+
+// ============================================================================
+// Learning-Based Detectors
+// ============================================================================
+
+// Repository Pattern Learning Detector
+export {
+  RepositoryPatternLearningDetector,
+  createRepositoryPatternLearningDetector,
+  type RepositoryPatternConventions,
+  type RepositoryNamingSuffix,
+} from './repository-pattern-learning.js';
+
+// Query Patterns Learning Detector
+export {
+  QueryPatternsLearningDetector,
+  createQueryPatternsLearningDetector,
+  type QueryPatternsConventions,
+  type QueryLibrary,
+} from './query-patterns-learning.js';
+
+// DTO Patterns Learning Detector
+export {
+  DTOPatternsLearningDetector,
+  createDTOPatternsLearningDetector,
+  type DTOPatternsConventions,
+  type DTONamingSuffix,
+} from './dto-patterns-learning.js';
+
+// Transaction Patterns Learning Detector
+export {
+  TransactionPatternsLearningDetector,
+  createTransactionPatternsLearningDetector,
+  type TransactionPatternsConventions,
+  type TransactionStyle,
+} from './transaction-patterns-learning.js';
+
+// Connection Pooling Learning Detector
+export {
+  ConnectionPoolingLearningDetector,
+  createConnectionPoolingLearningDetector,
+  type ConnectionPoolingConventions,
+  type PoolLibrary,
+} from './connection-pooling-learning.js';
+
+// Validation Patterns Learning Detector
+export {
+  ValidationPatternsLearningDetector,
+  createValidationPatternsLearningDetector,
+  type ValidationPatternsConventions,
+  type ValidationLibrary,
+} from './validation-patterns-learning.js';
+
+// N+1 Query Learning Detector
+export {
+  NPlusOneLearningDetector,
+  createNPlusOneLearningDetector,
+  type NPlusOneConventions,
+  type NPlusOnePreventionMethod,
+} from './n-plus-one-learning.js';

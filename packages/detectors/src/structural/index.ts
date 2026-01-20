@@ -91,3 +91,71 @@ export * from './import-ordering.js';
 export * from './module-boundaries.js';
 export * from './circular-deps.js';
 export * from './package-boundaries.js';
+
+// ============================================================================
+// Learning-Based Detectors
+// ============================================================================
+
+// File Naming Learning Detector
+export {
+  FileNamingLearningDetector,
+  createFileNamingLearningDetector,
+  type FileNamingConventions,
+} from './file-naming-learning.js';
+
+// Import Ordering Learning Detector
+export {
+  ImportOrderingLearningDetector,
+  createImportOrderingLearningDetector,
+  type ImportOrderingConventions,
+  type ImportType,
+} from './import-ordering-learning.js';
+
+// Barrel Exports Learning Detector
+export {
+  BarrelExportsLearningDetector,
+  createBarrelExportsLearningDetector,
+  type BarrelExportsConventions,
+  type BarrelExportStyle,
+} from './barrel-exports-learning.js';
+
+// Module Boundaries Learning Detector
+export {
+  ModuleBoundariesLearningDetector,
+  createModuleBoundariesLearningDetector,
+  type ModuleBoundariesConventions,
+  type ImportStyle,
+} from './module-boundaries-learning.js';
+
+// Directory Structure Learning Detector
+export {
+  DirectoryStructureLearningDetector,
+  createDirectoryStructureLearningDetector,
+  type DirectoryStructureConventions,
+  type DirectoryNamingStyle,
+  type OrganizationStyle,
+} from './directory-structure-learning.js';
+
+// Circular Dependencies Learning Detector
+export {
+  CircularDepsLearningDetector,
+  createCircularDepsLearningDetector,
+  type CircularDepsConventions,
+  type CircularResolution,
+} from './circular-deps-learning.js';
+
+// Co-location Learning Detector
+export {
+  CoLocationLearningDetector,
+  createCoLocationLearningDetector,
+  type CoLocationConventions,
+  type CoLocationStyle,
+} from './co-location-learning.js';
+
+// Package Boundaries Learning Detector
+export {
+  PackageBoundariesLearningDetector,
+  createPackageBoundariesLearningDetector,
+  type PackageBoundariesConventions,
+  type BoundaryStyle,
+} from './package-boundaries-learning.js';

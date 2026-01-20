@@ -329,3 +329,73 @@ export {
   EXCLUDED_FILE_PATTERNS as RESPONSIVE_EXCLUDED_FILE_PATTERNS,
   ALLOWED_BREAKPOINT_VALUES,
 } from './responsive.js';
+
+// ============================================================================
+// Learning-Based Detectors
+// ============================================================================
+
+// Class Naming Learning Detector
+export {
+  ClassNamingLearningDetector,
+  createClassNamingLearningDetector,
+  type ClassNamingConventions,
+  type ClassNamingConvention,
+} from './class-naming-learning.js';
+
+// Color Usage Learning Detector
+export {
+  ColorUsageLearningDetector,
+  createColorUsageLearningDetector,
+  type ColorConventions,
+  type ColorSystem,
+} from './color-usage-learning.js';
+
+// Design Tokens Learning Detector
+export {
+  DesignTokensLearningDetector,
+  createDesignTokensLearningDetector,
+  type DesignTokenConventions,
+  type TokenSourceType,
+} from './design-tokens-learning.js';
+
+// Responsive Learning Detector
+export {
+  ResponsiveLearningDetector,
+  createResponsiveLearningDetector,
+  type ResponsiveConventions,
+  type ResponsiveApproach,
+  type ResponsiveMethod,
+} from './responsive-learning.js';
+
+// Spacing Scale Learning Detector
+export {
+  SpacingScaleLearningDetector,
+  createSpacingScaleLearningDetector,
+  type SpacingScaleConventions,
+  type SpacingScaleType,
+  type SpacingMethod,
+} from './spacing-scale-learning.js';
+
+// Tailwind Patterns Learning Detector
+export {
+  TailwindPatternsLearningDetector,
+  createTailwindPatternsLearningDetector,
+  type TailwindConventions,
+  type TailwindCategory,
+} from './tailwind-patterns-learning.js';
+
+// Typography Learning Detector
+export {
+  TypographyLearningDetector,
+  createTypographyLearningDetector,
+  type TypographyConventions,
+  type TypographyMethod,
+} from './typography-learning.js';
+
+// Z-Index Scale Learning Detector
+export {
+  ZIndexScaleLearningDetector,
+  createZIndexScaleLearningDetector,
+  type ZIndexConventions,
+  type ZIndexMethod,
+} from './z-index-scale-learning.js';

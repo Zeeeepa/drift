@@ -188,3 +188,66 @@ export function createAllErrorDetectors() {
     errorLogging: createErrorLoggingDetector(),
   };
 }
+
+// ============================================================================
+// Learning-Based Detectors
+// ============================================================================
+
+// Error Codes Learning Detector
+export {
+  ErrorCodesLearningDetector,
+  createErrorCodesLearningDetector,
+  type ErrorCodeConventions,
+  type ErrorCodeStyle,
+  type ErrorCodeNaming,
+} from './error-codes-learning.js';
+
+// Exception Hierarchy Learning Detector
+export {
+  ExceptionHierarchyLearningDetector,
+  createExceptionHierarchyLearningDetector,
+  type ExceptionHierarchyConventions,
+  type ErrorClassSuffix,
+} from './exception-hierarchy-learning.js';
+
+// Error Logging Learning Detector
+export {
+  ErrorLoggingLearningDetector,
+  createErrorLoggingLearningDetector,
+  type ErrorLoggingConventions,
+  type LoggerType,
+} from './error-logging-learning.js';
+
+// Try-Catch Learning Detector
+export {
+  TryCatchLearningDetector,
+  createTryCatchLearningDetector,
+  type TryCatchConventions,
+  type CatchHandlingStyle,
+} from './try-catch-learning.js';
+
+// Async Errors Learning Detector
+export {
+  AsyncErrorsLearningDetector,
+  createAsyncErrorsLearningDetector,
+  type AsyncErrorsConventions,
+  type AsyncErrorStyle,
+} from './async-errors-learning.js';
+
+// Circuit Breaker Learning Detector
+export {
+  CircuitBreakerLearningDetector,
+  createCircuitBreakerLearningDetector,
+  type CircuitBreakerConventions,
+  type CircuitBreakerLibrary,
+  type StateManagement,
+} from './circuit-breaker-learning.js';
+
+// Error Propagation Learning Detector
+export {
+  ErrorPropagationLearningDetector,
+  createErrorPropagationLearningDetector,
+  type ErrorPropagationConventions,
+  type PropagationStyle,
+  type ChainPreservation,
+} from './error-propagation-learning.js';

@@ -30,3 +30,48 @@ export type DocumentationDetector = JsdocPatternsDetector | ReadmeStructureDetec
 export function createDocumentationDetectors(): DocumentationDetector[] {
   return [new JsdocPatternsDetector(), new ReadmeStructureDetector(), new TodoPatternsDetector(), new DeprecationDetector(), new ExampleCodeDetector()];
 }
+
+// ============================================================================
+// Learning-Based Detectors
+// ============================================================================
+
+// JSDoc Patterns Learning Detector
+export {
+  JSDocPatternsLearningDetector,
+  createJSDocPatternsLearningDetector,
+  type JSDocConventions,
+  type JSDocStyle,
+} from './jsdoc-patterns-learning.js';
+
+// TODO Patterns Learning Detector
+export {
+  TodoPatternsLearningDetector,
+  createTodoPatternsLearningDetector,
+  type TodoPatternsConventions,
+  type TodoTag,
+  type TodoFormat,
+} from './todo-patterns-learning.js';
+
+// Deprecation Learning Detector
+export {
+  DeprecationLearningDetector,
+  createDeprecationLearningDetector,
+  type DeprecationConventions,
+  type DeprecationStyle,
+} from './deprecation-learning.js';
+
+// Example Code Learning Detector
+export {
+  ExampleCodeLearningDetector,
+  createExampleCodeLearningDetector,
+  type ExampleCodeConventions,
+  type ExampleStyle,
+} from './example-code-learning.js';
+
+// README Structure Learning Detector
+export {
+  ReadmeStructureLearningDetector,
+  createReadmeStructureLearningDetector,
+  type ReadmeStructureConventions,
+  type ReadmeSection,
+} from './readme-structure-learning.js';

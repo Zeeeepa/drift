@@ -179,3 +179,59 @@ export function createAllAuthDetectors() {
     auditLogging: createAuditLoggingDetector(),
   };
 }
+
+// ============================================================================
+// Learning-Based Detectors
+// ============================================================================
+
+// Token Handling Learning Detector
+export {
+  TokenHandlingLearningDetector,
+  createTokenHandlingLearningDetector,
+  type TokenHandlingConventions,
+  type TokenStorageMethod,
+  type TokenLibrary,
+} from './token-handling-learning.js';
+
+// Auth Middleware Learning Detector
+export {
+  AuthMiddlewareLearningDetector,
+  createAuthMiddlewareLearningDetector,
+  type AuthMiddlewareConventions,
+  type AuthMiddlewareStyle,
+} from './middleware-usage-learning.js';
+
+// Permission Checks Learning Detector
+export {
+  PermissionChecksLearningDetector,
+  createPermissionChecksLearningDetector,
+  type PermissionChecksConventions,
+  type PermissionStyle,
+} from './permission-checks-learning.js';
+
+// RBAC Patterns Learning Detector
+export {
+  RBACPatternsLearningDetector,
+  createRBACPatternsLearningDetector,
+  type RBACConventions,
+  type RoleDefinitionStyle,
+  type PermissionCheckStyle as RBACPermissionCheckStyle,
+} from './rbac-patterns-learning.js';
+
+// Resource Ownership Learning Detector
+export {
+  ResourceOwnershipLearningDetector,
+  createResourceOwnershipLearningDetector,
+  type ResourceOwnershipConventions,
+  type OwnershipField,
+  type OwnershipCheckStyle,
+} from './resource-ownership-learning.js';
+
+// Audit Logging Learning Detector
+export {
+  AuditLoggingLearningDetector,
+  createAuditLoggingLearningDetector,
+  type AuditLoggingConventions,
+  type AuditMethod,
+  type AuditStorage,
+} from './audit-logging-learning.js';

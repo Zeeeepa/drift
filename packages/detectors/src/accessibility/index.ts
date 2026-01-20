@@ -34,3 +34,58 @@ export type AccessibilityDetector = SemanticHtmlDetector | AriaRolesDetector | K
 export function createAccessibilityDetectors(): AccessibilityDetector[] {
   return [new SemanticHtmlDetector(), new AriaRolesDetector(), new KeyboardNavDetector(), new FocusManagementDetector(), new HeadingHierarchyDetector(), new AltTextDetector()];
 }
+
+// ============================================================================
+// Learning-Based Detectors
+// ============================================================================
+
+// ARIA Roles Learning Detector
+export {
+  AriaRolesLearningDetector,
+  createAriaRolesLearningDetector,
+  type AriaRolesConventions,
+  type AriaUsageStyle,
+} from './aria-roles-learning.js';
+
+// Keyboard Navigation Learning Detector
+export {
+  KeyboardNavLearningDetector,
+  createKeyboardNavLearningDetector,
+  type KeyboardNavConventions,
+  type KeyboardHandlingStyle,
+} from './keyboard-nav-learning.js';
+
+// Alt Text Learning Detector
+export {
+  AltTextLearningDetector,
+  createAltTextLearningDetector,
+  type AltTextConventions,
+  type AltTextStyle,
+} from './alt-text-learning.js';
+
+// Semantic HTML Learning Detector
+export {
+  SemanticHtmlLearningDetector,
+  createSemanticHtmlLearningDetector,
+  type SemanticHtmlConventions,
+  type SemanticElement,
+  type LandmarkUsage,
+} from './semantic-html-learning.js';
+
+// Focus Management Learning Detector
+export {
+  FocusManagementLearningDetector,
+  createFocusManagementLearningDetector,
+  type FocusManagementConventions,
+  type FocusTrapMethod,
+  type FocusRingStyle,
+} from './focus-management-learning.js';
+
+// Heading Hierarchy Learning Detector
+export {
+  HeadingHierarchyLearningDetector,
+  createHeadingHierarchyLearningDetector,
+  type HeadingHierarchyConventions,
+  type HeadingStyle,
+  type HeadingComponent,
+} from './heading-hierarchy-learning.js';

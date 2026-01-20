@@ -212,3 +212,56 @@ export function createPerformanceDetectors(): PerformanceDetector[] {
     new BundleSizeDetector(),
   ];
 }
+
+// ============================================================================
+// Learning-Based Detectors
+// ============================================================================
+
+// Lazy Loading Learning Detector
+export {
+  LazyLoadingLearningDetector,
+  createLazyLoadingLearningDetector,
+  type LazyLoadingConventions,
+  type LazyLoadMethod,
+} from './lazy-loading-learning.js';
+
+// Code Splitting Learning Detector
+export {
+  CodeSplittingLearningDetector,
+  createCodeSplittingLearningDetector,
+  type CodeSplittingConventions,
+  type ChunkNamingStyle,
+} from './code-splitting-learning.js';
+
+// Debounce/Throttle Learning Detector
+export {
+  DebounceThrottleLearningDetector,
+  createDebounceThrottleLearningDetector,
+  type DebounceThrottleConventions,
+  type DebounceThrottleMethod,
+} from './debounce-throttle-learning.js';
+
+// Memoization Learning Detector
+export {
+  MemoizationLearningDetector,
+  createMemoizationLearningDetector,
+  type MemoizationConventions,
+  type MemoizationMethod,
+} from './memoization-learning.js';
+
+// Caching Patterns Learning Detector
+export {
+  CachingPatternsLearningDetector,
+  createCachingPatternsLearningDetector,
+  type CachingPatternsConventions,
+  type CacheLibrary,
+  type CacheKeyStyle,
+} from './caching-patterns-learning.js';
+
+// Bundle Size Learning Detector
+export {
+  BundleSizeLearningDetector,
+  createBundleSizeLearningDetector,
+  type BundleSizeConventions,
+  type ImportStyle,
+} from './bundle-size-learning.js';
