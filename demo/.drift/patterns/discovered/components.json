@@ -491,8 +491,4068 @@
       },
       "severity": "info",
       "autoFixable": false
+    },
+    {
+      "id": "7912c6d5ea875e47",
+      "subcategory": "component-structure",
+      "name": "Component Structure Detector",
+      "description": "Learns component structure patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/component-structure",
+          "patternId": "components/component-structure/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.59,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 16,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "README.md",
+          "line": 9,
+          "column": 5
+        },
+        {
+          "file": "README.md",
+          "line": 9,
+          "column": 33
+        },
+        {
+          "file": "README.md",
+          "line": 9,
+          "column": 5
+        },
+        {
+          "file": "README.md",
+          "line": 9,
+          "column": 33
+        },
+        {
+          "file": "README.md",
+          "line": 21,
+          "column": 40
+        },
+        {
+          "file": "README.md",
+          "line": 81,
+          "column": 9
+        },
+        {
+          "file": "backend/src/middleware/errorHandler.ts",
+          "line": 26,
+          "column": 5
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 37,
+          "column": 5
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 45,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 9,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 19,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 26,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 34,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 43,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 52,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 40,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 44,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 62,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 71,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 50,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 54,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 64,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 72,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 80,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 6,
+          "column": 25
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 47,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 51,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 55,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 68,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 80,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 88,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 40,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 44,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 48,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 55,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 62,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 2,
+          "column": 11
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 4,
+          "column": 26
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 2,
+          "column": 11
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 4,
+          "column": 26
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 2,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 4,
+          "column": 26
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 2,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 4,
+          "column": 26
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 2,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 2,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 2,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 2,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 13,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 13,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 24,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 46,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 2,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 2,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 43,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 62,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 70,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 29,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 69,
+          "column": 3
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.277Z",
+        "lastSeen": "2026-01-20T15:16:46.277Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "component-structure"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "c26da1d9cc028915",
+      "subcategory": "props-patterns",
+      "name": "Props Patterns Detector",
+      "description": "Learns props patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/props-patterns",
+          "patternId": "components/props-patterns/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.52,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 7,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "README.md",
+          "line": 9,
+          "column": 66
+        },
+        {
+          "file": "README.md",
+          "line": 9,
+          "column": 66
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 61,
+          "column": 14
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 62,
+          "column": 13
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 61,
+          "column": 14
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 62,
+          "column": 13
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 4,
+          "column": 62
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 4,
+          "column": 62
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 4,
+          "column": 62
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 4,
+          "column": 62
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 2,
+          "column": 4
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 4,
+          "column": 31
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 34,
+          "column": 4
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 40,
+          "column": 25
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 45,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 46,
+          "column": 13
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 2,
+          "column": 4
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 4,
+          "column": 31
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 34,
+          "column": 4
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 40,
+          "column": 25
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 45,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 46,
+          "column": 13
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 8,
+          "column": 29
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 8,
+          "column": 29
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 6,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 21,
+          "column": 22
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 30,
+          "column": 36
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 31,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 6,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 21,
+          "column": 22
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 30,
+          "column": 36
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 31,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 6,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 21,
+          "column": 22
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 30,
+          "column": 36
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 31,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 6,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 21,
+          "column": 22
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 30,
+          "column": 36
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 31,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 7,
+          "column": 20
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 37,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 43,
+          "column": 18
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 7,
+          "column": 20
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 37,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 43,
+          "column": 18
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 7,
+          "column": 20
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 37,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 43,
+          "column": 18
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 7,
+          "column": 20
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 37,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 43,
+          "column": 18
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.277Z",
+        "lastSeen": "2026-01-20T15:16:46.277Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "props-patterns"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "01c9c05dc1df4285",
+      "subcategory": "duplicate-detection",
+      "name": "Duplicate Detection Detector",
+      "description": "Learns duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/duplicate-detection",
+          "patternId": "components/duplicate-detection/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 25,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "README.md",
+          "line": 9,
+          "column": 5
+        },
+        {
+          "file": "README.md",
+          "line": 9,
+          "column": 33
+        },
+        {
+          "file": "README.md",
+          "line": 9,
+          "column": 5
+        },
+        {
+          "file": "README.md",
+          "line": 9,
+          "column": 33
+        },
+        {
+          "file": "README.md",
+          "line": 21,
+          "column": 40
+        },
+        {
+          "file": "README.md",
+          "line": 81,
+          "column": 9
+        },
+        {
+          "file": "backend/src/middleware/auth.ts",
+          "line": 19,
+          "column": 8
+        },
+        {
+          "file": "backend/src/middleware/auth.ts",
+          "line": 44,
+          "column": 8
+        },
+        {
+          "file": "backend/src/middleware/auth.ts",
+          "line": 19,
+          "column": 8
+        },
+        {
+          "file": "backend/src/middleware/auth.ts",
+          "line": 44,
+          "column": 8
+        },
+        {
+          "file": "backend/src/middleware/errorHandler.ts",
+          "line": 26,
+          "column": 5
+        },
+        {
+          "file": "backend/src/middleware/errorHandler.ts",
+          "line": 10,
+          "column": 8
+        },
+        {
+          "file": "backend/src/middleware/errorHandler.ts",
+          "line": 10,
+          "column": 8
+        },
+        {
+          "file": "backend/src/middleware/logger.ts",
+          "line": 9,
+          "column": 8
+        },
+        {
+          "file": "backend/src/middleware/logger.ts",
+          "line": 9,
+          "column": 8
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 37,
+          "column": 5
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 45,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 9,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 19,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 26,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 34,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 43,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 52,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 7,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 7,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 40,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 44,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 62,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 71,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 24,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 24,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 50,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 54,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 64,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 72,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 80,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 18,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 18,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 6,
+          "column": 25
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 47,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 51,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 55,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 68,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 80,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 88,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 24,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 24,
+          "column": 1
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 2,
+          "column": 17
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 7,
+          "column": 8
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 18,
+          "column": 8
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 25,
+          "column": 8
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 32,
+          "column": 8
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 2,
+          "column": 17
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 7,
+          "column": 8
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 18,
+          "column": 8
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 25,
+          "column": 8
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 32,
+          "column": 8
+        },
+        {
+          "file": "backend/src/utils/response.ts",
+          "line": 20,
+          "column": 8
+        },
+        {
+          "file": "backend/src/utils/response.ts",
+          "line": 27,
+          "column": 8
+        },
+        {
+          "file": "backend/src/utils/response.ts",
+          "line": 46,
+          "column": 8
+        },
+        {
+          "file": "backend/src/utils/response.ts",
+          "line": 50,
+          "column": 8
+        },
+        {
+          "file": "backend/src/utils/response.ts",
+          "line": 20,
+          "column": 8
+        },
+        {
+          "file": "backend/src/utils/response.ts",
+          "line": 27,
+          "column": 8
+        },
+        {
+          "file": "backend/src/utils/response.ts",
+          "line": 46,
+          "column": 8
+        },
+        {
+          "file": "backend/src/utils/response.ts",
+          "line": 50,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 4,
+          "column": 25
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 12,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 16,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 21,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 26,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 31,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 4,
+          "column": 25
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 12,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 16,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 21,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 26,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 31,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 40,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 44,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 48,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 55,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 62,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 9,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 9,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 4,
+          "column": 25
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 10,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 18,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 22,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 29,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 4,
+          "column": 25
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 10,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 18,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 22,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 29,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 4,
+          "column": 25
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 10,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 18,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 22,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 26,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 30,
+          "column": 14
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.277Z",
+        "lastSeen": "2026-01-20T15:16:46.277Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "duplicate-detection"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "e62407a0e4d3ca43",
+      "subcategory": "near-duplicate",
+      "name": "Near Duplicate Detector",
+      "description": "Learns near-duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/near-duplicate",
+          "patternId": "components/near-duplicate/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.59,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 16,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "README.md",
+          "line": 9,
+          "column": 5
+        },
+        {
+          "file": "README.md",
+          "line": 9,
+          "column": 33
+        },
+        {
+          "file": "README.md",
+          "line": 9,
+          "column": 5
+        },
+        {
+          "file": "README.md",
+          "line": 9,
+          "column": 33
+        },
+        {
+          "file": "README.md",
+          "line": 21,
+          "column": 40
+        },
+        {
+          "file": "README.md",
+          "line": 81,
+          "column": 9
+        },
+        {
+          "file": "backend/src/middleware/errorHandler.ts",
+          "line": 26,
+          "column": 5
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 37,
+          "column": 5
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 45,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 9,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 19,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 26,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 34,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 43,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 52,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 40,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 44,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 62,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 71,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 50,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 54,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 64,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 72,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 80,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 6,
+          "column": 25
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 47,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 51,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 55,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 68,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 80,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 88,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 40,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 44,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 48,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 55,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 62,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 2,
+          "column": 11
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 4,
+          "column": 26
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 2,
+          "column": 11
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 4,
+          "column": 26
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 2,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 4,
+          "column": 26
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 2,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 4,
+          "column": 26
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 2,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 2,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 2,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 2,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 13,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 13,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 24,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 46,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 2,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 2,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 43,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 62,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 70,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 29,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 69,
+          "column": 3
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.277Z",
+        "lastSeen": "2026-01-20T15:16:46.277Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "near-duplicate"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "afbc7be5fb98803e",
+      "subcategory": "modal-patterns",
+      "name": "Modal Patterns Detector",
+      "description": "Learns modal/dialog patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/modal-patterns",
+          "patternId": "components/modal-patterns/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.12,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 34,
+          "column": 7
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 32,
+          "column": 14
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 47,
+          "column": 15
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 51,
+          "column": 15
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 23,
+          "column": 16
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 24,
+          "column": 17
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 44,
+          "column": 15
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 20,
+          "column": 16
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 21,
+          "column": 17
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 44,
+          "column": 15
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 21,
+          "column": 16
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 22,
+          "column": 17
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "modal-patterns"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "6c13a4a30e383c0c",
+      "subcategory": "modal-patterns",
+      "name": "Modal Patterns Detector",
+      "description": "Learns modal/dialog patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/modal-patterns",
+          "patternId": "components/modal-patterns/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.03,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 13,
+          "column": 25
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 13,
+          "column": 25
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 14,
+          "column": 25
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "modal-patterns"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "73ea311a5bcc98ea",
+      "subcategory": "component-structure",
+      "name": "Component Structure Detector",
+      "description": "Learns component structure patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/component-structure",
+          "patternId": "components/component-structure/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.07,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 67,
+          "column": 17
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 69,
+          "column": 23
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 77,
+          "column": 23
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 73,
+          "column": 23
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 85,
+          "column": 23
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 41,
+          "column": 16
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 44,
+          "column": 14
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "component-structure"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "967073923cd41a6f",
+      "subcategory": "duplicate-detection",
+      "name": "Duplicate Detection Detector",
+      "description": "Learns duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/duplicate-detection",
+          "patternId": "components/duplicate-detection/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.11,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 5,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 67,
+          "column": 17
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 69,
+          "column": 23
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 77,
+          "column": 23
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 73,
+          "column": 23
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 85,
+          "column": 23
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 60,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 60,
+          "column": 117
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 60,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 60,
+          "column": 117
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 41,
+          "column": 16
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 44,
+          "column": 14
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "duplicate-detection"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "35858c254034cc52",
+      "subcategory": "near-duplicate",
+      "name": "Near Duplicate Detector",
+      "description": "Learns near-duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/near-duplicate",
+          "patternId": "components/near-duplicate/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.07,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 67,
+          "column": 17
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 69,
+          "column": 23
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 77,
+          "column": 23
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 73,
+          "column": 23
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 85,
+          "column": 23
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 41,
+          "column": 16
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 44,
+          "column": 14
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "near-duplicate"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "3125b0e3c5fa5877",
+      "subcategory": "props-patterns",
+      "name": "Props Patterns Detector",
+      "description": "Learns props patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/props-patterns",
+          "patternId": "components/props-patterns/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.12,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 58,
+          "column": 16
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 58,
+          "column": 16
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 35,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 35,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 14,
+          "column": 27
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 14,
+          "column": 27
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 14,
+          "column": 27
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 14,
+          "column": 27
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 14,
+          "column": 26
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 14,
+          "column": 26
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 14,
+          "column": 26
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 14,
+          "column": 26
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "props-patterns"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "f39450af2cee4624",
+      "subcategory": "modal-patterns",
+      "name": "Modal Patterns Detector",
+      "description": "Learns modal/dialog patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/modal-patterns",
+          "patternId": "components/modal-patterns/class_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 25,
+          "column": 14
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "modal-patterns"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "0ac83d1403d6a38d",
+      "subcategory": "component-structure",
+      "name": "Component Structure Detector",
+      "description": "Learns component structure patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/component-structure",
+          "patternId": "components/component-structure/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.11,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 6,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 47,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 29,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 42,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 55,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 37,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 37,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 45,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 52,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 29,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 25,
+          "column": 3
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "component-structure"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "ca7c9f0e6b726262",
+      "subcategory": "duplicate-detection",
+      "name": "Duplicate Detection Detector",
+      "description": "Learns duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/duplicate-detection",
+          "patternId": "components/duplicate-detection/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.11,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 6,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 47,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 29,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 42,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 55,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 37,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 37,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 45,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 52,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 29,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 25,
+          "column": 3
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "duplicate-detection"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "891e71a737704f18",
+      "subcategory": "duplicate-detection",
+      "name": "Duplicate Detection Detector",
+      "description": "Learns duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/duplicate-detection",
+          "patternId": "components/duplicate-detection/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.73,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 5,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 29,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 52,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 52,
+          "column": 99
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 55,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 56,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 29,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 52,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 52,
+          "column": 99
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 55,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 56,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 15,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 17,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 17,
+          "column": 77
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 28,
+          "column": 40
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 30,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 30,
+          "column": 59
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 41,
+          "column": 38
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 43,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 43,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 54,
+          "column": 40
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 56,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 56,
+          "column": 70
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 15,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 17,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 17,
+          "column": 77
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 28,
+          "column": 40
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 30,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 30,
+          "column": 59
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 41,
+          "column": 38
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 43,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 43,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 54,
+          "column": 40
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 56,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 56,
+          "column": 70
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 33,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 38,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 38,
+          "column": 44
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 40,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 42,
+          "column": 30
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 53,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 61,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 33,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 38,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 38,
+          "column": 44
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 40,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 42,
+          "column": 30
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 53,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 61,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 34,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 38,
+          "column": 12
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 39,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 46,
+          "column": 12
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 53,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 53,
+          "column": 40
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 54,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 55,
+          "column": 16
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 67,
+          "column": 16
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 72,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 77,
+          "column": 19
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 77,
+          "column": 90
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 34,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 38,
+          "column": 12
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 39,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 46,
+          "column": 12
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 53,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 53,
+          "column": 40
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 54,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 55,
+          "column": 16
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 67,
+          "column": 16
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 72,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 77,
+          "column": 19
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 77,
+          "column": 90
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 83,
+          "column": 14
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "duplicate-detection"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "0286284bdd72a118",
+      "subcategory": "near-duplicate",
+      "name": "Near Duplicate Detector",
+      "description": "Learns near-duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/near-duplicate",
+          "patternId": "components/near-duplicate/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.11,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 6,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 47,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 29,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 42,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 55,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 37,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 37,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 45,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 52,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 29,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 25,
+          "column": 3
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "near-duplicate"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "c82728f0753823a2",
+      "subcategory": "composition",
+      "name": "Composition Detector",
+      "description": "Learns component composition patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/composition",
+          "patternId": "components/composition/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.14,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 11,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 11,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 11,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 24,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 37,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 50,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 11,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 24,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 37,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 50,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 14,
+          "column": 36
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 14,
+          "column": 63
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 14,
+          "column": 36
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 14,
+          "column": 63
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "composition"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "2504889d0f27e6a1",
+      "subcategory": "composition",
+      "name": "Composition Detector",
+      "description": "Learns component composition patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/composition",
+          "patternId": "components/composition/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.24,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 22,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 60,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 22,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 60,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 15,
+          "column": 24
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 18,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 28,
+          "column": 30
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 31,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 41,
+          "column": 28
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 44,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 54,
+          "column": 30
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 57,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 15,
+          "column": 24
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 18,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 28,
+          "column": 30
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 31,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 41,
+          "column": 28
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 44,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 54,
+          "column": 30
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 57,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 5,
+          "column": 50
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 5,
+          "column": 50
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 13,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 13,
+          "column": 3
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "composition"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "b2b6118fea62b29b",
+      "subcategory": "props-patterns",
+      "name": "Props Patterns Detector",
+      "description": "Learns props patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/props-patterns",
+          "patternId": "components/props-patterns/class_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 10,
+          "column": 18
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 10,
+          "column": 18
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "props-patterns"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "417109e8284b0e6b",
+      "subcategory": "props-patterns",
+      "name": "Props Patterns Detector",
+      "description": "Learns props patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/props-patterns",
+          "patternId": "components/props-patterns/function_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 23,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 23,
+          "column": 17
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "props-patterns"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "840e48b8603b11cf",
+      "subcategory": "state-patterns",
+      "name": "State Patterns Detector",
+      "description": "Learns state management patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/state-patterns",
+          "patternId": "components/state-patterns/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.16,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 5,
+          "column": 48
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 5,
+          "column": 48
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 17,
+          "column": 29
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 4,
+          "column": 65
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 23,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 4,
+          "column": 65
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 23,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 23,
+          "column": 29
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 54,
+          "column": 29
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 23,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 4,
+          "column": 42
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 36,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 4,
+          "column": 42
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 36,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 36,
+          "column": 29
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 36,
+          "column": 17
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "state-patterns"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "4c03e33bd05c684e",
+      "subcategory": "component-structure",
+      "name": "Component Structure Detector",
+      "description": "Learns component structure patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/component-structure",
+          "patternId": "components/component-structure/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 79,
+          "column": 27
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 80,
+          "column": 30
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 79,
+          "column": 27
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 80,
+          "column": 30
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "component-structure"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "9a407608b601be65",
+      "subcategory": "duplicate-detection",
+      "name": "Duplicate Detection Detector",
+      "description": "Learns duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/duplicate-detection",
+          "patternId": "components/duplicate-detection/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 79,
+          "column": 27
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 80,
+          "column": 30
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 79,
+          "column": 27
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 80,
+          "column": 30
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "duplicate-detection"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "cea4d419f40dc548",
+      "subcategory": "near-duplicate",
+      "name": "Near Duplicate Detector",
+      "description": "Learns near-duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/near-duplicate",
+          "patternId": "components/near-duplicate/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 79,
+          "column": 27
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 80,
+          "column": 30
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 79,
+          "column": 27
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 80,
+          "column": 30
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "near-duplicate"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "eb403dddc6216b9e",
+      "subcategory": "composition",
+      "name": "Composition Detector",
+      "description": "Learns component composition patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/composition",
+          "patternId": "components/composition/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 79,
+          "column": 27
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 80,
+          "column": 30
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 79,
+          "column": 27
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 80,
+          "column": 30
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "composition"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "50ff1cc4c93547d1",
+      "subcategory": "state-patterns",
+      "name": "State Patterns Detector",
+      "description": "Learns state management patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/state-patterns",
+          "patternId": "components/state-patterns/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.03,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 11,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 7,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 7,
+          "column": 10
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "state-patterns"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "6197ce0a4faba040",
+      "subcategory": "state-patterns",
+      "name": "State Patterns Detector",
+      "description": "Learns state management patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/state-patterns",
+          "patternId": "components/state-patterns/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 15,
+          "column": 27
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 16,
+          "column": 33
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 53,
+          "column": 33
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 30,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 33,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 35,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 43,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 49,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 55,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 62,
+          "column": 5
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "state-patterns"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "53d96fa2de4b1903",
+      "subcategory": "composition",
+      "name": "Composition Detector",
+      "description": "Learns component composition patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/composition",
+          "patternId": "components/composition/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 46,
+          "column": 13
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 46,
+          "column": 13
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "composition"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "4ade661f5999d4eb",
+      "subcategory": "component-structure",
+      "name": "Component Structure Detector",
+      "description": "Learns component structure patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/component-structure",
+          "patternId": "components/component-structure/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 5,
+          "column": 23
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 5,
+          "column": 23
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "component-structure"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "12c2562ab2684200",
+      "subcategory": "props-patterns",
+      "name": "Props Patterns Detector",
+      "description": "Learns props patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/props-patterns",
+          "patternId": "components/props-patterns/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 13,
+          "column": 29
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 13,
+          "column": 29
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "props-patterns"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "9351357e70de914e",
+      "subcategory": "duplicate-detection",
+      "name": "Duplicate Detection Detector",
+      "description": "Learns duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/duplicate-detection",
+          "patternId": "components/duplicate-detection/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 5,
+          "column": 23
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 5,
+          "column": 23
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "duplicate-detection"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "7e6397ab923cc27a",
+      "subcategory": "near-duplicate",
+      "name": "Near Duplicate Detector",
+      "description": "Learns near-duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/near-duplicate",
+          "patternId": "components/near-duplicate/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 5,
+          "column": 23
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 5,
+          "column": 23
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "near-duplicate"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "9b480fc681bcb899",
+      "subcategory": "ref-forwarding",
+      "name": "Ref Forwarding Detector",
+      "description": "Learns ref forwarding patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/ref-forwarding",
+          "patternId": "components/ref-forwarding/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.06,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 27,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 27,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 43,
+          "column": 22
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 43,
+          "column": 22
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "ref-forwarding"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "a5ca7234821814c0",
+      "subcategory": "ref-forwarding",
+      "name": "Ref Forwarding Detector",
+      "description": "Learns ref forwarding patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/ref-forwarding",
+          "patternId": "components/ref-forwarding/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 11,
+          "column": 28
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "ref-forwarding"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "bee47d8e846f3162",
+      "subcategory": "ref-forwarding",
+      "name": "Ref Forwarding Detector",
+      "description": "Learns ref forwarding patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/ref-forwarding",
+          "patternId": "components/ref-forwarding/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 15,
+          "column": 19
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "ref-forwarding"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "3e7cf0d0d965946e",
+      "subcategory": "state-patterns",
+      "name": "State Patterns Detector",
+      "description": "Learns state management patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/state-patterns",
+          "patternId": "components/state-patterns/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 43,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 43,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 69,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 69,
+          "column": 15
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "state-patterns"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "88edac070400b512",
+      "subcategory": "modal-patterns",
+      "name": "Modal Patterns Detector",
+      "description": "Learns modal/dialog patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/modal-patterns",
+          "patternId": "components/modal-patterns/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.06,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 14,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 39,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 43,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 52,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 55,
+          "column": 36
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 65,
+          "column": 7
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "modal-patterns"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "b2bf7c1a46331b4f",
+      "subcategory": "component-structure",
+      "name": "Component Structure Detector",
+      "description": "Learns component structure patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/component-structure",
+          "patternId": "components/component-structure/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 83,
+          "column": 14
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "component-structure"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "f18959b7a5abe296",
+      "subcategory": "near-duplicate",
+      "name": "Near Duplicate Detector",
+      "description": "Learns near-duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/near-duplicate",
+          "patternId": "components/near-duplicate/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 83,
+          "column": 14
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "near-duplicate"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
     }
   ],
-  "lastUpdated": "2026-01-20T01:02:50.735Z",
-  "checksum": "127891955b040a83"
+  "lastUpdated": "2026-01-20T15:16:46.280Z",
+  "checksum": "a103486e47d2e42c"
 }

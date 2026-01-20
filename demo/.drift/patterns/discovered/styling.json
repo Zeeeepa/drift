@@ -341,8 +341,2118 @@
       },
       "severity": "info",
       "autoFixable": false
+    },
+    {
+      "id": "c5b5d4dbaa786246",
+      "subcategory": "z-index-scale",
+      "name": "Z-Index Scale Detector",
+      "description": "Learns z-index scale patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/z-index-scale",
+          "patternId": "styling/z-index-scale/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "README.md",
+          "line": 3,
+          "column": 15
+        },
+        {
+          "file": "README.md",
+          "line": 3,
+          "column": 15
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.277Z",
+        "lastSeen": "2026-01-20T15:16:46.277Z",
+        "source": "auto-detected",
+        "tags": [
+          "styling",
+          "z-index-scale"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "640c6c36d649f0c1",
+      "subcategory": "design-tokens",
+      "name": "Design Tokens Detector",
+      "description": "Learns design token patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/design-tokens",
+          "patternId": "styling/design-tokens/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.12,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/middleware/auth.ts",
+          "line": 24,
+          "column": 9
+        },
+        {
+          "file": "backend/src/middleware/auth.ts",
+          "line": 24,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 10,
+          "column": 11
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 12,
+          "column": 12
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 10,
+          "column": 11
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 12,
+          "column": 12
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 23,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 33,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 46,
+          "column": 13
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 46,
+          "column": 27
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 46,
+          "column": 13
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 46,
+          "column": 27
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "styling",
+          "design-tokens"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "a31806609e4bfedd",
+      "subcategory": "design-tokens",
+      "name": "Design Tokens Detector",
+      "description": "Learns design token patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/design-tokens",
+          "patternId": "styling/design-tokens/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/middleware/auth.ts",
+          "line": 26,
+          "column": 8
+        },
+        {
+          "file": "backend/src/middleware/auth.ts",
+          "line": 26,
+          "column": 8
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "styling",
+          "design-tokens"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "50db66ab7a30564e",
+      "subcategory": "class-naming",
+      "name": "Class Naming Detector",
+      "description": "Learns class naming patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/class-naming",
+          "patternId": "styling/class-naming/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.6,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 12,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 7,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 7,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 24,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 24,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 18,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 18,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 24,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 24,
+          "column": 1
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 2,
+          "column": 17
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 7,
+          "column": 8
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 18,
+          "column": 8
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 25,
+          "column": 8
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 32,
+          "column": 8
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 2,
+          "column": 17
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 7,
+          "column": 8
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 18,
+          "column": 8
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 25,
+          "column": 8
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 32,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 9,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 9,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 18,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 18,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 18,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 18,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 12,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 25,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 38,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 51,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 12,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 25,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 38,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 51,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 12,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 25,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 38,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 51,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 12,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 25,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 38,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 51,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 20,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 20,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 20,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 20,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 14,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 24,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 14,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 24,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 14,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 24,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 14,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 24,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 5,
+          "column": 36
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 5,
+          "column": 36
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 5,
+          "column": 36
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 5,
+          "column": 36
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 5,
+          "column": 18
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 5,
+          "column": 18
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 6,
+          "column": 13
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 6,
+          "column": 13
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "styling",
+          "class-naming"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "76f1506ca28903a4",
+      "subcategory": "design-tokens",
+      "name": "Design Tokens Detector",
+      "description": "Learns design token patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/design-tokens",
+          "patternId": "styling/design-tokens/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.07,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 2,
+          "column": 4
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 2,
+          "column": 4
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 5,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 12,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 7,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 47,
+          "column": 26
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 47,
+          "column": 26
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "styling",
+          "design-tokens"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "90ea23b2ae639b12",
+      "subcategory": "design-tokens",
+      "name": "Design Tokens Detector",
+      "description": "Learns design token patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/design-tokens",
+          "patternId": "styling/design-tokens/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.08,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 13,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 13,
+          "column": 18
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 25,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 26,
+          "column": 49
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 13,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 13,
+          "column": 18
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 25,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 26,
+          "column": 49
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "styling",
+          "design-tokens"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "b02abe274c998a95",
+      "subcategory": "typography",
+      "name": "Typography Detector",
+      "description": "Learns typography patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/typography",
+          "patternId": "styling/typography/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 13,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 13,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 54,
+          "column": 39
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 54,
+          "column": 39
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "styling",
+          "typography"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "11332859cb60224d",
+      "subcategory": "typography",
+      "name": "Typography Detector",
+      "description": "Learns typography patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/typography",
+          "patternId": "styling/typography/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.06,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 24,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 39,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 24,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 39,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 15,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 15,
+          "column": 3
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "styling",
+          "typography"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "34a4e7881122ed57",
+      "subcategory": "class-naming",
+      "name": "Class Naming Detector",
+      "description": "Learns class naming patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/class-naming",
+          "patternId": "styling/class-naming/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 6,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 29,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 52,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 52,
+          "column": 99
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 55,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 56,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 29,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 52,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 52,
+          "column": 99
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 55,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 56,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 29,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 52,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 52,
+          "column": 99
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 55,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 56,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 29,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 52,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 52,
+          "column": 99
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 55,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 56,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 15,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 17,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 17,
+          "column": 77
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 28,
+          "column": 40
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 30,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 30,
+          "column": 59
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 41,
+          "column": 38
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 43,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 43,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 54,
+          "column": 40
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 56,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 56,
+          "column": 70
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 15,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 17,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 17,
+          "column": 77
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 28,
+          "column": 40
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 30,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 30,
+          "column": 59
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 41,
+          "column": 38
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 43,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 43,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 54,
+          "column": 40
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 56,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 56,
+          "column": 70
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 15,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 17,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 17,
+          "column": 77
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 28,
+          "column": 40
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 30,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 30,
+          "column": 59
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 41,
+          "column": 38
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 43,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 43,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 54,
+          "column": 40
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 56,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 56,
+          "column": 70
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 15,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 17,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 17,
+          "column": 77
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 28,
+          "column": 40
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 30,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 30,
+          "column": 59
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 41,
+          "column": 38
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 43,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 43,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 54,
+          "column": 40
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 56,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 56,
+          "column": 70
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 33,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 38,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 38,
+          "column": 44
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 40,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 42,
+          "column": 30
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 53,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 61,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 33,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 38,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 38,
+          "column": 44
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 40,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 42,
+          "column": 30
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 53,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 61,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 33,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 38,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 38,
+          "column": 44
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 40,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 42,
+          "column": 30
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 53,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 61,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 33,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 38,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 38,
+          "column": 44
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 40,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 42,
+          "column": 30
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 53,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 61,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 34,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 38,
+          "column": 12
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 39,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 46,
+          "column": 12
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "styling",
+          "class-naming"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "155fd22e6d39435f",
+      "subcategory": "responsive",
+      "name": "Responsive Detector",
+      "description": "Learns responsive design patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/responsive",
+          "patternId": "styling/responsive/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.05,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 40,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 40,
+          "column": 27
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 41,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 42,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 42,
+          "column": 25
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "styling",
+          "responsive"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "f01c489d1a2e0c27",
+      "subcategory": "color-usage",
+      "name": "Color Usage Detector",
+      "description": "Learns color usage patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/color-usage",
+          "patternId": "styling/color-usage/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.06,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 54,
+          "column": 21
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 55,
+          "column": 69
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 54,
+          "column": 21
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 55,
+          "column": 69
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 16,
+          "column": 3
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "styling",
+          "color-usage"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "01bba4ab8d2080cc",
+      "subcategory": "tailwind-patterns",
+      "name": "Tailwind Patterns Detector",
+      "description": "Learns Tailwind CSS patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/tailwind-patterns",
+          "patternId": "styling/tailwind-patterns/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 54,
+          "column": 39
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "styling",
+          "tailwind-patterns"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "6c977ce5138af66d",
+      "subcategory": "responsive",
+      "name": "Responsive Detector",
+      "description": "Learns responsive design patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/responsive",
+          "patternId": "styling/responsive/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 54,
+          "column": 36
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "styling",
+          "responsive"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "c95c58d88adc9bb5",
+      "subcategory": "class-naming",
+      "name": "Class Naming Detector",
+      "description": "Learns class naming patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/class-naming",
+          "patternId": "styling/class-naming/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.06,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 60,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 60,
+          "column": 117
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 60,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 60,
+          "column": 117
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 44,
+          "column": 26
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 44,
+          "column": 26
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "styling",
+          "class-naming"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "f29a19ff3a07dcb5",
+      "subcategory": "class-naming",
+      "name": "Class Naming Detector",
+      "description": "Learns class naming patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/class-naming",
+          "patternId": "styling/class-naming/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 60,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 60,
+          "column": 117
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 77,
+          "column": 19
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 77,
+          "column": 90
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 60,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 60,
+          "column": 117
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 77,
+          "column": 19
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 77,
+          "column": 90
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 20,
+          "column": 23
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 20,
+          "column": 23
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "styling",
+          "class-naming"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "4ce7ec1150db72f1",
+      "subcategory": "color-usage",
+      "name": "Color Usage Detector",
+      "description": "Learns color usage patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/color-usage",
+          "patternId": "styling/color-usage/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 44,
+          "column": 35
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 44,
+          "column": 35
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "styling",
+          "color-usage"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "19b1cabe95e724a8",
+      "subcategory": "spacing-scale",
+      "name": "Spacing Scale Detector",
+      "description": "Learns spacing scale patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/spacing-scale",
+          "patternId": "styling/spacing-scale/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 23,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 23,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 37,
+          "column": 20
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 42,
+          "column": 18
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 37,
+          "column": 20
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 42,
+          "column": 18
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 30,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 42,
+          "column": 87
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 30,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 42,
+          "column": 87
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "styling",
+          "spacing-scale"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "75d1edb2769f319b",
+      "subcategory": "color-usage",
+      "name": "Color Usage Detector",
+      "description": "Learns color usage patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/color-usage",
+          "patternId": "styling/color-usage/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 21,
+          "column": 28
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 21,
+          "column": 28
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "styling",
+          "color-usage"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "c5c3115bd95333b5",
+      "subcategory": "color-usage",
+      "name": "Color Usage Detector",
+      "description": "Learns color usage patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/color-usage",
+          "patternId": "styling/color-usage/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.2,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 22,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 22,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 21,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 21,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 24,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 25,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 24,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 25,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 38,
+          "column": 19
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 42,
+          "column": 55
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 38,
+          "column": 19
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 42,
+          "column": 55
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 42,
+          "column": 36
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 42,
+          "column": 36
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 29,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 31,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 42,
+          "column": 71
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 29,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 31,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 42,
+          "column": 71
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "styling",
+          "color-usage"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "d26956225f765629",
+      "subcategory": "typography",
+      "name": "Typography Detector",
+      "description": "Learns typography patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/typography",
+          "patternId": "styling/typography/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 31,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 31,
+          "column": 14
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "styling",
+          "typography"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "b8c27df1a14e8c37",
+      "subcategory": "tailwind-patterns",
+      "name": "Tailwind Patterns Detector",
+      "description": "Learns Tailwind CSS patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/tailwind-patterns",
+          "patternId": "styling/tailwind-patterns/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 15,
+          "column": 3
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "styling",
+          "tailwind-patterns"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "94d15cc2f12af6ca",
+      "subcategory": "tailwind-patterns",
+      "name": "Tailwind Patterns Detector",
+      "description": "Learns Tailwind CSS patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/tailwind-patterns",
+          "patternId": "styling/tailwind-patterns/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 31,
+          "column": 14
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "styling",
+          "tailwind-patterns"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
     }
   ],
-  "lastUpdated": "2026-01-20T01:02:50.735Z",
-  "checksum": "b5f13cef59c77f28"
+  "lastUpdated": "2026-01-20T15:16:46.281Z",
+  "checksum": "b53ba53e7ebb8b71"
 }

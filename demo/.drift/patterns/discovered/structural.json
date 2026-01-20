@@ -1522,8 +1522,3818 @@
       },
       "severity": "info",
       "autoFixable": false
+    },
+    {
+      "id": "e6f0dc384fcbdf34",
+      "subcategory": "file-naming",
+      "name": "File Naming Detector",
+      "description": "Learns file naming convention patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/file-naming",
+          "patternId": "structural/file-naming/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.09,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "README.md",
+          "line": 14,
+          "column": 3
+        },
+        {
+          "file": "README.md",
+          "line": 95,
+          "column": 34
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 4,
+          "column": 12
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 56,
+          "column": 11
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 62,
+          "column": 5
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 41,
+          "column": 11
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 47,
+          "column": 49
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 41,
+          "column": 18
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 47,
+          "column": 50
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.277Z",
+        "lastSeen": "2026-01-20T15:16:46.277Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "file-naming"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "ca58fc40d4f4aa65",
+      "subcategory": "file-naming",
+      "name": "File Naming Detector",
+      "description": "Learns file naming convention patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/file-naming",
+          "patternId": "structural/file-naming/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.18,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 8,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "README.md",
+          "line": 84,
+          "column": 15
+        },
+        {
+          "file": "README.md",
+          "line": 87,
+          "column": 15
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 20,
+          "column": 14
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 21,
+          "column": 14
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 40,
+          "column": 22
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 20,
+          "column": 50
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 21,
+          "column": 50
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 10,
+          "column": 3
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 22,
+          "column": 7
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 31,
+          "column": 7
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 12,
+          "column": 3
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 20,
+          "column": 3
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 29,
+          "column": 7
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 37,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 18,
+          "column": 57
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 50,
+          "column": 38
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 33,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 41,
+          "column": 3
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.277Z",
+        "lastSeen": "2026-01-20T15:16:46.277Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "file-naming"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "ef9e3219a2e7d5d8",
+      "subcategory": "directory-structure",
+      "name": "Directory Structure Detector",
+      "description": "Learns directory structure patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/directory-structure",
+          "patternId": "structural/directory-structure/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.14,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 7,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "README.md",
+          "line": 32,
+          "column": 9
+        },
+        {
+          "file": "README.md",
+          "line": 31,
+          "column": 9
+        },
+        {
+          "file": "README.md",
+          "line": 36,
+          "column": 9
+        },
+        {
+          "file": "README.md",
+          "line": 62,
+          "column": 4
+        },
+        {
+          "file": "README.md",
+          "line": 72,
+          "column": 4
+        },
+        {
+          "file": "README.md",
+          "line": 82,
+          "column": 4
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 6,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 4,
+          "column": 51
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 6,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 7,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 2,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 4,
+          "column": 40
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 2,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 6,
+          "column": 12
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.277Z",
+        "lastSeen": "2026-01-20T15:16:46.277Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "directory-structure"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "a5986ffafff3a67b",
+      "subcategory": "co-location",
+      "name": "Co-Location Detector",
+      "description": "Learns co-location patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/co-location",
+          "patternId": "structural/co-location/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.2,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 9,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "README.md",
+          "line": 62,
+          "column": 4
+        },
+        {
+          "file": "README.md",
+          "line": 72,
+          "column": 4
+        },
+        {
+          "file": "README.md",
+          "line": 82,
+          "column": 4
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 5,
+          "column": 58
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 71,
+          "column": 19
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 71,
+          "column": 47
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 72,
+          "column": 26
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 79,
+          "column": 26
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 75,
+          "column": 16
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 76,
+          "column": 21
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 80,
+          "column": 23
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 87,
+          "column": 23
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 6,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 4,
+          "column": 51
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 5,
+          "column": 18
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 6,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 6,
+          "column": 13
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 7,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 2,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 6,
+          "column": 12
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.277Z",
+        "lastSeen": "2026-01-20T15:16:46.277Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "co-location"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "f8fb6bbeedafdea6",
+      "subcategory": "import-ordering",
+      "name": "Import Ordering Detector",
+      "description": "Learns import ordering patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/import-ordering",
+          "patternId": "structural/import-ordering/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 28,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "README.md",
+          "line": 14,
+          "column": 22
+        },
+        {
+          "file": "README.md",
+          "line": 71,
+          "column": 23
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 9,
+          "column": 1
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 11,
+          "column": 1
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 15,
+          "column": 1
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 16,
+          "column": 1
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 17,
+          "column": 1
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 18,
+          "column": 1
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 19,
+          "column": 1
+        },
+        {
+          "file": "backend/src/middleware/auth.ts",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "file": "backend/src/middleware/auth.ts",
+          "line": 9,
+          "column": 1
+        },
+        {
+          "file": "backend/src/middleware/auth.ts",
+          "line": 4,
+          "column": 43
+        },
+        {
+          "file": "backend/src/middleware/auth.ts",
+          "line": 12,
+          "column": 3
+        },
+        {
+          "file": "backend/src/middleware/errorHandler.ts",
+          "line": 7,
+          "column": 1
+        },
+        {
+          "file": "backend/src/middleware/errorHandler.ts",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "file": "backend/src/middleware/logger.ts",
+          "line": 7,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/admin.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/admin.ts",
+          "line": 14,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/admin.ts",
+          "line": 15,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/admin.ts",
+          "line": 16,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/admin.ts",
+          "line": 5,
+          "column": 6
+        },
+        {
+          "file": "backend/src/routes/admin.ts",
+          "line": 6,
+          "column": 6
+        },
+        {
+          "file": "backend/src/routes/admin.ts",
+          "line": 10,
+          "column": 14
+        },
+        {
+          "file": "backend/src/routes/admin.ts",
+          "line": 29,
+          "column": 20
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 25,
+          "column": 12
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 49,
+          "column": 12
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 11,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 14,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 5,
+          "column": 6
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 5,
+          "column": 53
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 6,
+          "column": 6
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 7,
+          "column": 6
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 27,
+          "column": 63
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 33,
+          "column": 64
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 65,
+          "column": 62
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 11,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 14,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 5,
+          "column": 6
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 6,
+          "column": 6
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 7,
+          "column": 6
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 11,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 14,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 15,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 2,
+          "column": 4
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 5,
+          "column": 6
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 6,
+          "column": 6
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 7,
+          "column": 6
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 24,
+          "column": 11
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 24,
+          "column": 34
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 25,
+          "column": 22
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 36,
+          "column": 20
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 48,
+          "column": 20
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 59,
+          "column": 20
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 64,
+          "column": 25
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 4,
+          "column": 40
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 53,
+          "column": 7
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 4,
+          "column": 40
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 4,
+          "column": 40
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 4,
+          "column": 40
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 2,
+          "column": 4
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 47,
+          "column": 14
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 47,
+          "column": 33
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 50,
+          "column": 39
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 51,
+          "column": 17
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 54,
+          "column": 45
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 55,
+          "column": 17
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 58,
+          "column": 49
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 67,
+          "column": 10
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 67,
+          "column": 21
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 68,
+          "column": 12
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 71,
+          "column": 42
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 71,
+          "column": 58
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 72,
+          "column": 24
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 75,
+          "column": 10
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 76,
+          "column": 15
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 80,
+          "column": 17
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 84,
+          "column": 24
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 87,
+          "column": 10
+        },
+        {
+          "file": "backend/src/utils/response.ts",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "file": "backend/src/utils/response.ts",
+          "line": 4,
+          "column": 47
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 9,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 7,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 7,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 7,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 8,
+          "column": 1
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.277Z",
+        "lastSeen": "2026-01-20T15:16:46.277Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "import-ordering"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "400b6899a21af02b",
+      "subcategory": "barrel-exports",
+      "name": "Barrel Exports Detector",
+      "description": "Learns barrel export patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/barrel-exports",
+          "patternId": "structural/barrel-exports/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.89,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 30,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/index.ts",
+          "line": 48,
+          "column": 1
+        },
+        {
+          "file": "backend/src/middleware/auth.ts",
+          "line": 11,
+          "column": 1
+        },
+        {
+          "file": "backend/src/middleware/auth.ts",
+          "line": 19,
+          "column": 1
+        },
+        {
+          "file": "backend/src/middleware/auth.ts",
+          "line": 44,
+          "column": 1
+        },
+        {
+          "file": "backend/src/middleware/errorHandler.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "file": "backend/src/middleware/logger.ts",
+          "line": 9,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/admin.ts",
+          "line": 10,
+          "column": 7
+        },
+        {
+          "file": "backend/src/routes/admin.ts",
+          "line": 60,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 116,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 74,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 73,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 73,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 60,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 7,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 75,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 84,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 71,
+          "column": 19
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 71,
+          "column": 47
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 72,
+          "column": 26
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 79,
+          "column": 26
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 9,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 18,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 92,
+          "column": 1
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 75,
+          "column": 16
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 76,
+          "column": 21
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 80,
+          "column": 23
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 87,
+          "column": 23
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 7,
+          "column": 1
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 18,
+          "column": 1
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 25,
+          "column": 1
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 32,
+          "column": 1
+        },
+        {
+          "file": "backend/src/utils/response.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "file": "backend/src/utils/response.ts",
+          "line": 20,
+          "column": 1
+        },
+        {
+          "file": "backend/src/utils/response.ts",
+          "line": 27,
+          "column": 1
+        },
+        {
+          "file": "backend/src/utils/response.ts",
+          "line": 46,
+          "column": 1
+        },
+        {
+          "file": "backend/src/utils/response.ts",
+          "line": 50,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 16,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 21,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 31,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 9,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 66,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 18,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 22,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 29,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 18,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 22,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 26,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 30,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 14,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 18,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 22,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 26,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 21,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 15,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 23,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 28,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 36,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 41,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 49,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 54,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 23,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 17,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 27,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 14,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 14,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 14,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 19,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 46,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 24,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 32,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 72,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 21,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 30,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 39,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 49,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 55,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 66,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 73,
+          "column": 1
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "barrel-exports"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "c7e27a96a29901dc",
+      "subcategory": "import-ordering",
+      "name": "Import Ordering Detector",
+      "description": "Learns import ordering patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/import-ordering",
+          "patternId": "structural/import-ordering/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.76,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 23,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/index.ts",
+          "line": 8,
+          "column": 16
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 9,
+          "column": 13
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 10,
+          "column": 27
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 11,
+          "column": 25
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 12,
+          "column": 26
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 15,
+          "column": 19
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 16,
+          "column": 22
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 17,
+          "column": 20
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 18,
+          "column": 20
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 19,
+          "column": 21
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 15,
+          "column": 8
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 15,
+          "column": 34
+        },
+        {
+          "file": "backend/src/middleware/auth.ts",
+          "line": 8,
+          "column": 44
+        },
+        {
+          "file": "backend/src/middleware/auth.ts",
+          "line": 9,
+          "column": 21
+        },
+        {
+          "file": "backend/src/middleware/errorHandler.ts",
+          "line": 7,
+          "column": 44
+        },
+        {
+          "file": "backend/src/middleware/errorHandler.ts",
+          "line": 8,
+          "column": 21
+        },
+        {
+          "file": "backend/src/middleware/logger.ts",
+          "line": 7,
+          "column": 44
+        },
+        {
+          "file": "backend/src/routes/admin.ts",
+          "line": 13,
+          "column": 38
+        },
+        {
+          "file": "backend/src/routes/admin.ts",
+          "line": 14,
+          "column": 66
+        },
+        {
+          "file": "backend/src/routes/admin.ts",
+          "line": 15,
+          "column": 24
+        },
+        {
+          "file": "backend/src/routes/admin.ts",
+          "line": 16,
+          "column": 25
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 10,
+          "column": 38
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 24,
+          "column": 20
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 24,
+          "column": 41
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 10,
+          "column": 29
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 11,
+          "column": 49
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 12,
+          "column": 52
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 13,
+          "column": 43
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 14,
+          "column": 25
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 10,
+          "column": 29
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 11,
+          "column": 49
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 12,
+          "column": 52
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 13,
+          "column": 43
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 14,
+          "column": 27
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 11,
+          "column": 29
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 12,
+          "column": 49
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 13,
+          "column": 52
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 14,
+          "column": 43
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 15,
+          "column": 24
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 15,
+          "column": 10
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 15,
+          "column": 42
+        },
+        {
+          "file": "backend/src/utils/response.ts",
+          "line": 8,
+          "column": 21
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 9,
+          "column": 22
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 10,
+          "column": 68
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 7,
+          "column": 22
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 8,
+          "column": 47
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 7,
+          "column": 22
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 8,
+          "column": 38
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 7,
+          "column": 22
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 8,
+          "column": 35
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 8,
+          "column": 28
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 8,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 8,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 8,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 8,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 11,
+          "column": 39
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 5,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 5,
+          "column": 18
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 11,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 11,
+          "column": 27
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 13,
+          "column": 25
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 13,
+          "column": 29
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 11,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 11,
+          "column": 37
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 11,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 11,
+          "column": 28
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 7,
+          "column": 45
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 7,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 7,
+          "column": 20
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 7,
+          "column": 31
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 7,
+          "column": 61
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 9,
+          "column": 22
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 7,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 7,
+          "column": 20
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 7,
+          "column": 48
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 9,
+          "column": 15
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "import-ordering"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "680ba5d018737dc0",
+      "subcategory": "import-ordering",
+      "name": "Import Ordering Detector",
+      "description": "Learns import ordering patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/import-ordering",
+          "patternId": "structural/import-ordering/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.05,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/index.ts",
+          "line": 25,
+          "column": 5
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 26,
+          "column": 5
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 27,
+          "column": 5
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 42,
+          "column": 5
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 19,
+          "column": 8
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "import-ordering"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "80a510415c83909b",
+      "subcategory": "circular-deps",
+      "name": "Circular Dependencies Detector",
+      "description": "Learns circular dependency patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/circular-deps",
+          "patternId": "structural/circular-deps/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.56,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 23,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/index.ts",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 9,
+          "column": 1
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 11,
+          "column": 1
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 15,
+          "column": 1
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 16,
+          "column": 1
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 17,
+          "column": 1
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 18,
+          "column": 1
+        },
+        {
+          "file": "backend/src/index.ts",
+          "line": 19,
+          "column": 1
+        },
+        {
+          "file": "backend/src/middleware/auth.ts",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "file": "backend/src/middleware/auth.ts",
+          "line": 9,
+          "column": 1
+        },
+        {
+          "file": "backend/src/middleware/errorHandler.ts",
+          "line": 7,
+          "column": 1
+        },
+        {
+          "file": "backend/src/middleware/errorHandler.ts",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "file": "backend/src/middleware/logger.ts",
+          "line": 7,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/admin.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/admin.ts",
+          "line": 14,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/admin.ts",
+          "line": 15,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/admin.ts",
+          "line": 16,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 11,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 14,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 11,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 14,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 11,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 14,
+          "column": 1
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 15,
+          "column": 1
+        },
+        {
+          "file": "backend/src/utils/response.ts",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 9,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 7,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 7,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 7,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 18,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 42,
+          "column": 12
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 11,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 11,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 11,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 7,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 7,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 9,
+          "column": 1
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "circular-deps"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "628dbf766554d938",
+      "subcategory": "directory-structure",
+      "name": "Directory Structure Detector",
+      "description": "Learns directory structure patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/directory-structure",
+          "patternId": "structural/directory-structure/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.18,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 11,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/middleware/auth.ts",
+          "line": 9,
+          "column": 30
+        },
+        {
+          "file": "backend/src/middleware/errorHandler.ts",
+          "line": 8,
+          "column": 30
+        },
+        {
+          "file": "backend/src/routes/admin.ts",
+          "line": 15,
+          "column": 33
+        },
+        {
+          "file": "backend/src/routes/admin.ts",
+          "line": 16,
+          "column": 34
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 12,
+          "column": 61
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 13,
+          "column": 52
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 14,
+          "column": 34
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 12,
+          "column": 61
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 13,
+          "column": 52
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 14,
+          "column": 36
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 13,
+          "column": 61
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 14,
+          "column": 52
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 15,
+          "column": 33
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 10,
+          "column": 77
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 8,
+          "column": 56
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 8,
+          "column": 47
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 8,
+          "column": 44
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 9,
+          "column": 31
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "directory-structure"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "ca29a3521329112d",
+      "subcategory": "import-ordering",
+      "name": "Import Ordering Detector",
+      "description": "Learns import ordering patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/import-ordering",
+          "patternId": "structural/import-ordering/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.53,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 11,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/middleware/auth.ts",
+          "line": 33,
+          "column": 9
+        },
+        {
+          "file": "backend/src/routes/admin.ts",
+          "line": 28,
+          "column": 9
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 19,
+          "column": 9
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 40,
+          "column": 9
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 40,
+          "column": 36
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 68,
+          "column": 26
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 75,
+          "column": 25
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 75,
+          "column": 59
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 55,
+          "column": 5
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 55,
+          "column": 17
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 30,
+          "column": 9
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 30,
+          "column": 22
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 47,
+          "column": 9
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 47,
+          "column": 22
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 53,
+          "column": 9
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 53,
+          "column": 22
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 27,
+          "column": 7
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 35,
+          "column": 7
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 51,
+          "column": 17
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 15,
+          "column": 3
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 28,
+          "column": 5
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 31,
+          "column": 46
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 31,
+          "column": 57
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 43,
+          "column": 30
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 44,
+          "column": 51
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 44,
+          "column": 62
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 47,
+          "column": 24
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 52,
+          "column": 7
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 52,
+          "column": 20
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 65,
+          "column": 28
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 66,
+          "column": 58
+        },
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 66,
+          "column": 69
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 25,
+          "column": 11
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 25,
+          "column": 18
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 44,
+          "column": 57
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 44,
+          "column": 64
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 46,
+          "column": 11
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 46,
+          "column": 24
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 59,
+          "column": 11
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 59,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 31,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 52,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 52,
+          "column": 19
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 12,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 12,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 37,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 50,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 50,
+          "column": 22
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 50,
+          "column": 50
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 50,
+          "column": 64
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 63,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 57,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 74,
+          "column": 3
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "import-ordering"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "4e0b213ddbd3f35d",
+      "subcategory": "import-ordering",
+      "name": "Import Ordering Detector",
+      "description": "Learns import ordering patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/import-ordering",
+          "patternId": "structural/import-ordering/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.05,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/middleware/auth.ts",
+          "line": 49,
+          "column": 11
+        },
+        {
+          "file": "backend/src/routes/legacy.ts",
+          "line": 42,
+          "column": 8
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 32,
+          "column": 8
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 55,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 79,
+          "column": 51
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "import-ordering"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "bf2b62ff6c2edbc0",
+      "subcategory": "barrel-exports",
+      "name": "Barrel Exports Detector",
+      "description": "Learns barrel export patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/barrel-exports",
+          "patternId": "structural/barrel-exports/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/routes/admin.ts",
+          "line": 42,
+          "column": 35
+        },
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 33,
+          "column": 9
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "barrel-exports"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "a0fd6391ec49653a",
+      "subcategory": "file-naming",
+      "name": "File Naming Detector",
+      "description": "Learns file naming convention patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/file-naming",
+          "patternId": "structural/file-naming/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 43,
+          "column": 8
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 43,
+          "column": 18
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "file-naming"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "f5e102df85647c7c",
+      "subcategory": "barrel-exports",
+      "name": "Barrel Exports Detector",
+      "description": "Learns barrel export patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/barrel-exports",
+          "patternId": "structural/barrel-exports/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.05,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/services/adminService.ts",
+          "line": 38,
+          "column": 7
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 68,
+          "column": 11
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 76,
+          "column": 11
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 72,
+          "column": 11
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 84,
+          "column": 11
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "barrel-exports"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "f8fedc987c025b6b",
+      "subcategory": "module-boundaries",
+      "name": "Module Boundaries Detector",
+      "description": "Learns module boundary patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/module-boundaries",
+          "patternId": "structural/module-boundaries/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.08,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 6,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/services/orderService.ts",
+          "line": 25,
+          "column": 3
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 19,
+          "column": 3
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 25,
+          "column": 3
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 10,
+          "column": 5
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 11,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 10,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 7,
+          "column": 15
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "module-boundaries"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "bacccc47a76f1d4b",
+      "subcategory": "co-location",
+      "name": "Co-Location Detector",
+      "description": "Learns co-location patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/co-location",
+          "patternId": "structural/co-location/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.11,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 68,
+          "column": 11
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 76,
+          "column": 11
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 72,
+          "column": 11
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 84,
+          "column": 11
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 20,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 30,
+          "column": 13
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 30,
+          "column": 20
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 28,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 37,
+          "column": 11
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 38,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 42,
+          "column": 9
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "co-location"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "c22beede2c112cc2",
+      "subcategory": "co-location",
+      "name": "Co-Location Detector",
+      "description": "Learns co-location patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/co-location",
+          "patternId": "structural/co-location/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.05,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 69,
+          "column": 9
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 77,
+          "column": 9
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 73,
+          "column": 9
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 85,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 44,
+          "column": 26
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "co-location"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "3f219172babda5ff",
+      "subcategory": "barrel-exports",
+      "name": "Barrel Exports Detector",
+      "description": "Learns barrel export patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/barrel-exports",
+          "patternId": "structural/barrel-exports/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 69,
+          "column": 9
+        },
+        {
+          "file": "backend/src/services/productService.ts",
+          "line": 77,
+          "column": 9
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 73,
+          "column": 9
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 85,
+          "column": 9
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "barrel-exports"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "9d2c6babb744621f",
+      "subcategory": "file-naming",
+      "name": "File Naming Detector",
+      "description": "Learns file naming convention patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/file-naming",
+          "patternId": "structural/file-naming/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.07,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 62,
+          "column": 7
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 62,
+          "column": 19
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 14,
+          "column": 10
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 21,
+          "column": 10
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 28,
+          "column": 10
+        },
+        {
+          "file": "backend/src/utils/errors.ts",
+          "line": 35,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 37,
+          "column": 45
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "file-naming"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "66a9049d0bc6c35b",
+      "subcategory": "import-ordering",
+      "name": "Import Ordering Detector",
+      "description": "Learns import ordering patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/import-ordering",
+          "patternId": "structural/import-ordering/class_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.06,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 9,
+          "column": 18
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 24,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 9,
+          "column": 11
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 15,
+          "column": 11
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 15,
+          "column": 35
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 30,
+          "column": 18
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "import-ordering"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "0fc49b9a4353f7b0",
+      "subcategory": "import-ordering",
+      "name": "Import Ordering Detector",
+      "description": "Learns import ordering patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/import-ordering",
+          "patternId": "structural/import-ordering/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.13,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 5,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 92,
+          "column": 14
+        },
+        {
+          "file": "backend/src/services/userService.ts",
+          "line": 92,
+          "column": 32
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 15,
+          "column": 27
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 16,
+          "column": 33
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 19,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 18,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 29,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 39,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 53,
+          "column": 33
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 56,
+          "column": 18
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 25,
+          "column": 19
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 42,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 60,
+          "column": 18
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.278Z",
+        "lastSeen": "2026-01-20T15:16:46.278Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "import-ordering"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "67fca1a18d6e160e",
+      "subcategory": "co-location",
+      "name": "Co-Location Detector",
+      "description": "Learns co-location patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/co-location",
+          "patternId": "structural/co-location/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.05,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 5,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 10,
+          "column": 77
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 8,
+          "column": 56
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 8,
+          "column": 47
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 8,
+          "column": 44
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 9,
+          "column": 31
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "co-location"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "ddf861f1d5535167",
+      "subcategory": "barrel-exports",
+      "name": "Barrel Exports Detector",
+      "description": "Learns barrel export patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/barrel-exports",
+          "patternId": "structural/barrel-exports/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 10,
+          "column": 55
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "barrel-exports"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "657a3a39c08ef3bc",
+      "subcategory": "barrel-exports",
+      "name": "Barrel Exports Detector",
+      "description": "Learns barrel export patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/barrel-exports",
+          "patternId": "structural/barrel-exports/function_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.03,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 26,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 26,
+          "column": 23
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 26,
+          "column": 45
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "barrel-exports"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "7619deb55748ff12",
+      "subcategory": "import-ordering",
+      "name": "Import Ordering Detector",
+      "description": "Learns import ordering patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/import-ordering",
+          "patternId": "structural/import-ordering/function_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 31,
+          "column": 31
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 31,
+          "column": 70
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 10,
+          "column": 75
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 14,
+          "column": 64
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 18,
+          "column": 112
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 22,
+          "column": 60
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 22,
+          "column": 88
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 14,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 24,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 32,
+          "column": 17
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "import-ordering"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "a357da6bd4497c93",
+      "subcategory": "circular-deps",
+      "name": "Circular Dependencies Detector",
+      "description": "Learns circular dependency patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/circular-deps",
+          "patternId": "structural/circular-deps/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.03,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 31,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 52,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 52,
+          "column": 19
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "circular-deps"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "2535afaa324a5122",
+      "subcategory": "file-naming",
+      "name": "File Naming Detector",
+      "description": "Learns file naming convention patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/file-naming",
+          "patternId": "structural/file-naming/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 8,
+          "column": 19
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "file-naming"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "bd385feacbea8ef1",
+      "subcategory": "co-location",
+      "name": "Co-Location Detector",
+      "description": "Learns co-location patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/co-location",
+          "patternId": "structural/co-location/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 20,
+          "column": 23
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "co-location"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "41622713121ed61a",
+      "subcategory": "barrel-exports",
+      "name": "Barrel Exports Detector",
+      "description": "Learns barrel export patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/barrel-exports",
+          "patternId": "structural/barrel-exports/class_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 80,
+          "column": 1
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 80,
+          "column": 18
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-20T15:16:46.279Z",
+        "lastSeen": "2026-01-20T15:16:46.279Z",
+        "source": "auto-detected",
+        "tags": [
+          "structural",
+          "barrel-exports"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
     }
   ],
-  "lastUpdated": "2026-01-20T01:02:50.734Z",
-  "checksum": "c7f76555268f482e"
+  "lastUpdated": "2026-01-20T15:16:46.279Z",
+  "checksum": "00734518c7d121b7"
 }
