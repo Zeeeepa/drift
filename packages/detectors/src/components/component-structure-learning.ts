@@ -125,7 +125,7 @@ export class ComponentStructureLearningDetector extends LearningDetector<Compone
   readonly subcategory = 'component-structure';
   readonly name = 'Component Structure Detector (Learning)';
   readonly description = 'Learns component structure patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof ComponentStructureConventions> {
     return ['componentStyle', 'exportStyle', 'usesPropsInterface', 'usesForwardRef'];

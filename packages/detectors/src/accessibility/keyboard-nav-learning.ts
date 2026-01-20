@@ -119,7 +119,7 @@ export class KeyboardNavLearningDetector extends LearningDetector<KeyboardNavCon
   readonly subcategory = 'keyboard-nav';
   readonly name = 'Keyboard Navigation Detector (Learning)';
   readonly description = 'Learns keyboard navigation patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof KeyboardNavConventions> {
     return ['handlingStyle', 'usesTabIndex', 'usesFocusTrap'];

@@ -61,7 +61,7 @@ export class EnvironmentDetectionLearningDetector extends LearningDetector<Envir
   readonly subcategory = 'environment-detection';
   readonly name = 'Environment Detection Detector (Learning)';
   readonly description = 'Learns environment detection patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof EnvironmentDetectionConventions> {
     return ['envAccessMethod', 'envCheckStyle', 'usesEnvValidation'];

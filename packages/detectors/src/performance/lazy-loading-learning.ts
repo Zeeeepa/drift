@@ -89,7 +89,7 @@ export class LazyLoadingLearningDetector extends LearningDetector<LazyLoadingCon
   readonly subcategory = 'lazy-loading';
   readonly name = 'Lazy Loading Detector (Learning)';
   readonly description = 'Learns lazy loading patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof LazyLoadingConventions> {
     return ['preferredMethod', 'usesSuspense', 'usesLoadingFallback'];

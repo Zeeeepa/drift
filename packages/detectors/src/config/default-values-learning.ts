@@ -60,7 +60,7 @@ export class DefaultValuesLearningDetector extends LearningDetector<DefaultValue
   readonly subcategory = 'default-values';
   readonly name = 'Default Values Detector (Learning)';
   readonly description = 'Learns default value patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof DefaultValuesConventions> {
     return ['defaultValueStyle', 'usesNullishCoalescing', 'usesOptionalChaining'];

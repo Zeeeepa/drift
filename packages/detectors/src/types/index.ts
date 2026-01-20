@@ -364,3 +364,42 @@ export {
   type AssertionSyntax,
   type NonNullUsage,
 } from './type-assertions-learning.js';
+
+// ============================================================================
+// Semantic Detectors (Language-Agnostic)
+// ============================================================================
+
+export {
+  FileLocationSemanticDetector,
+  createFileLocationSemanticDetector,
+} from './file-location-semantic.js';
+
+export {
+  NamingConventionsSemanticDetector,
+  createNamingConventionsSemanticDetector,
+} from './naming-conventions-semantic.js';
+
+export {
+  InterfaceVsTypeSemanticDetector,
+  createInterfaceVsTypeSemanticDetector,
+} from './interface-vs-type-semantic.js';
+
+export {
+  GenericPatternsSemanticDetector,
+  createGenericPatternsSemanticDetector,
+} from './generic-patterns-semantic.js';
+
+export {
+  UtilityTypesSemanticDetector,
+  createUtilityTypesSemanticDetector,
+} from './utility-types-semantic.js';
+
+export {
+  TypeAssertionsSemanticDetector,
+  createTypeAssertionsSemanticDetector,
+} from './type-assertions-semantic.js';
+
+export {
+  AnyUsageSemanticDetector,
+  createAnyUsageSemanticDetector,
+} from './any-usage-semantic.js';

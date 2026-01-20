@@ -109,7 +109,7 @@ export class FileNamingLearningDetector extends LearningDetector<FileNamingConve
   readonly subcategory = 'naming';
   readonly name = 'File Naming Detector (Learning)';
   readonly description = 'Learns file naming conventions from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof FileNamingConventions> {
     return ['componentNaming', 'utilityNaming', 'hookNaming', 'serviceNaming', 'testSuffix', 'usesIndexFiles'];

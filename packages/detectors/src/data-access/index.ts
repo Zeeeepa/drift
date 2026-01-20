@@ -274,3 +274,42 @@ export {
   type NPlusOneConventions,
   type NPlusOnePreventionMethod,
 } from './n-plus-one-learning.js';
+
+// ============================================================================
+// Semantic Detectors (Language-Agnostic)
+// ============================================================================
+
+export {
+  QueryPatternsSemanticDetector,
+  createQueryPatternsSemanticDetector,
+} from './query-patterns-semantic.js';
+
+export {
+  RepositoryPatternSemanticDetector,
+  createRepositoryPatternSemanticDetector,
+} from './repository-pattern-semantic.js';
+
+export {
+  TransactionSemanticDetector,
+  createTransactionSemanticDetector,
+} from './transaction-semantic.js';
+
+export {
+  ValidationSemanticDetector,
+  createValidationSemanticDetector,
+} from './validation-semantic.js';
+
+export {
+  DTOPatternsSemanticDetector,
+  createDTOPatternsSemanticDetector,
+} from './dto-patterns-semantic.js';
+
+export {
+  NPlusOneSemanticDetector,
+  createNPlusOneSemanticDetector,
+} from './n-plus-one-semantic.js';
+
+export {
+  ConnectionPoolingSemanticDetector,
+  createConnectionPoolingSemanticDetector,
+} from './connection-pooling-semantic.js';

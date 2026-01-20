@@ -120,7 +120,7 @@ export class StructuredFormatLearningDetector extends LearningDetector<Structure
   readonly subcategory = 'structured-format';
   readonly name = 'Structured Format Detector (Learning)';
   readonly description = 'Learns structured logging format patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof StructuredFormatConventions> {
     return ['library', 'format', 'usesStructuredContext'];

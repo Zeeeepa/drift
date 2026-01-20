@@ -147,7 +147,7 @@ export class ImportOrderingLearningDetector extends LearningDetector<ImportOrder
   readonly subcategory = 'import-ordering';
   readonly name = 'Import Ordering Detector (Learning)';
   readonly description = 'Learns import ordering patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof ImportOrderingConventions> {
     return ['groupOrder', 'usesBlankLines', 'separatesTypeImports'];

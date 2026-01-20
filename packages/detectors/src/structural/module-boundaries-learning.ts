@@ -86,7 +86,7 @@ export class ModuleBoundariesLearningDetector extends LearningDetector<ModuleBou
   readonly subcategory = 'module-boundaries';
   readonly name = 'Module Boundaries Detector (Learning)';
   readonly description = 'Learns module boundary patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof ModuleBoundariesConventions> {
     return ['importStyle', 'usesPublicApi', 'allowsDeepImports'];

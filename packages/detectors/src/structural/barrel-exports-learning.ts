@@ -108,7 +108,7 @@ export class BarrelExportsLearningDetector extends LearningDetector<BarrelExport
   readonly subcategory = 'barrel-exports';
   readonly name = 'Barrel Exports Detector (Learning)';
   readonly description = 'Learns barrel export patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof BarrelExportsConventions> {
     return ['exportStyle', 'usesIndexFiles', 'reExportsFromIndex'];

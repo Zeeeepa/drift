@@ -102,7 +102,7 @@ export class CSPHeadersLearningDetector extends LearningDetector<CSPHeadersConve
   readonly subcategory = 'csp-headers';
   readonly name = 'CSP Headers Detector (Learning)';
   readonly description = 'Learns CSP header patterns from your codebase and flags inconsistencies';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof CSPHeadersConventions> {
     return ['cspMode', 'scriptSrcMethod', 'usesReportUri', 'usesFrameAncestors'];

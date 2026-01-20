@@ -251,3 +251,42 @@ export {
   type PropagationStyle,
   type ChainPreservation,
 } from './error-propagation-learning.js';
+
+// ============================================================================
+// Semantic Detectors (Language-Agnostic)
+// ============================================================================
+
+export {
+  ExceptionHierarchySemanticDetector,
+  createExceptionHierarchySemanticDetector,
+} from './exception-hierarchy-semantic.js';
+
+export {
+  ErrorCodesSemanticDetector,
+  createErrorCodesSemanticDetector,
+} from './error-codes-semantic.js';
+
+export {
+  TryCatchSemanticDetector,
+  createTryCatchSemanticDetector,
+} from './try-catch-semantic.js';
+
+export {
+  ErrorPropagationSemanticDetector,
+  createErrorPropagationSemanticDetector,
+} from './error-propagation-semantic.js';
+
+export {
+  AsyncErrorsSemanticDetector,
+  createAsyncErrorsSemanticDetector,
+} from './async-errors-semantic.js';
+
+export {
+  CircuitBreakerSemanticDetector,
+  createCircuitBreakerSemanticDetector,
+} from './circuit-breaker-semantic.js';
+
+export {
+  ErrorLoggingSemanticDetector,
+  createErrorLoggingSemanticDetector,
+} from './error-logging-semantic.js';

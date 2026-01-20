@@ -97,7 +97,7 @@ export class CircuitBreakerLearningDetector extends LearningDetector<CircuitBrea
   readonly subcategory = 'circuit-breaker';
   readonly name = 'Circuit Breaker Detector (Learning)';
   readonly description = 'Learns circuit breaker patterns from your codebase and flags inconsistencies';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof CircuitBreakerConventions> {
     return ['library', 'stateManagement', 'defaultTimeout', 'defaultThreshold', 'usesHalfOpen'];

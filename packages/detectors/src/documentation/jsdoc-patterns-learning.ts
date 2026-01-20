@@ -92,7 +92,7 @@ export class JSDocPatternsLearningDetector extends LearningDetector<JSDocConvent
   readonly subcategory = 'jsdoc-patterns';
   readonly name = 'JSDoc Patterns Detector (Learning)';
   readonly description = 'Learns JSDoc patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof JSDocConventions> {
     return ['style', 'usesParamTags', 'usesReturnTags', 'usesExampleTags'];

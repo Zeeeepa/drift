@@ -265,3 +265,37 @@ export {
   type BundleSizeConventions,
   type ImportStyle,
 } from './bundle-size-learning.js';
+
+// ============================================================================
+// Semantic Detectors (Language-Agnostic)
+// ============================================================================
+
+export {
+  CodeSplittingSemanticDetector,
+  createCodeSplittingSemanticDetector,
+} from './code-splitting-semantic.js';
+
+export {
+  LazyLoadingSemanticDetector,
+  createLazyLoadingSemanticDetector,
+} from './lazy-loading-semantic.js';
+
+export {
+  MemoizationSemanticDetector,
+  createMemoizationSemanticDetector,
+} from './memoization-semantic.js';
+
+export {
+  CachingPatternsSemanticDetector,
+  createCachingPatternsSemanticDetector,
+} from './caching-patterns-semantic.js';
+
+export {
+  DebounceThrottleSemanticDetector,
+  createDebounceThrottleSemanticDetector,
+} from './debounce-throttle-semantic.js';
+
+export {
+  BundleSizeSemanticDetector,
+  createBundleSizeSemanticDetector,
+} from './bundle-size-semantic.js';

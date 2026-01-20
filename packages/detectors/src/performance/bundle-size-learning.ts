@@ -115,7 +115,7 @@ export class BundleSizeLearningDetector extends LearningDetector<BundleSizeConve
   readonly subcategory = 'bundle-size';
   readonly name = 'Bundle Size Detector (Learning)';
   readonly description = 'Learns bundle optimization patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof BundleSizeConventions> {
     return ['importStyle', 'usesTreeShaking', 'usesDynamicImports'];

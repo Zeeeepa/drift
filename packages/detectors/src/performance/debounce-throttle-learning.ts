@@ -97,7 +97,7 @@ export class DebounceThrottleLearningDetector extends LearningDetector<DebounceT
   readonly subcategory = 'debounce-throttle';
   readonly name = 'Debounce/Throttle Detector (Learning)';
   readonly description = 'Learns debounce/throttle patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof DebounceThrottleConventions> {
     return ['preferredMethod', 'defaultDebounceMs', 'defaultThrottleMs'];

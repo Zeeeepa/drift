@@ -60,7 +60,7 @@ export class ValidationPatternsLearningDetector extends LearningDetector<Validat
   readonly subcategory = 'validation-patterns';
   readonly name = 'Validation Patterns Detector (Learning)';
   readonly description = 'Learns validation patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof ValidationPatternsConventions> {
     return ['validationLibrary', 'validatesAtBoundary', 'usesSchemaInference'];

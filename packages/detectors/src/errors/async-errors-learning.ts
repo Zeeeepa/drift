@@ -107,7 +107,7 @@ export class AsyncErrorsLearningDetector extends LearningDetector<AsyncErrorsCon
   readonly subcategory = 'async-errors';
   readonly name = 'Async Errors Detector (Learning)';
   readonly description = 'Learns async error handling patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof AsyncErrorsConventions> {
     return ['style', 'usesErrorBoundaries', 'usesUnhandledRejection'];

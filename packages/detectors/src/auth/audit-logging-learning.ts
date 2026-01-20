@@ -81,7 +81,7 @@ export class AuditLoggingLearningDetector extends LearningDetector<AuditLoggingC
   readonly subcategory = 'audit-logging';
   readonly name = 'Audit Logging Detector (Learning)';
   readonly description = 'Learns audit logging patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof AuditLoggingConventions> {
     return ['auditMethod', 'auditStorage', 'includesUserId', 'includesTimestamp', 'includesIpAddress'];

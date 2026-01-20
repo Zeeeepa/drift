@@ -112,7 +112,7 @@ export class AltTextLearningDetector extends LearningDetector<AltTextConventions
   readonly subcategory = 'alt-text';
   readonly name = 'Alt Text Detector (Learning)';
   readonly description = 'Learns alt text patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof AltTextConventions> {
     return ['style', 'usesEmptyAltForDecorative', 'usesAriaLabel'];

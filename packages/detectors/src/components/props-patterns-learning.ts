@@ -132,7 +132,7 @@ export class PropsPatternsLearningDetector extends LearningDetector<PropsPattern
   readonly subcategory = 'props-patterns';
   readonly name = 'Props Patterns Detector (Learning)';
   readonly description = 'Learns props patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof PropsPatternsConventions> {
     return ['typingStyle', 'namingSuffix', 'usesDestructuring', 'usesDefaultProps'];

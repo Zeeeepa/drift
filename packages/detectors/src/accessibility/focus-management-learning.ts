@@ -96,7 +96,7 @@ export class FocusManagementLearningDetector extends LearningDetector<FocusManag
   readonly subcategory = 'focus-management';
   readonly name = 'Focus Management Detector (Learning)';
   readonly description = 'Learns focus management patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof FocusManagementConventions> {
     return ['focusTrapMethod', 'focusRingStyle', 'usesFocusVisible', 'restoresFocus'];

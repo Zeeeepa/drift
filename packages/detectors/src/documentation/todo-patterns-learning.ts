@@ -94,7 +94,7 @@ export class TodoPatternsLearningDetector extends LearningDetector<TodoPatternsC
   readonly subcategory = 'todo-patterns';
   readonly name = 'TODO Patterns Detector (Learning)';
   readonly description = 'Learns TODO/FIXME comment patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof TodoPatternsConventions> {
     return ['preferredTag', 'format', 'usesAttribution'];

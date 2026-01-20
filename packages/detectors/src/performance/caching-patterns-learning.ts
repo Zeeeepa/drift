@@ -124,7 +124,7 @@ export class CachingPatternsLearningDetector extends LearningDetector<CachingPat
   readonly subcategory = 'caching-patterns';
   readonly name = 'Caching Patterns Detector (Learning)';
   readonly description = 'Learns caching patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof CachingPatternsConventions> {
     return ['library', 'keyStyle', 'usesPrefix'];

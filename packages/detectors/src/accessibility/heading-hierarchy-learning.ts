@@ -91,7 +91,7 @@ export class HeadingHierarchyLearningDetector extends LearningDetector<HeadingHi
   readonly subcategory = 'heading-hierarchy';
   readonly name = 'Heading Hierarchy Detector (Learning)';
   readonly description = 'Learns heading hierarchy patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof HeadingHierarchyConventions> {
     return ['headingStyle', 'headingComponent', 'usesLevelProp', 'maxLevel'];

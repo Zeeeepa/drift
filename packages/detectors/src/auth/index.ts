@@ -235,3 +235,37 @@ export {
   type AuditMethod,
   type AuditStorage,
 } from './audit-logging-learning.js';
+
+// ============================================================================
+// Semantic Detectors (Language-Agnostic)
+// ============================================================================
+
+export {
+  AuditSemanticDetector,
+  createAuditSemanticDetector,
+} from './audit-semantic.js';
+
+export {
+  AuthMiddlewareSemanticDetector,
+  createAuthMiddlewareSemanticDetector,
+} from './middleware-semantic.js';
+
+export {
+  OwnershipSemanticDetector,
+  createOwnershipSemanticDetector,
+} from './ownership-semantic.js';
+
+export {
+  PermissionChecksSemanticDetector,
+  createPermissionChecksSemanticDetector,
+} from './permission-checks-semantic.js';
+
+export {
+  RBACSemanticDetector,
+  createRBACSemanticDetector,
+} from './rbac-semantic.js';
+
+export {
+  TokenHandlingSemanticDetector,
+  createTokenHandlingSemanticDetector,
+} from './token-handling-semantic.js';

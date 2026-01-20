@@ -112,7 +112,7 @@ export class CodeSplittingLearningDetector extends LearningDetector<CodeSplittin
   readonly subcategory = 'code-splitting';
   readonly name = 'Code Splitting Detector (Learning)';
   readonly description = 'Learns code splitting patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof CodeSplittingConventions> {
     return ['chunkNaming', 'usesWebpackMagicComments', 'usesPrefetch'];

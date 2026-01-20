@@ -118,7 +118,7 @@ export class MockPatternsLearningDetector extends LearningDetector<MockPatternsC
   readonly subcategory = 'mock-patterns';
   readonly name = 'Mock Patterns Detector (Learning)';
   readonly description = 'Learns mock patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof MockPatternsConventions> {
     return ['library', 'usesMockPrefix', 'usesSpyOn'];

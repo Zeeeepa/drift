@@ -102,7 +102,7 @@ export class CorrelationIdsLearningDetector extends LearningDetector<Correlation
   readonly subcategory = 'correlation-ids';
   readonly name = 'Correlation IDs Detector (Learning)';
   readonly description = 'Learns correlation ID patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof CorrelationIdsConventions> {
     return ['idName', 'headerName', 'usesUUID'];

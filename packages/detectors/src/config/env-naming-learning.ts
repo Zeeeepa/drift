@@ -138,7 +138,7 @@ export class EnvNamingLearningDetector extends LearningDetector<EnvNamingConvent
   readonly subcategory = 'env-naming';
   readonly name = 'Environment Naming Detector (Learning)';
   readonly description = 'Learns environment variable naming patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof EnvNamingConventions> {
     return ['prefix', 'naming', 'accessMethod'];

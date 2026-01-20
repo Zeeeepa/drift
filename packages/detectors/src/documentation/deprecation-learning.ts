@@ -59,7 +59,7 @@ export class DeprecationLearningDetector extends LearningDetector<DeprecationCon
   readonly subcategory = 'deprecation';
   readonly name = 'Deprecation Detector (Learning)';
   readonly description = 'Learns deprecation patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof DeprecationConventions> {
     return ['deprecationStyle', 'includesReplacement', 'includesVersion'];

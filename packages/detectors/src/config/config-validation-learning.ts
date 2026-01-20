@@ -84,7 +84,7 @@ export class ConfigValidationLearningDetector extends LearningDetector<ConfigVal
   readonly subcategory = 'config-validation';
   readonly name = 'Config Validation Detector (Learning)';
   readonly description = 'Learns config validation patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof ConfigValidationConventions> {
     return ['library', 'usesSchemaValidation', 'throwsOnInvalid'];

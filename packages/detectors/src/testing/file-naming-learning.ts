@@ -59,7 +59,7 @@ export class TestFileNamingLearningDetector extends LearningDetector<TestFileNam
   readonly subcategory = 'file-naming';
   readonly name = 'Test File Naming Detector (Learning)';
   readonly description = 'Learns test file naming patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof TestFileNamingConventions> {
     return ['fileSuffix', 'fileLocation', 'matchesSourceName'];

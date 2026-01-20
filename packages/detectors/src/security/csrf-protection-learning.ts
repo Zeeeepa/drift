@@ -90,7 +90,7 @@ export class CSRFProtectionLearningDetector extends LearningDetector<CSRFProtect
   readonly subcategory = 'csrf-protection';
   readonly name = 'CSRF Protection Detector (Learning)';
   readonly description = 'Learns CSRF protection patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof CSRFProtectionConventions> {
     return ['library', 'tokenLocation', 'headerName'];

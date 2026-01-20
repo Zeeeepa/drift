@@ -80,7 +80,7 @@ export class DirectoryStructureLearningDetector extends LearningDetector<Directo
   readonly subcategory = 'directory-structure';
   readonly name = 'Directory Structure Detector (Learning)';
   readonly description = 'Learns directory structure patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof DirectoryStructureConventions> {
     return ['namingStyle', 'organizationStyle', 'usesIndexFiles'];

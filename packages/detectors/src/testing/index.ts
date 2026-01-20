@@ -226,3 +226,42 @@ export {
   type TestCoLocationConventions,
   type TestCoLocationStyle,
 } from './co-location-learning.js';
+
+// ============================================================================
+// Semantic Detectors (Language-Agnostic)
+// ============================================================================
+
+export {
+  TestFileNamingSemanticDetector,
+  createTestFileNamingSemanticDetector,
+} from './test-file-naming-semantic.js';
+
+export {
+  TestCoLocationSemanticDetector,
+  createTestCoLocationSemanticDetector,
+} from './test-co-location-semantic.js';
+
+export {
+  TestStructureSemanticDetector,
+  createTestStructureSemanticDetector,
+} from './test-structure-semantic.js';
+
+export {
+  MockPatternsSemanticDetector,
+  createMockPatternsSemanticDetector,
+} from './mock-patterns-semantic.js';
+
+export {
+  FixturePatternsSemanticDetector,
+  createFixturePatternsSemanticDetector,
+} from './fixture-patterns-semantic.js';
+
+export {
+  DescribeNamingSemanticDetector,
+  createDescribeNamingSemanticDetector,
+} from './describe-naming-semantic.js';
+
+export {
+  SetupTeardownSemanticDetector,
+  createSetupTeardownSemanticDetector,
+} from './setup-teardown-semantic.js';

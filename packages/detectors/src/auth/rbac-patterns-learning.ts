@@ -94,7 +94,7 @@ export class RBACPatternsLearningDetector extends LearningDetector<RBACConventio
   readonly subcategory = 'rbac-patterns';
   readonly name = 'RBAC Patterns Detector (Learning)';
   readonly description = 'Learns RBAC patterns from your codebase and flags inconsistencies';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof RBACConventions> {
     return ['roleDefinitionStyle', 'permissionCheckStyle', 'usesHierarchy', 'roleNamingCase'];

@@ -132,7 +132,7 @@ export class DescribeNamingLearningDetector extends LearningDetector<DescribeNam
   readonly subcategory = 'naming';
   readonly name = 'Describe Naming Detector (Learning)';
   readonly description = 'Learns test describe/it naming conventions from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof DescribeNamingConventions> {
     return ['describeStyle', 'nestedDescribeStyle', 'itStyle', 'usesTestKeyword'];

@@ -159,3 +159,47 @@ export {
   type PackageBoundariesConventions,
   type BoundaryStyle,
 } from './package-boundaries-learning.js';
+
+// ============================================================================
+// Semantic Detectors (Language-Agnostic)
+// ============================================================================
+
+export {
+  FileNamingSemanticDetector,
+  createFileNamingSemanticDetector,
+} from './file-naming-semantic.js';
+
+export {
+  DirectoryStructureSemanticDetector,
+  createDirectoryStructureSemanticDetector,
+} from './directory-structure-semantic.js';
+
+export {
+  CoLocationSemanticDetector,
+  createCoLocationSemanticDetector,
+} from './co-location-semantic.js';
+
+export {
+  BarrelExportsSemanticDetector,
+  createBarrelExportsSemanticDetector,
+} from './barrel-exports-semantic.js';
+
+export {
+  ImportOrderingSemanticDetector,
+  createImportOrderingSemanticDetector,
+} from './import-ordering-semantic.js';
+
+export {
+  ModuleBoundariesSemanticDetector,
+  createModuleBoundariesSemanticDetector,
+} from './module-boundaries-semantic.js';
+
+export {
+  CircularDepsSemanticDetector,
+  createCircularDepsSemanticDetector,
+} from './circular-deps-semantic.js';
+
+export {
+  PackageBoundariesSemanticDetector,
+  createPackageBoundariesSemanticDetector,
+} from './package-boundaries-semantic.js';

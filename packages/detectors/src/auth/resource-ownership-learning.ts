@@ -96,7 +96,7 @@ export class ResourceOwnershipLearningDetector extends LearningDetector<Resource
   readonly subcategory = 'resource-ownership';
   readonly name = 'Resource Ownership Detector (Learning)';
   readonly description = 'Learns resource ownership patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof ResourceOwnershipConventions> {
     return ['ownershipField', 'checkStyle', 'usesTenantId', 'tenantField'];

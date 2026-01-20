@@ -96,7 +96,7 @@ export class XSSPreventionLearningDetector extends LearningDetector<XSSPreventio
   readonly subcategory = 'xss-prevention';
   readonly name = 'XSS Prevention Detector (Learning)';
   readonly description = 'Learns XSS prevention patterns from your codebase and flags inconsistencies';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof XSSPreventionConventions> {
     return ['sanitizationMethod', 'outputEncoding', 'usesDangerouslySetInnerHTML', 'usesVHtml'];

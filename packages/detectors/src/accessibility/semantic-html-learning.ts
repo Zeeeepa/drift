@@ -89,7 +89,7 @@ export class SemanticHtmlLearningDetector extends LearningDetector<SemanticHtmlC
   readonly subcategory = 'semantic-html';
   readonly name = 'Semantic HTML Detector (Learning)';
   readonly description = 'Learns semantic HTML patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof SemanticHtmlConventions> {
     return ['landmarkUsage', 'usesHeader', 'usesNav', 'usesMain', 'usesFooter'];

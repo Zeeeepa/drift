@@ -424,21 +424,49 @@ export class ContractMatcher {
       framework: endpoint.framework,
     };
     
-    const frontend: FrontendApiCall[] = frontendCalls.map(call => ({
-      method: call.method,
-      path: call.path,
-      normalizedPath: call.normalizedPath,
-      file: call.file,
-      line: call.line,
-      responseFields: call.responseFields,
-      library: call.library,
-    }));
+    // Only add requestFields if they exist
+    if (endpoint.requestFields && endpoint.requestFields.length > 0) {
+      backend.requestFields = endpoint.requestFields;
+    }
+    
+    const frontend: FrontendApiCall[] = frontendCalls.map(call => {
+      const frontendCall: FrontendApiCall = {
+        method: call.method,
+        path: call.path,
+        normalizedPath: call.normalizedPath,
+        file: call.file,
+        line: call.line,
+        responseFields: call.responseFields,
+        library: call.library,
+      };
+      
+      // Only add requestFields if they exist
+      if (call.requestFields && call.requestFields.length > 0) {
+        frontendCall.requestFields = call.requestFields;
+      }
+      
+      return frontendCall;
+    });
     
     const mismatches: FieldMismatch[] = [];
     if (this.config.detectTypeMismatches) {
       for (const call of frontendCalls) {
+        // Compare response fields
         if (call.responseFields.length > 0 || endpoint.responseFields.length > 0) {
           mismatches.push(...compareFields(endpoint.responseFields, call.responseFields));
+        }
+        
+        // Compare request fields (if both have them)
+        const backendRequestFields = endpoint.requestFields || [];
+        const frontendRequestFields = call.requestFields || [];
+        if (backendRequestFields.length > 0 || frontendRequestFields.length > 0) {
+          const requestMismatches = compareFields(backendRequestFields, frontendRequestFields);
+          // Mark these as request field mismatches
+          for (const mismatch of requestMismatches) {
+            mismatch.fieldPath = `request.${mismatch.fieldPath}`;
+            mismatch.description = mismatch.description.replace('Field "', 'Request field "');
+          }
+          mismatches.push(...requestMismatches);
         }
       }
     }
@@ -452,9 +480,15 @@ export class ContractMatcher {
 
   private calculateConfidence(endpoint: ExtractedEndpoint, frontendCalls: ExtractedApiCall[], mismatches: FieldMismatch[], pathMatchScore: number): ContractConfidence {
     const matchConfidence = pathMatchScore;
-    const hasBackendFields = endpoint.responseFields.length > 0;
-    const hasFrontendFields = frontendCalls.some(c => c.responseFields.length > 0);
-    const fieldExtractionConfidence = (hasBackendFields ? 0.5 : 0) + (hasFrontendFields ? 0.5 : 0);
+    const hasBackendResponseFields = endpoint.responseFields.length > 0;
+    const hasFrontendResponseFields = frontendCalls.some(c => c.responseFields.length > 0);
+    const hasBackendRequestFields = (endpoint.requestFields?.length || 0) > 0;
+    const hasFrontendRequestFields = frontendCalls.some(c => (c.requestFields?.length || 0) > 0);
+    
+    // Weight response fields more heavily since they're more commonly extracted
+    const responseFieldScore = (hasBackendResponseFields ? 0.3 : 0) + (hasFrontendResponseFields ? 0.3 : 0);
+    const requestFieldScore = (hasBackendRequestFields ? 0.2 : 0) + (hasFrontendRequestFields ? 0.2 : 0);
+    const fieldExtractionConfidence = responseFieldScore + requestFieldScore;
     
     let score = (matchConfidence * 0.6) + (fieldExtractionConfidence * 0.4);
     if (mismatches.length > 0) {

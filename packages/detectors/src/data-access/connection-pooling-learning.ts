@@ -65,7 +65,7 @@ export class ConnectionPoolingLearningDetector extends LearningDetector<Connecti
   readonly subcategory = 'connection-pooling';
   readonly name = 'Connection Pooling Detector (Learning)';
   readonly description = 'Learns connection pooling patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof ConnectionPoolingConventions> {
     return ['poolLibrary', 'defaultPoolSize', 'usesConnectionTimeout'];

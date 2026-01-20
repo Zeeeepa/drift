@@ -60,7 +60,7 @@ export class NPlusOneLearningDetector extends LearningDetector<NPlusOneConventio
   readonly subcategory = 'n-plus-one';
   readonly name = 'N+1 Query Detector (Learning)';
   readonly description = 'Learns N+1 prevention patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof NPlusOneConventions> {
     return ['preventionMethod', 'usesDataLoader', 'usesInclude'];

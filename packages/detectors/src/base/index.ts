@@ -61,5 +61,16 @@ export {
   type LearningResult,
 } from './learning-detector.js';
 
+// Export Semantic detector class and related types
+export {
+  SemanticDetector,
+  DEFAULT_SEMANTIC_CONFIG,
+  type ContextType,
+  type SemanticMatch,
+  type UsagePattern,
+  type SemanticLearningResult,
+  type SemanticDetectorConfig,
+} from './semantic-detector.js';
+
 // Export types from types.ts (for backward compatibility)
 export * from './types.js';

@@ -60,7 +60,7 @@ export class DuplicateDetectionLearningDetector extends LearningDetector<Duplica
   readonly subcategory = 'duplicate-detection';
   readonly name = 'Duplicate Detection Detector (Learning)';
   readonly description = 'Learns component abstraction patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof DuplicateDetectionConventions> {
     return ['abstractionStyle', 'sharedComponentsPath', 'maxDuplicationThreshold'];

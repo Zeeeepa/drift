@@ -91,7 +91,7 @@ export class ContextFieldsLearningDetector extends LearningDetector<ContextField
   readonly subcategory = 'context-fields';
   readonly name = 'Context Fields Detector (Learning)';
   readonly description = 'Learns logging context field patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof ContextFieldsConventions> {
     return ['fieldNaming', 'usesRequestId', 'usesUserId', 'usesTimestamp'];

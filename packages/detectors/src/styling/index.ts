@@ -399,3 +399,47 @@ export {
   type ZIndexConventions,
   type ZIndexMethod,
 } from './z-index-scale-learning.js';
+
+// ============================================================================
+// Semantic Detectors (Language-Agnostic)
+// ============================================================================
+
+export {
+  ClassNamingSemanticDetector,
+  createClassNamingSemanticDetector,
+} from './class-naming-semantic.js';
+
+export {
+  ColorUsageSemanticDetector,
+  createColorUsageSemanticDetector,
+} from './color-usage-semantic.js';
+
+export {
+  DesignTokensSemanticDetector,
+  createDesignTokensSemanticDetector,
+} from './design-tokens-semantic.js';
+
+export {
+  ResponsiveSemanticDetector,
+  createResponsiveSemanticDetector,
+} from './responsive-semantic.js';
+
+export {
+  SpacingScaleSemanticDetector,
+  createSpacingScaleSemanticDetector,
+} from './spacing-scale-semantic.js';
+
+export {
+  TailwindPatternsSemanticDetector,
+  createTailwindPatternsSemanticDetector,
+} from './tailwind-patterns-semantic.js';
+
+export {
+  TypographySemanticDetector,
+  createTypographySemanticDetector,
+} from './typography-semantic.js';
+
+export {
+  ZIndexScaleSemanticDetector,
+  createZIndexScaleSemanticDetector,
+} from './z-index-scale-semantic.js';

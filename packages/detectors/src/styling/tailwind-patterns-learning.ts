@@ -167,7 +167,7 @@ export class TailwindPatternsLearningDetector extends LearningDetector<TailwindC
   readonly subcategory = 'tailwind-patterns';
   readonly name = 'Tailwind Patterns Detector (Learning)';
   readonly description = 'Learns Tailwind CSS patterns from your codebase and flags inconsistencies';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   // ============================================================================
   // Learning Implementation

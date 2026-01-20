@@ -100,7 +100,7 @@ export class RepositoryPatternLearningDetector extends LearningDetector<Reposito
   readonly subcategory = 'repository-pattern';
   readonly name = 'Repository Pattern Detector (Learning)';
   readonly description = 'Learns repository pattern conventions from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof RepositoryPatternConventions> {
     return ['namingSuffix', 'usesAsyncMethods', 'methodPrefix'];

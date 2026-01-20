@@ -111,7 +111,7 @@ export class TokenHandlingLearningDetector extends LearningDetector<TokenHandlin
   readonly subcategory = 'token-handling';
   readonly name = 'Token Handling Detector (Learning)';
   readonly description = 'Learns token handling patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof TokenHandlingConventions> {
     return ['storageMethod', 'library', 'usesRefreshTokens'];

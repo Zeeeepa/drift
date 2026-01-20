@@ -171,3 +171,37 @@ export {
   type RequiredOptionalConventions,
   type RequiredMarking,
 } from './required-optional-learning.js';
+
+// ============================================================================
+// Semantic Detectors (Language-Agnostic)
+// ============================================================================
+
+export {
+  EnvConfigSemanticDetector,
+  createEnvConfigSemanticDetector,
+} from './env-config-semantic.js';
+
+export {
+  FeatureFlagsSemanticDetector,
+  createFeatureFlagsSemanticDetector,
+} from './feature-flags-semantic.js';
+
+export {
+  RequiredOptionalSemanticDetector,
+  createRequiredOptionalSemanticDetector,
+} from './required-optional-semantic.js';
+
+export {
+  DefaultValuesSemanticDetector,
+  createDefaultValuesSemanticDetector,
+} from './default-values-semantic.js';
+
+export {
+  ConfigValidationSemanticDetector,
+  createConfigValidationSemanticDetector,
+} from './config-validation-semantic.js';
+
+export {
+  EnvironmentDetectionSemanticDetector,
+  createEnvironmentDetectionSemanticDetector,
+} from './environment-detection-semantic.js';

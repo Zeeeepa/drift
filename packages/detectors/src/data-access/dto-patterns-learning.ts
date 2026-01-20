@@ -114,7 +114,7 @@ export class DTOPatternsLearningDetector extends LearningDetector<DTOPatternsCon
   readonly subcategory = 'dto-patterns';
   readonly name = 'DTO Patterns Detector (Learning)';
   readonly description = 'Learns DTO patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof DTOPatternsConventions> {
     return ['namingSuffix', 'usesClassTransformer', 'usesValidation'];

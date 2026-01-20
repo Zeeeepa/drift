@@ -58,7 +58,7 @@ export class RefForwardingLearningDetector extends LearningDetector<RefForwardin
   readonly subcategory = 'ref-forwarding';
   readonly name = 'Ref Forwarding Detector (Learning)';
   readonly description = 'Learns ref forwarding patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof RefForwardingConventions> {
     return ['forwardingStyle', 'usesImperativeHandle', 'typesRefs'];

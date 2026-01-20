@@ -338,3 +338,47 @@ export {
   type RefForwardingConventions,
   type RefForwardingStyle,
 } from './ref-forwarding-learning.js';
+
+// ============================================================================
+// Semantic Detectors (Language-Agnostic)
+// ============================================================================
+
+export {
+  ComponentStructureSemanticDetector,
+  createComponentStructureSemanticDetector,
+} from './component-structure-semantic.js';
+
+export {
+  PropsPatternsSemanticDetector,
+  createPropsPatternsSemanticDetector,
+} from './props-patterns-semantic.js';
+
+export {
+  DuplicateDetectionSemanticDetector,
+  createDuplicateDetectionSemanticDetector,
+} from './duplicate-detection-semantic.js';
+
+export {
+  NearDuplicateSemanticDetector,
+  createNearDuplicateSemanticDetector,
+} from './near-duplicate-semantic.js';
+
+export {
+  StatePatternsSemanticDetector,
+  createStatePatternsSemanticDetector,
+} from './state-patterns-semantic.js';
+
+export {
+  CompositionSemanticDetector,
+  createCompositionSemanticDetector,
+} from './composition-semantic.js';
+
+export {
+  RefForwardingSemanticDetector,
+  createRefForwardingSemanticDetector,
+} from './ref-forwarding-semantic.js';
+
+export {
+  ModalPatternsSemanticDetector,
+  createModalPatternsSemanticDetector,
+} from './modal-patterns-semantic.js';

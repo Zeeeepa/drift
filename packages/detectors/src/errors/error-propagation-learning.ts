@@ -95,7 +95,7 @@ export class ErrorPropagationLearningDetector extends LearningDetector<ErrorProp
   readonly subcategory = 'error-propagation';
   readonly name = 'Error Propagation Detector (Learning)';
   readonly description = 'Learns error propagation patterns from your codebase and flags inconsistencies';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof ErrorPropagationConventions> {
     return ['propagationStyle', 'chainPreservation', 'addsContext', 'usesErrorCodes'];

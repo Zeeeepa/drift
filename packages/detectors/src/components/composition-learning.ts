@@ -124,7 +124,7 @@ export class CompositionLearningDetector extends LearningDetector<CompositionCon
   readonly subcategory = 'composition';
   readonly name = 'Component Composition Detector (Learning)';
   readonly description = 'Learns component composition patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof CompositionConventions> {
     return ['preferredStyle', 'usesChildren', 'usesRenderProps', 'usesHOCs'];

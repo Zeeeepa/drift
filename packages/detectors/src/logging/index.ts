@@ -216,3 +216,42 @@ export {
   type RedactionMethod,
   type PIIFieldPattern,
 } from './pii-redaction-learning.js';
+
+// ============================================================================
+// Semantic Detectors (Language-Agnostic)
+// ============================================================================
+
+export {
+  StructuredLoggingSemanticDetector,
+  createStructuredLoggingSemanticDetector,
+} from './structured-logging-semantic.js';
+
+export {
+  LogLevelsSemanticDetector,
+  createLogLevelsSemanticDetector,
+} from './log-levels-semantic.js';
+
+export {
+  ContextFieldsSemanticDetector,
+  createContextFieldsSemanticDetector,
+} from './context-fields-semantic.js';
+
+export {
+  CorrelationIdsSemanticDetector,
+  createCorrelationIdsSemanticDetector,
+} from './correlation-ids-semantic.js';
+
+export {
+  PIIRedactionSemanticDetector,
+  createPIIRedactionSemanticDetector,
+} from './pii-redaction-semantic.js';
+
+export {
+  MetricsSemanticDetector,
+  createMetricsSemanticDetector,
+} from './metrics-semantic.js';
+
+export {
+  HealthChecksSemanticDetector,
+  createHealthChecksSemanticDetector,
+} from './health-checks-semantic.js';

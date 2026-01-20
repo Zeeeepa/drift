@@ -52,7 +52,7 @@ export class PackageBoundariesLearningDetector extends LearningDetector<PackageB
   readonly subcategory = 'package-boundaries';
   readonly name = 'Package Boundaries Detector (Learning)';
   readonly description = 'Learns package boundary patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof PackageBoundariesConventions> {
     return ['boundaryStyle', 'usesInternalFolder', 'enforcesBoundaries'];

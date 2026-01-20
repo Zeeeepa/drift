@@ -111,7 +111,7 @@ export class TransactionPatternsLearningDetector extends LearningDetector<Transa
   readonly subcategory = 'transaction-patterns';
   readonly name = 'Transaction Patterns Detector (Learning)';
   readonly description = 'Learns database transaction patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof TransactionPatternsConventions> {
     return ['style', 'usesExplicitRollback', 'usesIsolationLevel'];

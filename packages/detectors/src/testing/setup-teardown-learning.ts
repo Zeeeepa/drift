@@ -82,7 +82,7 @@ export class SetupTeardownLearningDetector extends LearningDetector<SetupTeardow
   readonly subcategory = 'setup-teardown';
   readonly name = 'Setup/Teardown Detector (Learning)';
   readonly description = 'Learns test setup/teardown patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof SetupTeardownConventions> {
     return ['setupStyle', 'usesAfterEach', 'usesAfterAll'];

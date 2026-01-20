@@ -87,7 +87,7 @@ export class StatePatternsLearningDetector extends LearningDetector<StatePattern
   readonly subcategory = 'state-patterns';
   readonly name = 'State Patterns Detector (Learning)';
   readonly description = 'Learns state management patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof StatePatternsConventions> {
     return ['preferredLibrary', 'usesLocalState', 'usesGlobalState'];

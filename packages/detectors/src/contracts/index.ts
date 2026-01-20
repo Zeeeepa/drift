@@ -9,4 +9,5 @@
 export * from './backend-endpoint-detector.js';
 export * from './frontend-type-detector.js';
 export * from './contract-matcher.js';
+export * from './schema-parser.js';
 export * from './types.js';

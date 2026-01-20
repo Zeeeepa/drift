@@ -52,7 +52,7 @@ export class CircularDepsLearningDetector extends LearningDetector<CircularDepsC
   readonly subcategory = 'circular-deps';
   readonly name = 'Circular Dependencies Detector (Learning)';
   readonly description = 'Learns circular dependency handling patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof CircularDepsConventions> {
     return ['resolutionMethod', 'usesBarrelFiles', 'maxModuleDepth'];

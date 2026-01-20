@@ -60,7 +60,7 @@ export class ExampleCodeLearningDetector extends LearningDetector<ExampleCodeCon
   readonly subcategory = 'example-code';
   readonly name = 'Example Code Detector (Learning)';
   readonly description = 'Learns example code patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof ExampleCodeConventions> {
     return ['exampleStyle', 'usesCodeBlocks', 'includesOutput'];

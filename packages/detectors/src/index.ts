@@ -67,6 +67,20 @@ import {
   analyzeRbac,
   analyzeOwnership,
   analyzeAuditLogging,
+  // Learning detectors
+  createTokenHandlingLearningDetector,
+  createAuthMiddlewareLearningDetector,
+  createPermissionChecksLearningDetector,
+  createRBACPatternsLearningDetector,
+  createResourceOwnershipLearningDetector,
+  createAuditLoggingLearningDetector,
+  // Semantic detectors
+  createAuditSemanticDetector,
+  createAuthMiddlewareSemanticDetector,
+  createOwnershipSemanticDetector,
+  createPermissionChecksSemanticDetector,
+  createRBACSemanticDetector,
+  createTokenHandlingSemanticDetector,
 } from './auth/index.js';
 
 // Security Detectors
@@ -86,6 +100,22 @@ import {
   analyzeCSPHeaders,
   analyzeSecretManagement,
   analyzeRateLimiting,
+  // Learning detectors
+  createInputSanitizationLearningDetector,
+  createRateLimitingLearningDetector,
+  createCSRFProtectionLearningDetector,
+  createSQLInjectionLearningDetector,
+  createXSSPreventionLearningDetector,
+  createCSPHeadersLearningDetector,
+  createSecretManagementLearningDetector,
+  // Semantic detectors
+  createInputSanitizationSemanticDetector,
+  createRateLimitingSemanticDetector,
+  createCSRFProtectionSemanticDetector,
+  createSQLInjectionSemanticDetector,
+  createXSSPreventionSemanticDetector,
+  createCSPHeadersSemanticDetector,
+  createSecretManagementSemanticDetector,
 } from './security/index.js';
 
 // Error Detectors
@@ -105,6 +135,22 @@ import {
   analyzeAsyncErrors,
   analyzeCircuitBreaker,
   analyzeErrorLogging,
+  // Learning detectors
+  createErrorCodesLearningDetector,
+  createExceptionHierarchyLearningDetector,
+  createErrorLoggingLearningDetector,
+  createTryCatchLearningDetector,
+  createAsyncErrorsLearningDetector,
+  createCircuitBreakerLearningDetector,
+  createErrorPropagationLearningDetector,
+  // Semantic detectors
+  createExceptionHierarchySemanticDetector,
+  createErrorCodesSemanticDetector,
+  createTryCatchSemanticDetector,
+  createErrorPropagationSemanticDetector,
+  createAsyncErrorsSemanticDetector,
+  createCircuitBreakerSemanticDetector,
+  createErrorLoggingSemanticDetector,
 } from './errors/index.js';
 
 // Logging Detectors
@@ -124,6 +170,22 @@ import {
   analyzePIIRedaction,
   analyzeMetricNaming,
   analyzeHealthChecks,
+  // Learning detectors
+  createLogLevelsLearningDetector,
+  createMetricNamingLearningDetector,
+  createStructuredFormatLearningDetector,
+  createContextFieldsLearningDetector,
+  createCorrelationIdsLearningDetector,
+  createHealthChecksLearningDetector,
+  createPIIRedactionLearningDetector,
+  // Semantic detectors
+  createStructuredLoggingSemanticDetector,
+  createLogLevelsSemanticDetector,
+  createContextFieldsSemanticDetector,
+  createCorrelationIdsSemanticDetector,
+  createPIIRedactionSemanticDetector,
+  createMetricsSemanticDetector,
+  createHealthChecksSemanticDetector,
 } from './logging/index.js';
 
 // Testing Detectors
@@ -142,6 +204,22 @@ import {
   analyzeFixturePatterns,
   analyzeDescribeNaming,
   analyzeSetupTeardown,
+  // Learning detectors
+  createDescribeNamingLearningDetector,
+  createTestStructureLearningDetector,
+  createMockPatternsLearningDetector,
+  createFixturePatternsLearningDetector,
+  createSetupTeardownLearningDetector,
+  createTestFileNamingLearningDetector,
+  createTestCoLocationLearningDetector,
+  // Semantic detectors
+  createTestFileNamingSemanticDetector,
+  createTestCoLocationSemanticDetector,
+  createTestStructureSemanticDetector,
+  createMockPatternsSemanticDetector,
+  createFixturePatternsSemanticDetector,
+  createDescribeNamingSemanticDetector,
+  createSetupTeardownSemanticDetector,
 } from './testing/index.js';
 
 // Data Access Detectors
@@ -161,6 +239,22 @@ import {
   analyzeDTOPatterns,
   analyzeNPlusOne,
   analyzeConnectionPooling,
+  // Learning detectors
+  createRepositoryPatternLearningDetector,
+  createQueryPatternsLearningDetector,
+  createDTOPatternsLearningDetector,
+  createTransactionPatternsLearningDetector,
+  createConnectionPoolingLearningDetector,
+  createValidationPatternsLearningDetector,
+  createNPlusOneLearningDetector,
+  // Semantic detectors
+  createQueryPatternsSemanticDetector,
+  createRepositoryPatternSemanticDetector,
+  createTransactionSemanticDetector,
+  createValidationSemanticDetector,
+  createDTOPatternsSemanticDetector,
+  createNPlusOneSemanticDetector,
+  createConnectionPoolingSemanticDetector,
 } from './data-access/index.js';
 
 // Config Detectors
@@ -178,6 +272,20 @@ import {
   analyzeFeatureFlags,
   analyzeConfigValidation,
   analyzeEnvironmentDetection,
+  // Learning detectors
+  createFeatureFlagsLearningDetector,
+  createEnvNamingLearningDetector,
+  createConfigValidationLearningDetector,
+  createDefaultValuesLearningDetector,
+  createEnvironmentDetectionLearningDetector,
+  createRequiredOptionalLearningDetector,
+  // Semantic detectors
+  createEnvConfigSemanticDetector,
+  createFeatureFlagsSemanticDetector,
+  createRequiredOptionalSemanticDetector,
+  createDefaultValuesSemanticDetector,
+  createConfigValidationSemanticDetector,
+  createEnvironmentDetectionSemanticDetector,
 } from './config/index.js';
 
 // Types Detectors
@@ -197,6 +305,22 @@ import {
   analyzeUtilityTypes,
   analyzeTypeAssertions,
   analyzeAnyUsage,
+  // Learning detectors
+  createInterfaceVsTypeLearningDetector,
+  createTypeNamingConventionsLearningDetector,
+  createUtilityTypesLearningDetector,
+  createGenericPatternsLearningDetector,
+  createAnyUsageLearningDetector,
+  createTypeFileLocationLearningDetector,
+  createTypeAssertionsLearningDetector,
+  // Semantic detectors
+  createFileLocationSemanticDetector,
+  createNamingConventionsSemanticDetector,
+  createInterfaceVsTypeSemanticDetector,
+  createGenericPatternsSemanticDetector,
+  createUtilityTypesSemanticDetector,
+  createTypeAssertionsSemanticDetector,
+  createAnyUsageSemanticDetector,
 } from './types/index.js';
 
 // Structural Detectors
@@ -209,6 +333,24 @@ import {
   createModuleBoundariesDetector,
   createCircularDependenciesDetector,
   createPackageBoundariesDetector,
+  // Learning detectors
+  createFileNamingLearningDetector,
+  createImportOrderingLearningDetector,
+  createBarrelExportsLearningDetector,
+  createModuleBoundariesLearningDetector,
+  createDirectoryStructureLearningDetector,
+  createCircularDepsLearningDetector,
+  createCoLocationLearningDetector,
+  createPackageBoundariesLearningDetector,
+  // Semantic detectors
+  createFileNamingSemanticDetector,
+  createDirectoryStructureSemanticDetector,
+  createCoLocationSemanticDetector,
+  createBarrelExportsSemanticDetector,
+  createImportOrderingSemanticDetector,
+  createModuleBoundariesSemanticDetector,
+  createCircularDepsSemanticDetector,
+  createPackageBoundariesSemanticDetector,
 } from './structural/index.js';
 
 // Component Detectors
@@ -220,6 +362,23 @@ import {
   createStatePatternDetector,
   createCompositionDetector,
   createRefForwardingDetector,
+  // Learning detectors
+  createComponentStructureLearningDetector,
+  createPropsPatternsLearningDetector,
+  createStatePatternsLearningDetector,
+  createCompositionLearningDetector,
+  createDuplicateDetectionLearningDetector,
+  createNearDuplicateLearningDetector,
+  createRefForwardingLearningDetector,
+  // Semantic detectors
+  createComponentStructureSemanticDetector,
+  createPropsPatternsSemanticDetector,
+  createDuplicateDetectionSemanticDetector,
+  createNearDuplicateSemanticDetector,
+  createStatePatternsSemanticDetector,
+  createCompositionSemanticDetector,
+  createRefForwardingSemanticDetector,
+  createModalPatternsSemanticDetector,
 } from './components/index.js';
 
 // Styling Detectors
@@ -232,6 +391,24 @@ import {
   createTailwindPatternsDetector,
   createZIndexScaleDetector,
   createResponsiveDetector,
+  // Learning detectors
+  createClassNamingLearningDetector,
+  createColorUsageLearningDetector,
+  createDesignTokensLearningDetector,
+  createResponsiveLearningDetector,
+  createSpacingScaleLearningDetector,
+  createTailwindPatternsLearningDetector,
+  createTypographyLearningDetector,
+  createZIndexScaleLearningDetector,
+  // Semantic detectors
+  createClassNamingSemanticDetector,
+  createColorUsageSemanticDetector,
+  createDesignTokensSemanticDetector,
+  createResponsiveSemanticDetector,
+  createSpacingScaleSemanticDetector,
+  createTailwindPatternsSemanticDetector,
+  createTypographySemanticDetector,
+  createZIndexScaleSemanticDetector,
 } from './styling/index.js';
 
 // Accessibility Detectors
@@ -249,6 +426,20 @@ import {
   analyzeFocusManagement,
   analyzeHeadingHierarchy,
   analyzeAltText,
+  // Learning detectors
+  createAriaRolesLearningDetector,
+  createKeyboardNavLearningDetector,
+  createAltTextLearningDetector,
+  createSemanticHtmlLearningDetector,
+  createFocusManagementLearningDetector,
+  createHeadingHierarchyLearningDetector,
+  // Semantic detectors
+  createSemanticHtmlSemanticDetector,
+  createAriaRolesSemanticDetector,
+  createKeyboardNavSemanticDetector,
+  createFocusManagementSemanticDetector,
+  createHeadingHierarchySemanticDetector,
+  createAltTextSemanticDetector,
 } from './accessibility/index.js';
 
 // Documentation Detectors
@@ -264,6 +455,18 @@ import {
   analyzeTodoPatterns,
   analyzeDeprecation,
   analyzeExampleCode,
+  // Learning detectors
+  createJSDocPatternsLearningDetector,
+  createTodoPatternsLearningDetector,
+  createDeprecationLearningDetector,
+  createExampleCodeLearningDetector,
+  createReadmeStructureLearningDetector,
+  // Semantic detectors
+  createJSDocPatternsSemanticDetector,
+  createReadmeStructureSemanticDetector,
+  createTodoPatternsSemanticDetector,
+  createDeprecationSemanticDetector,
+  createExampleCodeSemanticDetector,
 } from './documentation/index.js';
 
 // Performance Detectors
@@ -281,6 +484,20 @@ import {
   analyzeCachingPatterns,
   analyzeDebounceThrottle,
   analyzeBundleSize,
+  // Learning detectors
+  createLazyLoadingLearningDetector,
+  createCodeSplittingLearningDetector,
+  createDebounceThrottleLearningDetector,
+  createMemoizationLearningDetector,
+  createCachingPatternsLearningDetector,
+  createBundleSizeLearningDetector,
+  // Semantic detectors
+  createCodeSplittingSemanticDetector,
+  createLazyLoadingSemanticDetector,
+  createMemoizationSemanticDetector,
+  createCachingPatternsSemanticDetector,
+  createDebounceThrottleSemanticDetector,
+  createBundleSizeSemanticDetector,
 } from './performance/index.js';
 
 import type { BaseDetector } from './base/index.js';
@@ -606,11 +823,13 @@ export function createAllStylingDetectors() {
 
 /**
  * Create all detectors as a flat array for easy iteration
+ * NOW USES SEMANTIC DETECTORS - language-agnostic keyword-based detection
+ * that works across TypeScript, JavaScript, Python, and more
  */
 export function createAllDetectorsArray(): BaseDetector[] {
   const detectors: BaseDetector[] = [];
 
-  // API detectors (7)
+  // API detectors (7) - keep original, they use universal patterns
   const apiDetectors = createAllApiDetectors();
   detectors.push(
     apiDetectors.routeStructure,
@@ -622,145 +841,396 @@ export function createAllDetectorsArray(): BaseDetector[] {
     apiDetectors.retryPatterns
   );
 
-  // Auth detectors (6)
-  const authDetectors = createAllAuthDetectors();
+  // Auth detectors (6) - SEMANTIC
   detectors.push(
-    authDetectors.middlewareUsage,
-    authDetectors.tokenHandling,
-    authDetectors.permissionChecks,
-    authDetectors.rbacPatterns,
-    authDetectors.resourceOwnership,
-    authDetectors.auditLogging
+    createAuthMiddlewareSemanticDetector(),
+    createTokenHandlingSemanticDetector(),
+    createPermissionChecksSemanticDetector(),
+    createRBACSemanticDetector(),
+    createOwnershipSemanticDetector(),
+    createAuditSemanticDetector()
   );
 
-  // Security detectors (7)
-  detectors.push(...createSecurityDetectors());
-
-  // Error detectors (7)
-  const errorDetectors = createAllErrorDetectors();
+  // Security detectors (7) - SEMANTIC
   detectors.push(
-    errorDetectors.exceptionHierarchy,
-    errorDetectors.errorCodes,
-    errorDetectors.tryCatchPlacement,
-    errorDetectors.errorPropagation,
-    errorDetectors.asyncErrors,
-    errorDetectors.circuitBreaker,
-    errorDetectors.errorLogging
+    createInputSanitizationSemanticDetector(),
+    createSQLInjectionSemanticDetector(),
+    createXSSPreventionSemanticDetector(),
+    createCSRFProtectionSemanticDetector(),
+    createCSPHeadersSemanticDetector(),
+    createSecretManagementSemanticDetector(),
+    createRateLimitingSemanticDetector()
   );
 
-  // Structural detectors (8)
-  const structuralDetectors = createAllStructuralDetectors();
+  // Error detectors (7) - SEMANTIC
   detectors.push(
-    structuralDetectors.fileNaming,
-    structuralDetectors.directoryStructure,
-    structuralDetectors.coLocation,
-    structuralDetectors.barrelExports,
-    structuralDetectors.importOrdering,
-    structuralDetectors.moduleBoundaries,
-    structuralDetectors.circularDeps,
-    structuralDetectors.packageBoundaries
+    createExceptionHierarchySemanticDetector(),
+    createErrorCodesSemanticDetector(),
+    createTryCatchSemanticDetector(),
+    createErrorPropagationSemanticDetector(),
+    createAsyncErrorsSemanticDetector(),
+    createCircuitBreakerSemanticDetector(),
+    createErrorLoggingSemanticDetector()
   );
 
-  // Component detectors (7)
-  const componentDetectors = createAllComponentDetectors();
+  // Structural detectors (8) - SEMANTIC
   detectors.push(
-    componentDetectors.componentStructure,
-    componentDetectors.propsPattern,
-    componentDetectors.duplicate,
-    componentDetectors.nearDuplicate,
-    componentDetectors.statePattern,
-    componentDetectors.composition,
-    componentDetectors.refForwarding
+    createFileNamingSemanticDetector(),
+    createDirectoryStructureSemanticDetector(),
+    createCoLocationSemanticDetector(),
+    createBarrelExportsSemanticDetector(),
+    createImportOrderingSemanticDetector(),
+    createModuleBoundariesSemanticDetector(),
+    createCircularDepsSemanticDetector(),
+    createPackageBoundariesSemanticDetector()
   );
 
-  // Styling detectors (8)
-  const stylingDetectors = createAllStylingDetectors();
+  // Component detectors (7) - SEMANTIC
   detectors.push(
-    stylingDetectors.designTokens,
-    stylingDetectors.spacingScale,
-    stylingDetectors.colorUsage,
-    stylingDetectors.typography,
-    stylingDetectors.classNaming,
-    stylingDetectors.tailwindPatterns,
-    stylingDetectors.zIndexScale,
-    stylingDetectors.responsive
+    createComponentStructureSemanticDetector(),
+    createPropsPatternsSemanticDetector(),
+    createDuplicateDetectionSemanticDetector(),
+    createNearDuplicateSemanticDetector(),
+    createStatePatternsSemanticDetector(),
+    createCompositionSemanticDetector(),
+    createRefForwardingSemanticDetector()
   );
 
-  // Logging detectors (7)
-  const loggingDetectors = createAllLoggingDetectors();
+  // Modal patterns detector (1) - SEMANTIC
   detectors.push(
-    loggingDetectors.structuredFormat,
-    loggingDetectors.logLevels,
-    loggingDetectors.contextFields,
-    loggingDetectors.correlationIds,
-    loggingDetectors.piiRedaction,
-    loggingDetectors.metricNaming,
-    loggingDetectors.healthChecks
+    createModalPatternsSemanticDetector()
   );
 
-  // Testing detectors (7)
-  const testingDetectors = createAllTestingDetectors();
+  // Styling detectors (8) - SEMANTIC
   detectors.push(
-    testingDetectors.fileNaming,
-    testingDetectors.coLocation,
-    testingDetectors.testStructure,
-    testingDetectors.mockPatterns,
-    testingDetectors.fixturePatterns,
-    testingDetectors.describeNaming,
-    testingDetectors.setupTeardown
+    createDesignTokensSemanticDetector(),
+    createSpacingScaleSemanticDetector(),
+    createColorUsageSemanticDetector(),
+    createTypographySemanticDetector(),
+    createClassNamingSemanticDetector(),
+    createTailwindPatternsSemanticDetector(),
+    createZIndexScaleSemanticDetector(),
+    createResponsiveSemanticDetector()
   );
 
-  // Data access detectors (7)
-  const dataAccessDetectors = createAllDataAccessDetectors();
+  // Logging detectors (7) - SEMANTIC
   detectors.push(
-    dataAccessDetectors.queryPatterns,
-    dataAccessDetectors.repositoryPattern,
-    dataAccessDetectors.transactionPatterns,
-    dataAccessDetectors.validationPatterns,
-    dataAccessDetectors.dtoPatterns,
-    dataAccessDetectors.nPlusOne,
-    dataAccessDetectors.connectionPooling
+    createStructuredLoggingSemanticDetector(),
+    createLogLevelsSemanticDetector(),
+    createContextFieldsSemanticDetector(),
+    createCorrelationIdsSemanticDetector(),
+    createPIIRedactionSemanticDetector(),
+    createMetricsSemanticDetector(),
+    createHealthChecksSemanticDetector()
   );
 
-  // Config detectors (6)
-  detectors.push(...createConfigDetectors());
+  // Testing detectors (7) - SEMANTIC
+  detectors.push(
+    createTestFileNamingSemanticDetector(),
+    createTestCoLocationSemanticDetector(),
+    createTestStructureSemanticDetector(),
+    createMockPatternsSemanticDetector(),
+    createFixturePatternsSemanticDetector(),
+    createDescribeNamingSemanticDetector(),
+    createSetupTeardownSemanticDetector()
+  );
 
-  // Types detectors (7)
-  detectors.push(...createTypesDetectors());
+  // Data access detectors (7) - SEMANTIC
+  detectors.push(
+    createQueryPatternsSemanticDetector(),
+    createRepositoryPatternSemanticDetector(),
+    createTransactionSemanticDetector(),
+    createValidationSemanticDetector(),
+    createDTOPatternsSemanticDetector(),
+    createNPlusOneSemanticDetector(),
+    createConnectionPoolingSemanticDetector()
+  );
 
-  // Accessibility detectors (6)
-  detectors.push(...createAccessibilityDetectors());
+  // Config detectors (6) - SEMANTIC
+  detectors.push(
+    createEnvConfigSemanticDetector(),
+    createRequiredOptionalSemanticDetector(),
+    createDefaultValuesSemanticDetector(),
+    createFeatureFlagsSemanticDetector(),
+    createConfigValidationSemanticDetector(),
+    createEnvironmentDetectionSemanticDetector()
+  );
 
-  // Documentation detectors (5)
-  detectors.push(...createDocumentationDetectors());
+  // Types detectors (7) - SEMANTIC
+  detectors.push(
+    createFileLocationSemanticDetector(),
+    createNamingConventionsSemanticDetector(),
+    createInterfaceVsTypeSemanticDetector(),
+    createGenericPatternsSemanticDetector(),
+    createUtilityTypesSemanticDetector(),
+    createTypeAssertionsSemanticDetector(),
+    createAnyUsageSemanticDetector()
+  );
 
-  // Performance detectors (6)
-  detectors.push(...createPerformanceDetectors());
+  // Accessibility detectors (6) - SEMANTIC
+  detectors.push(
+    createSemanticHtmlSemanticDetector(),
+    createAriaRolesSemanticDetector(),
+    createKeyboardNavSemanticDetector(),
+    createFocusManagementSemanticDetector(),
+    createHeadingHierarchySemanticDetector(),
+    createAltTextSemanticDetector()
+  );
+
+  // Documentation detectors (5) - SEMANTIC
+  detectors.push(
+    createJSDocPatternsSemanticDetector(),
+    createReadmeStructureSemanticDetector(),
+    createTodoPatternsSemanticDetector(),
+    createDeprecationSemanticDetector(),
+    createExampleCodeSemanticDetector()
+  );
+
+  // Performance detectors (6) - SEMANTIC
+  detectors.push(
+    createCodeSplittingSemanticDetector(),
+    createLazyLoadingSemanticDetector(),
+    createMemoizationSemanticDetector(),
+    createCachingPatternsSemanticDetector(),
+    createDebounceThrottleSemanticDetector(),
+    createBundleSizeSemanticDetector()
+  );
 
   return detectors;
 }
 
 /**
  * Create all detectors grouped by category
+ * NOW USES SEMANTIC DETECTORS
  */
 export function createAllDetectors() {
   return {
-    api: createAllApiDetectors(),
-    auth: createAllAuthDetectors(),
-    security: createSecurityDetectors(),
-    errors: createAllErrorDetectors(),
-    structural: createAllStructuralDetectors(),
-    components: createAllComponentDetectors(),
-    styling: createAllStylingDetectors(),
-    logging: createAllLoggingDetectors(),
-    testing: createAllTestingDetectors(),
-    dataAccess: createAllDataAccessDetectors(),
-    config: createConfigDetectors(),
-    types: createTypesDetectors(),
-    accessibility: createAccessibilityDetectors(),
-    documentation: createDocumentationDetectors(),
-    performance: createPerformanceDetectors(),
+    api: createAllApiDetectors(), // Keep original - universal patterns
+    auth: createAllAuthSemanticDetectors(),
+    security: createAllSecuritySemanticDetectors(),
+    errors: createAllErrorSemanticDetectors(),
+    structural: createAllStructuralSemanticDetectors(),
+    components: createAllComponentSemanticDetectors(),
+    styling: createAllStylingSemanticDetectors(),
+    logging: createAllLoggingSemanticDetectors(),
+    testing: createAllTestingSemanticDetectors(),
+    dataAccess: createAllDataAccessSemanticDetectors(),
+    config: createAllConfigSemanticDetectors(),
+    types: createAllTypesSemanticDetectors(),
+    accessibility: createAllAccessibilitySemanticDetectors(),
+    documentation: createAllDocumentationSemanticDetectors(),
+    performance: createAllPerformanceSemanticDetectors(),
   };
+}
+
+// ============================================================================
+// Learning Detector Factory Functions
+// ============================================================================
+
+/**
+ * Create all auth learning detectors
+ */
+export function createAllAuthLearningDetectors() {
+  return [
+    createAuthMiddlewareLearningDetector(),
+    createTokenHandlingLearningDetector(),
+    createPermissionChecksLearningDetector(),
+    createRBACPatternsLearningDetector(),
+    createResourceOwnershipLearningDetector(),
+    createAuditLoggingLearningDetector(),
+  ];
+}
+
+/**
+ * Create all security learning detectors
+ */
+export function createAllSecurityLearningDetectors() {
+  return [
+    createInputSanitizationLearningDetector(),
+    createSQLInjectionLearningDetector(),
+    createXSSPreventionLearningDetector(),
+    createCSRFProtectionLearningDetector(),
+    createCSPHeadersLearningDetector(),
+    createSecretManagementLearningDetector(),
+    createRateLimitingLearningDetector(),
+  ];
+}
+
+/**
+ * Create all error learning detectors
+ */
+export function createAllErrorLearningDetectors() {
+  return [
+    createExceptionHierarchyLearningDetector(),
+    createErrorCodesLearningDetector(),
+    createTryCatchLearningDetector(),
+    createErrorPropagationLearningDetector(),
+    createAsyncErrorsLearningDetector(),
+    createCircuitBreakerLearningDetector(),
+    createErrorLoggingLearningDetector(),
+  ];
+}
+
+/**
+ * Create all structural learning detectors
+ */
+export function createAllStructuralLearningDetectors() {
+  return [
+    createFileNamingLearningDetector(),
+    createDirectoryStructureLearningDetector(),
+    createCoLocationLearningDetector(),
+    createBarrelExportsLearningDetector(),
+    createImportOrderingLearningDetector(),
+    createModuleBoundariesLearningDetector(),
+    createCircularDepsLearningDetector(),
+    createPackageBoundariesLearningDetector(),
+  ];
+}
+
+/**
+ * Create all component learning detectors
+ */
+export function createAllComponentLearningDetectors() {
+  return [
+    createComponentStructureLearningDetector(),
+    createPropsPatternsLearningDetector(),
+    createDuplicateDetectionLearningDetector(),
+    createNearDuplicateLearningDetector(),
+    createStatePatternsLearningDetector(),
+    createCompositionLearningDetector(),
+    createRefForwardingLearningDetector(),
+  ];
+}
+
+/**
+ * Create all styling learning detectors
+ */
+export function createAllStylingLearningDetectors() {
+  return [
+    createDesignTokensLearningDetector(),
+    createSpacingScaleLearningDetector(),
+    createColorUsageLearningDetector(),
+    createTypographyLearningDetector(),
+    createClassNamingLearningDetector(),
+    createTailwindPatternsLearningDetector(),
+    createZIndexScaleLearningDetector(),
+    createResponsiveLearningDetector(),
+  ];
+}
+
+/**
+ * Create all logging learning detectors
+ */
+export function createAllLoggingLearningDetectors() {
+  return [
+    createStructuredFormatLearningDetector(),
+    createLogLevelsLearningDetector(),
+    createContextFieldsLearningDetector(),
+    createCorrelationIdsLearningDetector(),
+    createPIIRedactionLearningDetector(),
+    createMetricNamingLearningDetector(),
+    createHealthChecksLearningDetector(),
+  ];
+}
+
+/**
+ * Create all testing learning detectors
+ */
+export function createAllTestingLearningDetectors() {
+  return [
+    createTestFileNamingLearningDetector(),
+    createTestCoLocationLearningDetector(),
+    createTestStructureLearningDetector(),
+    createMockPatternsLearningDetector(),
+    createFixturePatternsLearningDetector(),
+    createDescribeNamingLearningDetector(),
+    createSetupTeardownLearningDetector(),
+  ];
+}
+
+/**
+ * Create all data access learning detectors
+ */
+export function createAllDataAccessLearningDetectors() {
+  return [
+    createQueryPatternsLearningDetector(),
+    createRepositoryPatternLearningDetector(),
+    createTransactionPatternsLearningDetector(),
+    createValidationPatternsLearningDetector(),
+    createDTOPatternsLearningDetector(),
+    createNPlusOneLearningDetector(),
+    createConnectionPoolingLearningDetector(),
+  ];
+}
+
+/**
+ * Create all config learning detectors
+ */
+export function createAllConfigLearningDetectors() {
+  return [
+    createEnvNamingLearningDetector(),
+    createRequiredOptionalLearningDetector(),
+    createDefaultValuesLearningDetector(),
+    createFeatureFlagsLearningDetector(),
+    createConfigValidationLearningDetector(),
+    createEnvironmentDetectionLearningDetector(),
+  ];
+}
+
+/**
+ * Create all types learning detectors
+ */
+export function createAllTypesLearningDetectors() {
+  return [
+    createTypeFileLocationLearningDetector(),
+    createTypeNamingConventionsLearningDetector(),
+    createInterfaceVsTypeLearningDetector(),
+    createGenericPatternsLearningDetector(),
+    createUtilityTypesLearningDetector(),
+    createTypeAssertionsLearningDetector(),
+    createAnyUsageLearningDetector(),
+  ];
+}
+
+/**
+ * Create all accessibility learning detectors
+ */
+export function createAllAccessibilityLearningDetectors() {
+  return [
+    createSemanticHtmlLearningDetector(),
+    createAriaRolesLearningDetector(),
+    createKeyboardNavLearningDetector(),
+    createFocusManagementLearningDetector(),
+    createHeadingHierarchyLearningDetector(),
+    createAltTextLearningDetector(),
+  ];
+}
+
+/**
+ * Create all documentation learning detectors
+ */
+export function createAllDocumentationLearningDetectors() {
+  return [
+    createJSDocPatternsLearningDetector(),
+    createReadmeStructureLearningDetector(),
+    createTodoPatternsLearningDetector(),
+    createDeprecationLearningDetector(),
+    createExampleCodeLearningDetector(),
+  ];
+}
+
+/**
+ * Create all performance learning detectors
+ */
+export function createAllPerformanceLearningDetectors() {
+  return [
+    createCodeSplittingLearningDetector(),
+    createLazyLoadingLearningDetector(),
+    createMemoizationLearningDetector(),
+    createCachingPatternsLearningDetector(),
+    createDebounceThrottleLearningDetector(),
+    createBundleSizeLearningDetector(),
+  ];
 }
 
 /**
@@ -785,4 +1255,215 @@ export function getDetectorCounts() {
     performance: 6,
     total: 101, // All detectors wired
   };
+}
+
+// ============================================================================
+// Semantic Detector Factory Functions (Language-Agnostic)
+// ============================================================================
+
+/**
+ * Create all auth semantic detectors
+ */
+export function createAllAuthSemanticDetectors() {
+  return [
+    createAuthMiddlewareSemanticDetector(),
+    createTokenHandlingSemanticDetector(),
+    createPermissionChecksSemanticDetector(),
+    createRBACSemanticDetector(),
+    createOwnershipSemanticDetector(),
+    createAuditSemanticDetector(),
+  ];
+}
+
+/**
+ * Create all security semantic detectors
+ */
+export function createAllSecuritySemanticDetectors() {
+  return [
+    createInputSanitizationSemanticDetector(),
+    createSQLInjectionSemanticDetector(),
+    createXSSPreventionSemanticDetector(),
+    createCSRFProtectionSemanticDetector(),
+    createCSPHeadersSemanticDetector(),
+    createSecretManagementSemanticDetector(),
+    createRateLimitingSemanticDetector(),
+  ];
+}
+
+/**
+ * Create all error semantic detectors
+ */
+export function createAllErrorSemanticDetectors() {
+  return [
+    createExceptionHierarchySemanticDetector(),
+    createErrorCodesSemanticDetector(),
+    createTryCatchSemanticDetector(),
+    createErrorPropagationSemanticDetector(),
+    createAsyncErrorsSemanticDetector(),
+    createCircuitBreakerSemanticDetector(),
+    createErrorLoggingSemanticDetector(),
+  ];
+}
+
+/**
+ * Create all structural semantic detectors
+ */
+export function createAllStructuralSemanticDetectors() {
+  return [
+    createFileNamingSemanticDetector(),
+    createDirectoryStructureSemanticDetector(),
+    createCoLocationSemanticDetector(),
+    createBarrelExportsSemanticDetector(),
+    createImportOrderingSemanticDetector(),
+    createModuleBoundariesSemanticDetector(),
+    createCircularDepsSemanticDetector(),
+    createPackageBoundariesSemanticDetector(),
+  ];
+}
+
+/**
+ * Create all component semantic detectors
+ */
+export function createAllComponentSemanticDetectors() {
+  return [
+    createComponentStructureSemanticDetector(),
+    createPropsPatternsSemanticDetector(),
+    createDuplicateDetectionSemanticDetector(),
+    createNearDuplicateSemanticDetector(),
+    createStatePatternsSemanticDetector(),
+    createCompositionSemanticDetector(),
+    createRefForwardingSemanticDetector(),
+    createModalPatternsSemanticDetector(),
+  ];
+}
+
+/**
+ * Create all styling semantic detectors
+ */
+export function createAllStylingSemanticDetectors() {
+  return [
+    createDesignTokensSemanticDetector(),
+    createSpacingScaleSemanticDetector(),
+    createColorUsageSemanticDetector(),
+    createTypographySemanticDetector(),
+    createClassNamingSemanticDetector(),
+    createTailwindPatternsSemanticDetector(),
+    createZIndexScaleSemanticDetector(),
+    createResponsiveSemanticDetector(),
+  ];
+}
+
+/**
+ * Create all logging semantic detectors
+ */
+export function createAllLoggingSemanticDetectors() {
+  return [
+    createStructuredLoggingSemanticDetector(),
+    createLogLevelsSemanticDetector(),
+    createContextFieldsSemanticDetector(),
+    createCorrelationIdsSemanticDetector(),
+    createPIIRedactionSemanticDetector(),
+    createMetricsSemanticDetector(),
+    createHealthChecksSemanticDetector(),
+  ];
+}
+
+/**
+ * Create all testing semantic detectors
+ */
+export function createAllTestingSemanticDetectors() {
+  return [
+    createTestFileNamingSemanticDetector(),
+    createTestCoLocationSemanticDetector(),
+    createTestStructureSemanticDetector(),
+    createMockPatternsSemanticDetector(),
+    createFixturePatternsSemanticDetector(),
+    createDescribeNamingSemanticDetector(),
+    createSetupTeardownSemanticDetector(),
+  ];
+}
+
+/**
+ * Create all data access semantic detectors
+ */
+export function createAllDataAccessSemanticDetectors() {
+  return [
+    createQueryPatternsSemanticDetector(),
+    createRepositoryPatternSemanticDetector(),
+    createTransactionSemanticDetector(),
+    createValidationSemanticDetector(),
+    createDTOPatternsSemanticDetector(),
+    createNPlusOneSemanticDetector(),
+    createConnectionPoolingSemanticDetector(),
+  ];
+}
+
+/**
+ * Create all config semantic detectors
+ */
+export function createAllConfigSemanticDetectors() {
+  return [
+    createEnvConfigSemanticDetector(),
+    createRequiredOptionalSemanticDetector(),
+    createDefaultValuesSemanticDetector(),
+    createFeatureFlagsSemanticDetector(),
+    createConfigValidationSemanticDetector(),
+    createEnvironmentDetectionSemanticDetector(),
+  ];
+}
+
+/**
+ * Create all types semantic detectors
+ */
+export function createAllTypesSemanticDetectors() {
+  return [
+    createFileLocationSemanticDetector(),
+    createNamingConventionsSemanticDetector(),
+    createInterfaceVsTypeSemanticDetector(),
+    createGenericPatternsSemanticDetector(),
+    createUtilityTypesSemanticDetector(),
+    createTypeAssertionsSemanticDetector(),
+    createAnyUsageSemanticDetector(),
+  ];
+}
+
+/**
+ * Create all accessibility semantic detectors
+ */
+export function createAllAccessibilitySemanticDetectors() {
+  return [
+    createSemanticHtmlSemanticDetector(),
+    createAriaRolesSemanticDetector(),
+    createKeyboardNavSemanticDetector(),
+    createFocusManagementSemanticDetector(),
+    createHeadingHierarchySemanticDetector(),
+    createAltTextSemanticDetector(),
+  ];
+}
+
+/**
+ * Create all documentation semantic detectors
+ */
+export function createAllDocumentationSemanticDetectors() {
+  return [
+    createJSDocPatternsSemanticDetector(),
+    createReadmeStructureSemanticDetector(),
+    createTodoPatternsSemanticDetector(),
+    createDeprecationSemanticDetector(),
+    createExampleCodeSemanticDetector(),
+  ];
+}
+
+/**
+ * Create all performance semantic detectors
+ */
+export function createAllPerformanceSemanticDetectors() {
+  return [
+    createCodeSplittingSemanticDetector(),
+    createLazyLoadingSemanticDetector(),
+    createMemoizationSemanticDetector(),
+    createCachingPatternsSemanticDetector(),
+    createDebounceThrottleSemanticDetector(),
+    createBundleSizeSemanticDetector(),
+  ];
 }

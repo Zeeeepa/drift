@@ -111,7 +111,7 @@ export class PermissionChecksLearningDetector extends LearningDetector<Permissio
   readonly subcategory = 'permission-checks';
   readonly name = 'Permission Checks Detector (Learning)';
   readonly description = 'Learns permission check patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof PermissionChecksConventions> {
     return ['style', 'usesRoles', 'usesPermissions'];

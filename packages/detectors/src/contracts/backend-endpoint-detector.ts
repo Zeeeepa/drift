@@ -38,11 +38,21 @@ const RESPONSE_WRAPPERS = new Set([
   'jsonify', 'make_response',  // Flask
 ]);
 
+// Field names that are artifacts and should be filtered out
+const ARTIFACT_FIELD_NAMES = new Set([
+  '_model', '__model', 'model_', '_type', '__type',
+]);
+
 /**
  * Extract fields from a Pydantic model class definition
  */
 function extractPydanticModelFields(content: string, modelName: string): ContractField[] {
   const fields: ContractField[] = [];
+  
+  // Skip response wrappers - they don't have meaningful fields
+  if (RESPONSE_WRAPPERS.has(modelName)) {
+    return fields;
+  }
   
   // Find the class definition: class ModelName(BaseModel):
   const classPattern = new RegExp(`class\\s+${modelName}\\s*\\([^)]*\\)\\s*:`, 'g');
@@ -68,8 +78,8 @@ function extractPydanticModelFields(content: string, modelName: string): Contrac
       const fieldType = fieldMatch[2];
       const isOptional = line.includes('Optional[') || line.includes('= None') || line.includes('= Field(');
       
-      // Skip private fields and class methods
-      if (!fieldName.startsWith('_') && fieldName !== 'class') {
+      // Skip private fields, class methods, and artifact names
+      if (!fieldName.startsWith('_') && fieldName !== 'class' && !ARTIFACT_FIELD_NAMES.has(fieldName)) {
         fields.push({
           name: fieldName,
           type: mapPythonType(fieldType),
@@ -180,7 +190,7 @@ function extractPythonResponseFields(content: string, line: number): ContractFie
 function extractDictFields(dictContent: string, line: number, fields: ContractField[]): void {
   const keyMatches = dictContent.matchAll(/["'](\w+)["']\s*:/g);
   for (const match of keyMatches) {
-    if (match[1]) {
+    if (match[1] && !ARTIFACT_FIELD_NAMES.has(match[1])) {
       fields.push({
         name: match[1],
         type: 'unknown',
@@ -190,6 +200,131 @@ function extractDictFields(dictContent: string, line: number, fields: ContractFi
       });
     }
   }
+}
+
+// ============================================================================
+// Request Body Extraction
+// ============================================================================
+
+/**
+ * Extract request body type from FastAPI function parameters
+ * Looks for patterns like: def endpoint(body: RequestModel) or def endpoint(data: RequestModel = Body(...))
+ */
+function extractPythonRequestFields(content: string, line: number): ContractField[] {
+  const lines = content.split('\n');
+  
+  // Find the function definition (should be right after the decorator)
+  for (let i = line; i < Math.min(line + 5, lines.length); i++) {
+    const lineContent = lines[i];
+    if (!lineContent) continue;
+    
+    // Match function definition: def func_name(params):
+    const funcMatch = lineContent.match(/def\s+\w+\s*\(([^)]+)\)/);
+    if (!funcMatch || !funcMatch[1]) continue;
+    
+    const params = funcMatch[1];
+    
+    // Look for typed parameters that could be request bodies
+    // Pattern 1: param: ModelName (Pydantic model)
+    // Pattern 2: param: ModelName = Body(...)
+    // Pattern 3: param: ModelName = Depends(...)
+    const paramMatches = params.matchAll(/(\w+)\s*:\s*(\w+)(?:\s*=\s*(?:Body|Depends)\s*\([^)]*\))?/g);
+    
+    for (const match of paramMatches) {
+      const paramName = match[1];
+      const typeName = match[2];
+      if (!paramName || !typeName) continue;
+      
+      // Skip common non-body parameters
+      if (['Request', 'Response', 'BackgroundTasks', 'Depends', 'str', 'int', 'float', 'bool'].includes(typeName)) {
+        continue;
+      }
+      
+      // Skip path/query parameters (usually simple types or have default values without Body())
+      if (paramName === 'request' || paramName === 'response' || paramName === 'db') {
+        continue;
+      }
+      
+      // Try to extract fields from the Pydantic model
+      const modelFields = extractPydanticModelFields(content, typeName);
+      if (modelFields.length > 0) {
+        return modelFields;
+      }
+    }
+  }
+  
+  return [];
+}
+
+/**
+ * Extract request body from Express route handler
+ * Looks for req.body usage patterns
+ */
+function extractExpressRequestFields(content: string, line: number): ContractField[] {
+  const fields: ContractField[] = [];
+  const lines = content.split('\n');
+  const endLine = Math.min(line + 50, lines.length);
+  const seenFields = new Set<string>();
+  
+  for (let i = line; i < endLine; i++) {
+    const lineContent = lines[i];
+    if (!lineContent) continue;
+    
+    // Stop at next route definition
+    if (i > line && lineContent.match(/(?:app|router)\.(get|post|put|patch|delete)\s*\(/)) break;
+    
+    // Pattern 1: const { field1, field2 } = req.body
+    const destructureMatch = lineContent.match(/(?:const|let|var)\s*\{([^}]+)\}\s*=\s*req\.body/);
+    if (destructureMatch && destructureMatch[1]) {
+      const fieldNames = destructureMatch[1].split(',').map(f => f.trim().split(':')[0]?.trim()).filter(Boolean);
+      for (const name of fieldNames) {
+        if (name && !seenFields.has(name)) {
+          seenFields.add(name);
+          fields.push({
+            name,
+            type: 'unknown',
+            optional: false,
+            nullable: false,
+            line: i + 1,
+          });
+        }
+      }
+    }
+    
+    // Pattern 2: req.body.fieldName
+    const dotAccessMatches = lineContent.matchAll(/req\.body\.(\w+)/g);
+    for (const match of dotAccessMatches) {
+      const name = match[1];
+      if (name && !seenFields.has(name)) {
+        seenFields.add(name);
+        fields.push({
+          name,
+          type: 'unknown',
+          optional: false,
+          nullable: false,
+          line: i + 1,
+        });
+      }
+    }
+    
+    // Pattern 3: req.body['fieldName'] or req.body["fieldName"]
+    const bracketAccessMatches = lineContent.matchAll(/req\.body\[["'](\w+)["']\]/g);
+    for (const match of bracketAccessMatches) {
+      const name = match[1];
+      if (name && !seenFields.has(name)) {
+        seenFields.add(name);
+        fields.push({
+          name,
+          type: 'unknown',
+          optional: false,
+          nullable: false,
+          line: i + 1,
+        });
+      }
+    }
+  }
+  
+  return fields;
 }
 
 function extractExpressResponseFields(content: string, line: number): ContractField[] {
@@ -286,6 +421,11 @@ export class BackendEndpointDetector extends BaseDetector {
         
         const line = content.substring(0, match.index).split('\n').length;
         
+        // Extract request fields for POST/PUT/PATCH methods
+        const requestFields = ['POST', 'PUT', 'PATCH'].includes(method)
+          ? extractPythonRequestFields(content, line)
+          : [];
+        
         endpoints.push({
           method,
           path,
@@ -293,6 +433,7 @@ export class BackendEndpointDetector extends BaseDetector {
           file,
           line,
           responseFields: extractPythonResponseFields(content, line),
+          requestFields,
           framework,
         });
       }
@@ -324,6 +465,11 @@ export class BackendEndpointDetector extends BaseDetector {
         
         const line = content.substring(0, match.index).split('\n').length;
         
+        // Extract request fields for POST/PUT/PATCH methods
+        const requestFields = ['POST', 'PUT', 'PATCH'].includes(method)
+          ? extractExpressRequestFields(content, line)
+          : [];
+        
         endpoints.push({
           method,
           path,
@@ -331,6 +477,7 @@ export class BackendEndpointDetector extends BaseDetector {
           file,
           line,
           responseFields: extractExpressResponseFields(content, line),
+          requestFields,
           framework,
         });
       }

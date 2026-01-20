@@ -220,3 +220,42 @@ export {
   type SecretStorage,
   type SecretNaming,
 } from './secret-management-learning.js';
+
+// ============================================================================
+// Semantic Detectors (Language-Agnostic)
+// ============================================================================
+
+export {
+  InputSanitizationSemanticDetector,
+  createInputSanitizationSemanticDetector,
+} from './input-sanitization-semantic.js';
+
+export {
+  RateLimitingSemanticDetector,
+  createRateLimitingSemanticDetector,
+} from './rate-limiting-semantic.js';
+
+export {
+  CSRFProtectionSemanticDetector,
+  createCSRFProtectionSemanticDetector,
+} from './csrf-protection-semantic.js';
+
+export {
+  SQLInjectionSemanticDetector,
+  createSQLInjectionSemanticDetector,
+} from './sql-injection-semantic.js';
+
+export {
+  XSSPreventionSemanticDetector,
+  createXSSPreventionSemanticDetector,
+} from './xss-prevention-semantic.js';
+
+export {
+  CSPHeadersSemanticDetector,
+  createCSPHeadersSemanticDetector,
+} from './csp-headers-semantic.js';
+
+export {
+  SecretManagementSemanticDetector,
+  createSecretManagementSemanticDetector,
+} from './secret-management-semantic.js';

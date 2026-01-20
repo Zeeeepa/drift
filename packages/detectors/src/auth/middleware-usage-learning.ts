@@ -128,7 +128,7 @@ export class AuthMiddlewareLearningDetector extends LearningDetector<AuthMiddlew
   readonly subcategory = 'middleware-usage';
   readonly name = 'Auth Middleware Detector (Learning)';
   readonly description = 'Learns auth middleware patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof AuthMiddlewareConventions> {
     return ['style', 'namingPattern', 'usesDecorators'];

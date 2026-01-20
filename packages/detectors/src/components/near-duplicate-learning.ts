@@ -56,7 +56,7 @@ export class NearDuplicateLearningDetector extends LearningDetector<NearDuplicat
   readonly subcategory = 'near-duplicate';
   readonly name = 'Near Duplicate Detector (Learning)';
   readonly description = 'Learns near-duplicate handling patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof NearDuplicateConventions> {
     return ['acceptableVariation', 'similarityThreshold', 'prefersComposition'];

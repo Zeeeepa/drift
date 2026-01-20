@@ -52,7 +52,7 @@ export class TestCoLocationLearningDetector extends LearningDetector<TestCoLocat
   readonly subcategory = 'co-location';
   readonly name = 'Test Co-location Detector (Learning)';
   readonly description = 'Learns test co-location patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof TestCoLocationConventions> {
     return ['coLocationStyle', 'usesTestsFolder', 'testFolderName'];

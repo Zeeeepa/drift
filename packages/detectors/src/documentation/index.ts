@@ -75,3 +75,32 @@ export {
   type ReadmeStructureConventions,
   type ReadmeSection,
 } from './readme-structure-learning.js';
+
+// ============================================================================
+// Semantic Detectors (Language-Agnostic)
+// ============================================================================
+
+export {
+  JSDocPatternsSemanticDetector,
+  createJSDocPatternsSemanticDetector,
+} from './jsdoc-patterns-semantic.js';
+
+export {
+  ReadmeStructureSemanticDetector,
+  createReadmeStructureSemanticDetector,
+} from './readme-structure-semantic.js';
+
+export {
+  TodoPatternsSemanticDetector,
+  createTodoPatternsSemanticDetector,
+} from './todo-patterns-semantic.js';
+
+export {
+  DeprecationSemanticDetector,
+  createDeprecationSemanticDetector,
+} from './deprecation-semantic.js';
+
+export {
+  ExampleCodeSemanticDetector,
+  createExampleCodeSemanticDetector,
+} from './example-code-semantic.js';

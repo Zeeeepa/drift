@@ -162,7 +162,7 @@ export class ClientPatternsLearningDetector extends LearningDetector<ClientConve
   readonly subcategory = 'client';
   readonly name = 'Client Patterns Detector (Learning)';
   readonly description = 'Learns API client patterns from your codebase and flags inconsistencies';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof ClientConventions> {
     return ['primaryClient', 'usesWrapper', 'usesDataFetchingLib', 'dataFetchingLib'];

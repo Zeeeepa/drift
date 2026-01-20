@@ -59,7 +59,7 @@ export class RequiredOptionalLearningDetector extends LearningDetector<RequiredO
   readonly subcategory = 'required-optional';
   readonly name = 'Required/Optional Detector (Learning)';
   readonly description = 'Learns required/optional config patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof RequiredOptionalConventions> {
     return ['requiredMarking', 'throwsOnMissing', 'usesDefaultForOptional'];

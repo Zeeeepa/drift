@@ -111,7 +111,7 @@ export class FixturePatternsLearningDetector extends LearningDetector<FixturePat
   readonly subcategory = 'fixture-patterns';
   readonly name = 'Fixture Patterns Detector (Learning)';
   readonly description = 'Learns test fixture patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof FixturePatternsConventions> {
     return ['style', 'usesFactoryFunctions', 'usesFaker'];

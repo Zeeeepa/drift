@@ -83,7 +83,7 @@ export class MemoizationLearningDetector extends LearningDetector<MemoizationCon
   readonly subcategory = 'memoization';
   readonly name = 'Memoization Detector (Learning)';
   readonly description = 'Learns memoization patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof MemoizationConventions> {
     return ['preferredMethod', 'usesReactMemo', 'usesUseMemo', 'usesUseCallback'];

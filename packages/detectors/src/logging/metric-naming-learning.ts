@@ -99,7 +99,7 @@ export class MetricNamingLearningDetector extends LearningDetector<MetricNamingC
   readonly subcategory = 'metric-naming';
   readonly name = 'Metric Naming Detector (Learning)';
   readonly description = 'Learns metric naming patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof MetricNamingConventions> {
     return ['namingStyle', 'usesPrefix', 'prefix'];

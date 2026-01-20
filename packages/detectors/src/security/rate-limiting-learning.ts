@@ -83,7 +83,7 @@ export class RateLimitingLearningDetector extends LearningDetector<RateLimitingC
   readonly subcategory = 'rate-limiting';
   readonly name = 'Rate Limiting Detector (Learning)';
   readonly description = 'Learns rate limiting patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof RateLimitingConventions> {
     return ['library', 'usesMiddleware', 'usesRedisStore'];

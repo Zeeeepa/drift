@@ -128,7 +128,7 @@ export class AriaRolesLearningDetector extends LearningDetector<AriaRolesConvent
   readonly subcategory = 'aria-roles';
   readonly name = 'ARIA Roles Detector (Learning)';
   readonly description = 'Learns ARIA role patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof AriaRolesConventions> {
     return ['usageStyle', 'usesAriaLabels', 'usesAriaDescribedby'];

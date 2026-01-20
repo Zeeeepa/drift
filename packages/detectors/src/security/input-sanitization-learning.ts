@@ -85,7 +85,7 @@ export class InputSanitizationLearningDetector extends LearningDetector<InputSan
   readonly subcategory = 'input-sanitization';
   readonly name = 'Input Sanitization Detector (Learning)';
   readonly description = 'Learns input sanitization patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof InputSanitizationConventions> {
     return ['library', 'usesEscaping', 'sanitizesOnInput'];

@@ -87,7 +87,7 @@ export class QueryPatternsLearningDetector extends LearningDetector<QueryPattern
   readonly subcategory = 'query-patterns';
   readonly name = 'Query Patterns Detector (Learning)';
   readonly description = 'Learns database query patterns from your codebase';
-  readonly supportedLanguages: Language[] = ['typescript', 'javascript'];
+  readonly supportedLanguages: Language[] = ['typescript', 'javascript', 'python'];
 
   protected getConventionKeys(): Array<keyof QueryPatternsConventions> {
     return ['library', 'usesQueryBuilder', 'usesRawQueries'];

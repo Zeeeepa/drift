@@ -89,3 +89,37 @@ export {
   type HeadingStyle,
   type HeadingComponent,
 } from './heading-hierarchy-learning.js';
+
+// ============================================================================
+// Semantic Detectors (Language-Agnostic)
+// ============================================================================
+
+export {
+  SemanticHtmlSemanticDetector,
+  createSemanticHtmlSemanticDetector,
+} from './semantic-html-semantic.js';
+
+export {
+  AriaRolesSemanticDetector,
+  createAriaRolesSemanticDetector,
+} from './aria-roles-semantic.js';
+
+export {
+  KeyboardNavSemanticDetector,
+  createKeyboardNavSemanticDetector,
+} from './keyboard-nav-semantic.js';
+
+export {
+  FocusManagementSemanticDetector,
+  createFocusManagementSemanticDetector,
+} from './focus-management-semantic.js';
+
+export {
+  HeadingHierarchySemanticDetector,
+  createHeadingHierarchySemanticDetector,
+} from './heading-hierarchy-semantic.js';
+
+export {
+  AltTextSemanticDetector,
+  createAltTextSemanticDetector,
+} from './alt-text-semantic.js';
