@@ -19,7 +19,7 @@ export function getVersion(): string {
 }
 
 // For backwards compatibility
-export const VERSION = '0.4.3';
+export const VERSION = '0.4.4';
 
 /**
  * Activation controller instance

@@ -1,15 +1,18 @@
 {
-  "name": "@drift/vscode",
+  "name": "driftdetect-vscode",
   "displayName": "Drift - Architectural Drift Detection",
-  "description": "Detect and prevent architectural drift in your codebase",
-  "version": "0.1.0",
-  "publisher": "drift",
-  "private": true,
+  "description": "Detect and prevent architectural drift in your codebase. Pattern detection, call graph analysis, and security visualization for TypeScript, Python, C#, Java, and PHP.",
+  "version": "0.4.4",
+  "publisher": "driftdetect",
   "license": "MIT",
-  "icon": "resources/drift-icon.svg",
+  "icon": "resources/drift-icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/drift/drift"
+    "url": "https://github.com/dadbodgeoff/drift"
+  },
+  "homepage": "https://github.com/dadbodgeoff/drift#readme",
+  "bugs": {
+    "url": "https://github.com/dadbodgeoff/drift/issues"
   },
   "engines": {
     "vscode": "^1.85.0"
@@ -358,7 +361,7 @@
     "package": "vsce package --no-dependencies"
   },
   "dependencies": {
-    "driftdetect-lsp": "workspace:*",
+    "driftdetect-lsp": "^0.4.2",
     "vscode-languageclient": "^9.0.1"
   },
   "devDependencies": {
