@@ -1,6 +1,6 @@
 {
   "name": "driftdetect-detectors",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Pattern detectors for Drift - 150+ detectors across 15 categories",
   "license": "MIT",
   "repository": {
