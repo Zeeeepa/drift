@@ -291,7 +291,7 @@ AI Agent (Claude, Cursor, etc.)
          │
          ▼
 ┌─────────────────┐
-│  Drift MCP      │ ← 40+ tools
+│  Drift MCP      │ ← 45+ tools
 │    Server       │
 └────────┬────────┘
          │

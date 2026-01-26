@@ -232,7 +232,7 @@ Start with `drift_context` — it returns curated context for any task:
 }
 ```
 
-See [MCP Tools Reference](MCP-Tools-Reference) for all 40+ tools.
+See [MCP Tools Reference](MCP-Tools-Reference) for all 45+ tools.
 
 ### Why isn't the AI using Drift?
 

@@ -166,7 +166,7 @@ If connected, it will call `drift_status` and show your pattern summary.
 
 ## Available MCP Tools
 
-Drift provides **40+ MCP tools** organized in 7 layers:
+Drift provides **45+ MCP tools** organized in 7 layers:
 
 | Layer | Tools | Purpose |
 |-------|-------|---------|

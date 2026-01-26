@@ -170,6 +170,45 @@ Options:
 
 ---
 
+## AI Context Commands
+
+### `drift context`
+
+Generate package-scoped AI context for monorepos.
+
+```bash
+drift context [package] [options]
+
+Options:
+  -l, --list                List all detected packages
+  -f, --format <format>     Output format: json, markdown, ai (default: json)
+  -o, --output <file>       Output file (stdout if not specified)
+  --snippets                Include code snippets in context
+  --deps                    Include internal dependency patterns
+  -c, --categories <cats>   Categories to include (comma-separated)
+  --min-confidence <n>      Minimum pattern confidence (0.0-1.0)
+  --max-tokens <n>          Maximum tokens for AI context (default: 8000)
+  --compact                 Compact output (fewer details)
+```
+
+**Examples:**
+
+```bash
+# List all packages in monorepo
+drift context --list
+
+# Generate context for a package
+drift context @drift/core
+
+# AI-optimized format with snippets
+drift context @drift/core --format ai --snippets
+
+# Export to file
+drift context @drift/core -o context.json
+```
+
+---
+
 ## Core Commands
 
 ### `drift init`
@@ -560,6 +599,125 @@ Subcommands:
 
 ---
 
+## Enterprise Commands
+
+### `drift simulate`
+
+Speculative Execution Engine: Simulates implementation approaches BEFORE coding.
+
+```bash
+drift simulate <description> [options]
+
+Options:
+  -f, --format <format>        Output format (text, json)
+  -v, --verbose                Show detailed analysis
+  -n, --max-approaches <n>     Maximum approaches to simulate (default: 5)
+  -c, --category <category>    Task category (rate-limiting, authentication, etc.)
+  -t, --target <target>        Target file or function
+  --constraint <constraint>    Constraints (can be repeated)
+```
+
+**Examples:**
+
+```bash
+# Simulate adding rate limiting
+drift simulate "add rate limiting to API"
+
+# With constraints
+drift simulate "add authentication" --constraint "must work with existing auth"
+
+# Verbose output
+drift simulate "refactor user service" -v
+```
+
+### `drift decisions`
+
+Mine architectural decisions from git history.
+
+```bash
+drift decisions <subcommand> [options]
+
+Subcommands:
+  mine               Mine decisions from git history
+  status             Show decision mining summary
+  list               List all decisions
+  show <id>          Show decision details
+  export             Export decisions as markdown ADRs
+  confirm <id>       Confirm a draft decision
+  for-file <file>    Find decisions affecting a file
+  timeline           Show decisions timeline
+
+Options:
+  -f, --format <format>    Output format (text, json)
+  -v, --verbose            Enable verbose output
+  -s, --since <date>       Start date (ISO format)
+  -u, --until <date>       End date (ISO format)
+  -c, --min-confidence <n> Minimum confidence (0-1)
+  --category <category>    Filter by category
+  --status <status>        Filter by status
+  -l, --limit <n>          Maximum results
+```
+
+**Examples:**
+
+```bash
+# Mine decisions from git history
+drift decisions mine
+
+# List all decisions
+drift decisions list
+
+# Show decision details
+drift decisions show ADR-001
+
+# Export as markdown ADRs
+drift decisions export
+```
+
+### `drift constraints`
+
+Manage architectural constraints learned from the codebase.
+
+```bash
+drift constraints <subcommand> [options]
+
+Subcommands:
+  extract            Extract constraints from codebase
+  list               List all constraints
+  show <id>          Show constraint details
+  approve <id>       Approve a discovered constraint
+  ignore <id>        Ignore a constraint
+  verify <file>      Verify a file against constraints
+  check              Check all files against constraints
+  export <output>    Export constraints to JSON file
+
+Options:
+  -f, --format <format>    Output format (text, json)
+  -v, --verbose            Enable verbose output
+  -c, --category <cat>     Filter by category
+  -s, --status <status>    Filter by status
+  -l, --limit <n>          Maximum results
+  --min-confidence <n>     Minimum confidence threshold
+```
+
+**Examples:**
+
+```bash
+# Extract constraints from codebase
+drift constraints extract
+
+# List all constraints
+drift constraints list
+
+# Verify a file
+drift constraints verify src/api/users.ts
+
+# Check entire codebase
+drift constraints check
+```
+
+---
+
 ## Management Commands
 
 ### `drift projects`
@@ -602,6 +760,74 @@ drift parser [options]
 Options:
   --test             Test parser functionality
   --format <type>    Output format
+```
+
+### `drift env`
+
+Show environment variable access patterns.
+
+```bash
+drift env <subcommand> [options]
+
+Subcommands:
+  (default)          Show overview
+  scan               Scan codebase for environment variable access
+  list               List all discovered environment variables
+  var <name>         Show details for a specific variable
+  secrets            Show all secret and credential variables
+  required           Show required variables without defaults
+  file <pattern>     Show what env vars a file or pattern accesses
+
+Options:
+  -f, --format <format>    Output format (text, json)
+  -s, --sensitivity <type> Filter by sensitivity (secret, credential, config)
+  --verbose                Enable verbose output
+```
+
+**Examples:**
+
+```bash
+# Scan for environment variables
+drift env scan
+
+# List all variables
+drift env list
+
+# Show secrets
+drift env secrets
+
+# Check what a file accesses
+drift env file src/config.ts
+```
+
+### `drift license`
+
+Display license status and available features.
+
+```bash
+drift license [options]
+
+Options:
+  -f, --format <format>    Output format (text, json)
+```
+
+### `drift telemetry`
+
+Manage telemetry settings (opt-in, privacy-first).
+
+```bash
+drift telemetry <subcommand> [options]
+
+Subcommands:
+  (default)          Show telemetry status
+  enable             Enable telemetry
+  disable            Disable telemetry and clear queued data
+  setup              Interactive telemetry configuration
+  flush              Manually flush queued telemetry events
+
+Options:
+  --all              Enable all telemetry options (enable only)
+  -y, --yes          Skip confirmation prompts
 ```
 
 ### `drift migrate-storage`
