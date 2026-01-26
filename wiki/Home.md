@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <code>40+ MCP Tools</code> • <code>28+ CLI Commands</code> • <code>8 Languages</code> • <code>15 Pattern Categories</code> • <code>170+ Detectors</code>
+  <code>45+ MCP Tools</code> • <code>35+ CLI Commands</code> • <code>8 Languages</code> • <code>15 Pattern Categories</code> • <code>170+ Detectors</code>
 </p>
 
 ---

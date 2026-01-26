@@ -830,6 +830,47 @@ Options:
   -y, --yes          Skip confirmation prompts
 ```
 
+### `drift next-steps`
+
+Get personalized recommendations for what to do next.
+
+```bash
+drift next-steps [options]
+
+Options:
+  -f, --format <format>    Output format (text, json)
+  -v, --verbose            Show all recommendations with detailed reasons
+```
+
+Analyzes your project state and recommends:
+- High priority actions (initialize, scan, review patterns)
+- Language-specific commands based on detected languages
+- Analysis data to build (call graph, test topology, coupling)
+- MCP setup suggestions
+
+### `drift troubleshoot`
+
+Diagnose common issues and get targeted fixes.
+
+```bash
+drift troubleshoot [options]
+
+Options:
+  -f, --format <format>    Output format (text, json)
+  -v, --verbose            Show all issues including info-level
+  --fix                    Attempt to auto-fix issues where possible
+```
+
+Checks for:
+- Initialization issues
+- Invalid configuration
+- Missing patterns (needs scan)
+- .driftignore problems
+- Large directories slowing scans
+- Stale cache
+- Node.js version compatibility
+- MCP configuration
+
 ### `drift migrate-storage`
 
 Migrate to unified storage format.
