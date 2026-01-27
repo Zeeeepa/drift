@@ -630,50 +630,6 @@ drift simulate "add authentication" --constraint "must work with existing auth"
 drift simulate "refactor user service" -v
 ```
 
-### `drift decisions`
-
-Mine architectural decisions from git history.
-
-```bash
-drift decisions <subcommand> [options]
-
-Subcommands:
-  mine               Mine decisions from git history
-  status             Show decision mining summary
-  list               List all decisions
-  show <id>          Show decision details
-  export             Export decisions as markdown ADRs
-  confirm <id>       Confirm a draft decision
-  for-file <file>    Find decisions affecting a file
-  timeline           Show decisions timeline
-
-Options:
-  -f, --format <format>    Output format (text, json)
-  -v, --verbose            Enable verbose output
-  -s, --since <date>       Start date (ISO format)
-  -u, --until <date>       End date (ISO format)
-  -c, --min-confidence <n> Minimum confidence (0-1)
-  --category <category>    Filter by category
-  --status <status>        Filter by status
-  -l, --limit <n>          Maximum results
-```
-
-**Examples:**
-
-```bash
-# Mine decisions from git history
-drift decisions mine
-
-# List all decisions
-drift decisions list
-
-# Show decision details
-drift decisions show ADR-001
-
-# Export as markdown ADRs
-drift decisions export
-```
-
 ### `drift constraints`
 
 Manage architectural constraints learned from the codebase.
