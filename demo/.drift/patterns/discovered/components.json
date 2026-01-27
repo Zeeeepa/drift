@@ -3,496 +3,6 @@
   "category": "components",
   "patterns": [
     {
-      "id": "b1502e026ab77de9",
-      "subcategory": "file-structure",
-      "name": "Component Structure Detector",
-      "description": "Detects component file structure patterns (single file vs split) and identifies inconsistencies",
-      "detector": {
-        "type": "regex",
-        "config": {
-          "detectorId": "components/component-structure",
-          "patternId": "component-structure-single-file"
-        }
-      },
-      "confidence": {
-        "frequency": 0.3,
-        "consistency": 0.9,
-        "age": 0,
-        "spread": 30,
-        "score": 0.95,
-        "level": "high"
-      },
-      "locations": [
-        {
-          "file": "backend/src/index.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/middleware/auth.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/middleware/errorHandler.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/middleware/logger.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/routes/admin.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/routes/legacy.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/routes/orders.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/routes/products.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/routes/users.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/services/adminService.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/services/orderService.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/services/productService.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/services/userService.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/utils/errors.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/utils/response.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/api/admin.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/api/client.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/api/orders.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/api/products.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/api/users.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/components/Button.tsx",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/components/Input.tsx",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/components/Table.tsx",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/components/legacy/DataFetcher.tsx",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/components/legacy/OldButton.tsx",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/components/legacy/UserCard.tsx",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/hooks/useApi.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/hooks/useAuth.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/types/api.ts",
-          "line": 1,
-          "column": 1
-        }
-      ],
-      "outliers": [],
-      "metadata": {
-        "firstSeen": "2026-01-20T01:02:50.733Z",
-        "lastSeen": "2026-01-20T01:02:50.733Z",
-        "source": "auto-detected",
-        "tags": [
-          "components",
-          "file-structure"
-        ]
-      },
-      "severity": "info",
-      "autoFixable": false
-    },
-    {
-      "id": "dbc13122e05b6841",
-      "subcategory": "file-structure",
-      "name": "Component Structure Detector",
-      "description": "Detects component file structure patterns (single file vs split) and identifies inconsistencies",
-      "detector": {
-        "type": "regex",
-        "config": {
-          "detectorId": "components/component-structure",
-          "patternId": "component-structure-type-single-file"
-        }
-      },
-      "confidence": {
-        "frequency": 0.3,
-        "consistency": 0.9,
-        "age": 0,
-        "spread": 30,
-        "score": 0.95,
-        "level": "high"
-      },
-      "locations": [
-        {
-          "file": "backend/src/index.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/middleware/auth.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/middleware/errorHandler.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/middleware/logger.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/routes/admin.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/routes/legacy.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/routes/orders.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/routes/products.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/routes/users.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/services/adminService.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/services/orderService.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/services/productService.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/services/userService.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/utils/errors.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "backend/src/utils/response.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/api/admin.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/api/client.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/api/orders.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/api/products.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/api/users.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/components/Button.tsx",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/components/Input.tsx",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/components/Table.tsx",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/components/legacy/DataFetcher.tsx",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/components/legacy/OldButton.tsx",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/components/legacy/UserCard.tsx",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/hooks/useApi.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/hooks/useAuth.ts",
-          "line": 1,
-          "column": 1
-        },
-        {
-          "file": "frontend/src/types/api.ts",
-          "line": 1,
-          "column": 1
-        }
-      ],
-      "outliers": [],
-      "metadata": {
-        "firstSeen": "2026-01-20T01:02:50.733Z",
-        "lastSeen": "2026-01-20T01:02:50.733Z",
-        "source": "auto-detected",
-        "tags": [
-          "components",
-          "file-structure"
-        ]
-      },
-      "severity": "info",
-      "autoFixable": false
-    },
-    {
-      "id": "1820cf30adf3141e",
-      "subcategory": "composition",
-      "name": "Composition Pattern Detector",
-      "description": "Detects component composition patterns (children, render props, HOCs, compound components) and identifies anti-patterns",
-      "detector": {
-        "type": "regex",
-        "config": {
-          "detectorId": "components/composition",
-          "patternId": "composition-uncontrolled"
-        }
-      },
-      "confidence": {
-        "frequency": 0.01,
-        "consistency": 0.9,
-        "age": 0,
-        "spread": 1,
-        "score": 0.95,
-        "level": "high"
-      },
-      "locations": [
-        {
-          "file": "frontend/src/components/legacy/UserCard.tsx",
-          "line": 1,
-          "column": 1
-        }
-      ],
-      "outliers": [],
-      "metadata": {
-        "firstSeen": "2026-01-20T01:02:50.734Z",
-        "lastSeen": "2026-01-20T01:02:50.734Z",
-        "source": "auto-detected",
-        "tags": [
-          "components",
-          "composition"
-        ]
-      },
-      "severity": "info",
-      "autoFixable": false
-    },
-    {
-      "id": "e7f5c2a19d38f789",
-      "subcategory": "ref-forwarding",
-      "name": "Ref Forwarding Detector",
-      "description": "Detects ref forwarding patterns and identifies issues with ref handling",
-      "detector": {
-        "type": "regex",
-        "config": {
-          "detectorId": "components/ref-forwarding",
-          "patternId": "ref-forwarding-ref-prop-to-dom"
-        }
-      },
-      "confidence": {
-        "frequency": 0.01,
-        "consistency": 0.9,
-        "age": 0,
-        "spread": 1,
-        "score": 0.5,
-        "level": "low"
-      },
-      "locations": [
-        {
-          "file": "frontend/src/components/legacy/UserCard.tsx",
-          "line": 1,
-          "column": 1
-        }
-      ],
-      "outliers": [],
-      "metadata": {
-        "firstSeen": "2026-01-20T01:02:50.734Z",
-        "lastSeen": "2026-01-20T01:02:50.734Z",
-        "source": "auto-detected",
-        "tags": [
-          "components",
-          "ref-forwarding"
-        ]
-      },
-      "severity": "info",
-      "autoFixable": false
-    },
-    {
-      "id": "de23cf01bbe67760",
-      "subcategory": "ref-forwarding",
-      "name": "Ref Forwarding Detector",
-      "description": "Detects ref forwarding patterns and identifies issues with ref handling",
-      "detector": {
-        "type": "regex",
-        "config": {
-          "detectorId": "components/ref-forwarding",
-          "patternId": "ref-forwarding-useRef-dom"
-        }
-      },
-      "confidence": {
-        "frequency": 0.01,
-        "consistency": 0.9,
-        "age": 0,
-        "spread": 1,
-        "score": 0.5,
-        "level": "low"
-      },
-      "locations": [
-        {
-          "file": "frontend/src/components/legacy/UserCard.tsx",
-          "line": 1,
-          "column": 1
-        }
-      ],
-      "outliers": [],
-      "metadata": {
-        "firstSeen": "2026-01-20T01:02:50.734Z",
-        "lastSeen": "2026-01-20T01:02:50.734Z",
-        "source": "auto-detected",
-        "tags": [
-          "components",
-          "ref-forwarding"
-        ]
-      },
-      "severity": "info",
-      "autoFixable": false
-    },
-    {
       "id": "7912c6d5ea875e47",
       "subcategory": "component-structure",
       "name": "Component Structure Detector",
@@ -505,14 +15,34 @@
         }
       },
       "confidence": {
-        "frequency": 0.25,
+        "frequency": 0.61,
         "consistency": 0.9,
         "age": 0,
-        "spread": 6,
+        "spread": 17,
         "score": 0.77,
         "level": "medium"
       },
       "locations": [
+        {
+          "file": "README.md",
+          "line": 9,
+          "column": 5
+        },
+        {
+          "file": "README.md",
+          "line": 9,
+          "column": 33
+        },
+        {
+          "file": "README.md",
+          "line": 21,
+          "column": 40
+        },
+        {
+          "file": "README.md",
+          "line": 81,
+          "column": 9
+        },
         {
           "file": "backend/src/middleware/errorHandler.ts",
           "line": 26,
@@ -637,12 +167,117 @@
           "file": "backend/src/services/userService.ts",
           "line": 88,
           "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 40,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 44,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 48,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 55,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 62,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 2,
+          "column": 11
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 4,
+          "column": 26
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 2,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 4,
+          "column": 26
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 2,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 2,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 13,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 24,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 46,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 2,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 43,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 62,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 70,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 29,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 69,
+          "column": 3
+        },
+        {
+          "file": "spring-backend/README.md",
+          "line": 67,
+          "column": 18
         }
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.365Z",
-        "lastSeen": "2026-01-26T05:14:32.365Z",
+        "firstSeen": "2026-01-27T00:35:46.640Z",
+        "lastSeen": "2026-01-27T00:35:46.640Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -665,14 +300,19 @@
         }
       },
       "confidence": {
-        "frequency": 0.04,
+        "frequency": 0.52,
         "consistency": 0.9,
         "age": 0,
-        "spread": 1,
-        "score": 0.6533333333333333,
+        "spread": 7,
+        "score": 0.77,
         "level": "medium"
       },
       "locations": [
+        {
+          "file": "README.md",
+          "line": 9,
+          "column": 66
+        },
         {
           "file": "backend/src/services/userService.ts",
           "line": 61,
@@ -682,12 +322,87 @@
           "file": "backend/src/services/userService.ts",
           "line": 62,
           "column": 13
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 4,
+          "column": 62
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 2,
+          "column": 4
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 4,
+          "column": 31
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 34,
+          "column": 4
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 40,
+          "column": 25
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 45,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 46,
+          "column": 13
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 8,
+          "column": 29
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 6,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 21,
+          "column": 22
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 30,
+          "column": 36
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 31,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 7,
+          "column": 20
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 37,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 43,
+          "column": 18
         }
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.366Z",
-        "lastSeen": "2026-01-26T05:14:32.366Z",
+        "firstSeen": "2026-01-27T00:35:46.640Z",
+        "lastSeen": "2026-01-27T00:35:46.640Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -710,14 +425,34 @@
         }
       },
       "confidence": {
-        "frequency": 0.59,
+        "frequency": 1,
         "consistency": 0.9,
         "age": 0,
-        "spread": 10,
+        "spread": 26,
         "score": 0.77,
         "level": "medium"
       },
       "locations": [
+        {
+          "file": "README.md",
+          "line": 9,
+          "column": 5
+        },
+        {
+          "file": "README.md",
+          "line": 9,
+          "column": 33
+        },
+        {
+          "file": "README.md",
+          "line": 21,
+          "column": 40
+        },
+        {
+          "file": "README.md",
+          "line": 81,
+          "column": 9
+        },
         {
           "file": "backend/src/middleware/auth.ts",
           "line": 19,
@@ -927,12 +662,282 @@
           "file": "backend/src/utils/response.ts",
           "line": 50,
           "column": 8
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 4,
+          "column": 25
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 12,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 16,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 21,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 26,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 31,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 40,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 44,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 48,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 55,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 62,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 9,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 4,
+          "column": 25
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 10,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 18,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 22,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 29,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 4,
+          "column": 25
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 10,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 18,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 22,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 26,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 30,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 4,
+          "column": 25
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 10,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 14,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 18,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 22,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 26,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 2,
+          "column": 11
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 4,
+          "column": 26
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 21,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 18,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 2,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 4,
+          "column": 26
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 15,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 28,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 41,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 54,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 12,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 25,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 38,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 51,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 2,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 23,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 20,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 2,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 13,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 27,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 14,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 24,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 24,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 46,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 14,
+          "column": 8
         }
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.365Z",
-        "lastSeen": "2026-01-26T05:14:32.365Z",
+        "firstSeen": "2026-01-27T00:35:46.640Z",
+        "lastSeen": "2026-01-27T00:35:46.640Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -955,14 +960,34 @@
         }
       },
       "confidence": {
-        "frequency": 0.25,
+        "frequency": 0.61,
         "consistency": 0.9,
         "age": 0,
-        "spread": 6,
+        "spread": 17,
         "score": 0.77,
         "level": "medium"
       },
       "locations": [
+        {
+          "file": "README.md",
+          "line": 9,
+          "column": 5
+        },
+        {
+          "file": "README.md",
+          "line": 9,
+          "column": 33
+        },
+        {
+          "file": "README.md",
+          "line": 21,
+          "column": 40
+        },
+        {
+          "file": "README.md",
+          "line": 81,
+          "column": 9
+        },
         {
           "file": "backend/src/middleware/errorHandler.ts",
           "line": 26,
@@ -1087,16 +1112,256 @@
           "file": "backend/src/services/userService.ts",
           "line": 88,
           "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 40,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 44,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 48,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 55,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/api/client.ts",
+          "line": 62,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 2,
+          "column": 11
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 4,
+          "column": 26
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 2,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 4,
+          "column": 26
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 2,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 2,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 13,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 24,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 46,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 2,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 43,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 62,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 70,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 29,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 69,
+          "column": 3
+        },
+        {
+          "file": "spring-backend/README.md",
+          "line": 67,
+          "column": 18
         }
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.365Z",
-        "lastSeen": "2026-01-26T05:14:32.365Z",
+        "firstSeen": "2026-01-27T00:35:46.640Z",
+        "lastSeen": "2026-01-27T00:35:46.640Z",
         "source": "auto-detected",
         "tags": [
           "components",
           "near-duplicate"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "08b1cd5f220cd676",
+      "subcategory": "modal-patterns",
+      "name": "Modal Patterns Detector",
+      "description": "Learns modal/dialog patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/modal-patterns",
+          "patternId": "components/modal-patterns/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.09,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 5,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "backend/.drift/call-graph/graph.json",
+          "line": 6718,
+          "column": 25
+        },
+        {
+          "file": "backend/.drift/callgraph/graph.json",
+          "line": 6748,
+          "column": 25
+        },
+        {
+          "file": "backend/.drift/error-handling/topology.json",
+          "line": 773,
+          "column": 27
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 9521,
+          "column": 38
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 11043,
+          "column": 38
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 12319,
+          "column": 37
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 9599,
+          "column": 38
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 11121,
+          "column": 38
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 12397,
+          "column": 37
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-27T00:35:46.641Z",
+        "lastSeen": "2026-01-27T00:35:46.641Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "modal-patterns"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "6c13a4a30e383c0c",
+      "subcategory": "modal-patterns",
+      "name": "Modal Patterns Detector",
+      "description": "Learns modal/dialog patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/modal-patterns",
+          "patternId": "components/modal-patterns/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.8999999999999999,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "backend/.drift/error-handling/topology.json",
+          "line": 1262,
+          "column": 31
+        },
+        {
+          "file": "backend/src/routes/orders.ts",
+          "line": 13,
+          "column": 25
+        },
+        {
+          "file": "backend/src/routes/products.ts",
+          "line": 13,
+          "column": 25
+        },
+        {
+          "file": "backend/src/routes/users.ts",
+          "line": 14,
+          "column": 25
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-27T00:35:46.642Z",
+        "lastSeen": "2026-01-27T00:35:46.642Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "modal-patterns"
         ]
       },
       "severity": "info",
@@ -1115,10 +1380,10 @@
         }
       },
       "confidence": {
-        "frequency": 0.12,
+        "frequency": 0.14,
         "consistency": 0.9,
         "age": 0,
-        "spread": 4,
+        "spread": 6,
         "score": 0.95,
         "level": "high"
       },
@@ -1182,62 +1447,22 @@
           "file": "backend/src/routes/users.ts",
           "line": 22,
           "column": 17
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 228,
+          "column": 36
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 306,
+          "column": 36
         }
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.366Z",
-        "lastSeen": "2026-01-26T05:14:32.366Z",
-        "source": "auto-detected",
-        "tags": [
-          "components",
-          "modal-patterns"
-        ]
-      },
-      "severity": "info",
-      "autoFixable": false
-    },
-    {
-      "id": "6c13a4a30e383c0c",
-      "subcategory": "modal-patterns",
-      "name": "Modal Patterns Detector",
-      "description": "Learns modal/dialog patterns from your codebase",
-      "detector": {
-        "type": "regex",
-        "config": {
-          "detectorId": "components/modal-patterns",
-          "patternId": "components/modal-patterns/import"
-        }
-      },
-      "confidence": {
-        "frequency": 0.03,
-        "consistency": 0.9,
-        "age": 0,
-        "spread": 3,
-        "score": 0.8999999999999999,
-        "level": "high"
-      },
-      "locations": [
-        {
-          "file": "backend/src/routes/orders.ts",
-          "line": 13,
-          "column": 25
-        },
-        {
-          "file": "backend/src/routes/products.ts",
-          "line": 13,
-          "column": 25
-        },
-        {
-          "file": "backend/src/routes/users.ts",
-          "line": 14,
-          "column": 25
-        }
-      ],
-      "outliers": [],
-      "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.366Z",
-        "lastSeen": "2026-01-26T05:14:32.366Z",
+        "firstSeen": "2026-01-27T00:35:46.642Z",
+        "lastSeen": "2026-01-27T00:35:46.642Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -1260,10 +1485,10 @@
         }
       },
       "confidence": {
-        "frequency": 0.05,
+        "frequency": 0.19,
         "consistency": 0.9,
         "age": 0,
-        "spread": 3,
+        "spread": 6,
         "score": 0.8999999999999999,
         "level": "high"
       },
@@ -1292,12 +1517,52 @@
           "file": "backend/src/services/userService.ts",
           "line": 85,
           "column": 23
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 41,
+          "column": 16
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 44,
+          "column": 14
+        },
+        {
+          "file": "laravel-backend/.drift/call-graph/graph.json",
+          "line": 4472,
+          "column": 37
+        },
+        {
+          "file": "laravel-backend/.drift/call-graph/graph.json",
+          "line": 5013,
+          "column": 39
+        },
+        {
+          "file": "laravel-backend/.drift/call-graph/graph.json",
+          "line": 5626,
+          "column": 36
+        },
+        {
+          "file": "laravel-backend/.drift/callgraph/graph.json",
+          "line": 4510,
+          "column": 37
+        },
+        {
+          "file": "laravel-backend/.drift/callgraph/graph.json",
+          "line": 5051,
+          "column": 39
+        },
+        {
+          "file": "laravel-backend/.drift/callgraph/graph.json",
+          "line": 5664,
+          "column": 36
         }
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.366Z",
-        "lastSeen": "2026-01-26T05:14:32.366Z",
+        "firstSeen": "2026-01-27T00:35:46.643Z",
+        "lastSeen": "2026-01-27T00:35:46.643Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -1320,10 +1585,10 @@
         }
       },
       "confidence": {
-        "frequency": 0.05,
+        "frequency": 0.27,
         "consistency": 0.9,
         "age": 0,
-        "spread": 3,
+        "spread": 6,
         "score": 0.9199999999999999,
         "level": "high"
       },
@@ -1352,12 +1617,72 @@
           "file": "backend/src/services/userService.ts",
           "line": 85,
           "column": 23
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 82,
+          "column": 68
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 82,
+          "column": 136
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 112,
+          "column": 70
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 112,
+          "column": 138
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 148,
+          "column": 50
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 148,
+          "column": 118
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 172,
+          "column": 52
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 172,
+          "column": 120
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 60,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 60,
+          "column": 117
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 41,
+          "column": 16
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 44,
+          "column": 14
         }
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.366Z",
-        "lastSeen": "2026-01-26T05:14:32.366Z",
+        "firstSeen": "2026-01-27T00:35:46.643Z",
+        "lastSeen": "2026-01-27T00:35:46.643Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -1380,10 +1705,10 @@
         }
       },
       "confidence": {
-        "frequency": 0.05,
+        "frequency": 0.07,
         "consistency": 0.9,
         "age": 0,
-        "spread": 3,
+        "spread": 4,
         "score": 0.8999999999999999,
         "level": "high"
       },
@@ -1412,12 +1737,22 @@
           "file": "backend/src/services/userService.ts",
           "line": 85,
           "column": 23
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 41,
+          "column": 16
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 44,
+          "column": 14
         }
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.366Z",
-        "lastSeen": "2026-01-26T05:14:32.366Z",
+        "firstSeen": "2026-01-27T00:35:46.643Z",
+        "lastSeen": "2026-01-27T00:35:46.643Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -1440,11 +1775,11 @@
         }
       },
       "confidence": {
-        "frequency": 0.02,
+        "frequency": 0.12,
         "consistency": 0.9,
         "age": 0,
-        "spread": 1,
-        "score": 0.8533333333333333,
+        "spread": 4,
+        "score": 0.8999999999999999,
         "level": "high"
       },
       "locations": [
@@ -1452,12 +1787,27 @@
           "file": "backend/src/services/userService.ts",
           "line": 58,
           "column": 16
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 35,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 14,
+          "column": 27
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 14,
+          "column": 26
         }
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.366Z",
-        "lastSeen": "2026-01-26T05:14:32.366Z",
+        "firstSeen": "2026-01-27T00:35:46.643Z",
+        "lastSeen": "2026-01-27T00:35:46.643Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -1496,8 +1846,968 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.366Z",
-        "lastSeen": "2026-01-26T05:14:32.366Z",
+        "firstSeen": "2026-01-27T00:35:46.643Z",
+        "lastSeen": "2026-01-27T00:35:46.643Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "modal-patterns"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "704af11c849b7187",
+      "subcategory": "props-patterns",
+      "name": "Props Patterns Detector",
+      "description": "Learns props patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/props-patterns",
+          "patternId": "components/props-patterns/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.64,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.7949999999999999,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3155,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3169,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3197,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3211,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3239,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3253,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3281,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3295,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3351,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3365,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3393,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3421,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3435,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3505,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3645,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3673,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3233,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3247,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3275,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3289,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3317,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3331,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3359,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3373,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3429,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3443,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3471,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3499,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3513,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3583,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3723,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3751,
+          "column": 31
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-27T00:35:46.643Z",
+        "lastSeen": "2026-01-27T00:35:46.643Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "props-patterns"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "dadd7480144a5b94",
+      "subcategory": "props-patterns",
+      "name": "Props Patterns Detector",
+      "description": "Learns props patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/props-patterns",
+          "patternId": "components/props-patterns/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.64,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.7949999999999999,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3155,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3169,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3197,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3211,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3239,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3253,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3281,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3295,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3351,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3365,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3393,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3421,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3435,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3505,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3645,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 3673,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3233,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3247,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3275,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3289,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3317,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3331,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3359,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3373,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3429,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3443,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3471,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3499,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3513,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3583,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3723,
+          "column": 31
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 3751,
+          "column": 31
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-27T00:35:46.643Z",
+        "lastSeen": "2026-01-27T00:35:46.643Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "props-patterns"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "9b480fc681bcb899",
+      "subcategory": "ref-forwarding",
+      "name": "Ref Forwarding Detector",
+      "description": "Learns ref forwarding patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/ref-forwarding",
+          "patternId": "components/ref-forwarding/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.78,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 271,
+          "column": 55
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 272,
+          "column": 63
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 281,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 295,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 309,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 322,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 338,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 352,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 366,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 381,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 395,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 408,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 421,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 435,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 800,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 11390,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 15668,
+          "column": 55
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 15689,
+          "column": 55
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 22,
+          "column": 55
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 43,
+          "column": 55
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 349,
+          "column": 55
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 350,
+          "column": 63
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 359,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 373,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 387,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 400,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 416,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 430,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 444,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 459,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 473,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 486,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 499,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 513,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 878,
+          "column": 73
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 11468,
+          "column": 73
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 27,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 43,
+          "column": 22
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-27T00:35:46.643Z",
+        "lastSeen": "2026-01-27T00:35:46.643Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "ref-forwarding"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "48c8b9ee522d33b0",
+      "subcategory": "ref-forwarding",
+      "name": "Ref Forwarding Detector",
+      "description": "Learns ref forwarding patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/ref-forwarding",
+          "patternId": "components/ref-forwarding/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 274,
+          "column": 40
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 352,
+          "column": 40
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-27T00:35:46.643Z",
+        "lastSeen": "2026-01-27T00:35:46.643Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "ref-forwarding"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "88edac070400b512",
+      "subcategory": "modal-patterns",
+      "name": "Modal Patterns Detector",
+      "description": "Learns modal/dialog patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/modal-patterns",
+          "patternId": "components/modal-patterns/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.52,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 9091,
+          "column": 66
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 9098,
+          "column": 56
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 9518,
+          "column": 48
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 9519,
+          "column": 56
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 9530,
+          "column": 66
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 9537,
+          "column": 56
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 81,
+          "column": 64
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 89,
+          "column": 54
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 4540,
+          "column": 64
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 11040,
+          "column": 47
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 11041,
+          "column": 55
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 12316,
+          "column": 46
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 12317,
+          "column": 54
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 12326,
+          "column": 64
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 12342,
+          "column": 64
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 12357,
+          "column": 64
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 12370,
+          "column": 64
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 12383,
+          "column": 64
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 12401,
+          "column": 64
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 12409,
+          "column": 54
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 12532,
+          "column": 64
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 12662,
+          "column": 64
+        },
+        {
+          "file": "csharp-backend/.drift/call-graph/graph.json",
+          "line": 15727,
+          "column": 46
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 9169,
+          "column": 66
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 9176,
+          "column": 56
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 9596,
+          "column": 48
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 9597,
+          "column": 56
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 9608,
+          "column": 66
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 9615,
+          "column": 56
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 81,
+          "column": 46
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 159,
+          "column": 64
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 167,
+          "column": 54
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 4618,
+          "column": 64
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 11118,
+          "column": 47
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 11119,
+          "column": 55
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 12394,
+          "column": 46
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 12395,
+          "column": 54
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 12404,
+          "column": 64
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 12420,
+          "column": 64
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 12435,
+          "column": 64
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 12448,
+          "column": 64
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 12461,
+          "column": 64
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 12479,
+          "column": 64
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 12487,
+          "column": 54
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 12610,
+          "column": 64
+        },
+        {
+          "file": "csharp-backend/.drift/callgraph/graph.json",
+          "line": 12740,
+          "column": 64
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 14,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 39,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 43,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 52,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 55,
+          "column": 36
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 65,
+          "column": 7
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-27T00:35:46.643Z",
+        "lastSeen": "2026-01-27T00:35:46.643Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -1606,897 +2916,12 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.729Z",
-        "lastSeen": "2026-01-25T03:50:12.729Z",
+        "firstSeen": "2026-01-27T00:35:46.643Z",
+        "lastSeen": "2026-01-27T00:35:46.643Z",
         "source": "auto-detected",
         "tags": [
           "components",
           "component-structure"
-        ]
-      },
-      "severity": "info",
-      "autoFixable": false
-    },
-    {
-      "id": "ca7c9f0e6b726262",
-      "subcategory": "duplicate-detection",
-      "name": "Duplicate Detection Detector",
-      "description": "Learns duplicate component patterns from your codebase",
-      "detector": {
-        "type": "regex",
-        "config": {
-          "detectorId": "components/duplicate-detection",
-          "patternId": "components/duplicate-detection/function_call"
-        }
-      },
-      "confidence": {
-        "frequency": 0.15,
-        "consistency": 0.9,
-        "age": 0,
-        "spread": 7,
-        "score": 0.9199999999999999,
-        "level": "high"
-      },
-      "locations": [
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 82,
-          "column": 47
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 112,
-          "column": 49
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 148,
-          "column": 29
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 172,
-          "column": 31
-        },
-        {
-          "file": "frontend/src/components/Button.tsx",
-          "line": 47,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 16,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 29,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 42,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 55,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/Input.tsx",
-          "line": 37,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/Table.tsx",
-          "line": 37,
-          "column": 5
-        },
-        {
-          "file": "frontend/src/components/Table.tsx",
-          "line": 45,
-          "column": 5
-        },
-        {
-          "file": "frontend/src/components/Table.tsx",
-          "line": 52,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/legacy/OldButton.tsx",
-          "line": 29,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/legacy/UserCard.tsx",
-          "line": 25,
-          "column": 3
-        }
-      ],
-      "outliers": [],
-      "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.729Z",
-        "lastSeen": "2026-01-25T03:50:12.729Z",
-        "source": "auto-detected",
-        "tags": [
-          "components",
-          "duplicate-detection"
-        ]
-      },
-      "severity": "info",
-      "autoFixable": false
-    },
-    {
-      "id": "891e71a737704f18",
-      "subcategory": "duplicate-detection",
-      "name": "Duplicate Detection Detector",
-      "description": "Learns duplicate component patterns from your codebase",
-      "detector": {
-        "type": "regex",
-        "config": {
-          "detectorId": "components/duplicate-detection",
-          "patternId": "components/duplicate-detection/assignment"
-        }
-      },
-      "confidence": {
-        "frequency": 1,
-        "consistency": 0.9,
-        "age": 0,
-        "spread": 6,
-        "score": 0.95,
-        "level": "high"
-      },
-      "locations": [
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 69,
-          "column": 36
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 70,
-          "column": 66
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 70,
-          "column": 122
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 75,
-          "column": 51
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 76,
-          "column": 58
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 76,
-          "column": 156
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 81,
-          "column": 33
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 99,
-          "column": 38
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 100,
-          "column": 68
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 100,
-          "column": 124
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 105,
-          "column": 53
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 106,
-          "column": 60
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 106,
-          "column": 158
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 111,
-          "column": 35
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 141,
-          "column": 38
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 142,
-          "column": 59
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 142,
-          "column": 115
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 147,
-          "column": 36
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 165,
-          "column": 40
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 166,
-          "column": 61
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 166,
-          "column": 117
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 171,
-          "column": 38
-        },
-        {
-          "file": "frontend/src/components/Button.tsx",
-          "line": 29,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/Button.tsx",
-          "line": 52,
-          "column": 7
-        },
-        {
-          "file": "frontend/src/components/Button.tsx",
-          "line": 52,
-          "column": 99
-        },
-        {
-          "file": "frontend/src/components/Button.tsx",
-          "line": 55,
-          "column": 15
-        },
-        {
-          "file": "frontend/src/components/Button.tsx",
-          "line": 56,
-          "column": 17
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 15,
-          "column": 34
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 17,
-          "column": 10
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 17,
-          "column": 77
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 28,
-          "column": 40
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 30,
-          "column": 10
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 30,
-          "column": 59
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 41,
-          "column": 38
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 43,
-          "column": 10
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 43,
-          "column": 34
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 54,
-          "column": 40
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 56,
-          "column": 10
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 56,
-          "column": 70
-        },
-        {
-          "file": "frontend/src/components/Input.tsx",
-          "line": 33,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/Input.tsx",
-          "line": 38,
-          "column": 10
-        },
-        {
-          "file": "frontend/src/components/Input.tsx",
-          "line": 38,
-          "column": 44
-        },
-        {
-          "file": "frontend/src/components/Input.tsx",
-          "line": 40,
-          "column": 34
-        },
-        {
-          "file": "frontend/src/components/Input.tsx",
-          "line": 42,
-          "column": 30
-        },
-        {
-          "file": "frontend/src/components/Input.tsx",
-          "line": 53,
-          "column": 9
-        },
-        {
-          "file": "frontend/src/components/Input.tsx",
-          "line": 61,
-          "column": 15
-        },
-        {
-          "file": "frontend/src/components/Table.tsx",
-          "line": 34,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/Table.tsx",
-          "line": 38,
-          "column": 12
-        },
-        {
-          "file": "frontend/src/components/Table.tsx",
-          "line": 39,
-          "column": 15
-        },
-        {
-          "file": "frontend/src/components/Table.tsx",
-          "line": 46,
-          "column": 12
-        },
-        {
-          "file": "frontend/src/components/Table.tsx",
-          "line": 53,
-          "column": 10
-        },
-        {
-          "file": "frontend/src/components/Table.tsx",
-          "line": 53,
-          "column": 40
-        },
-        {
-          "file": "frontend/src/components/Table.tsx",
-          "line": 54,
-          "column": 14
-        },
-        {
-          "file": "frontend/src/components/Table.tsx",
-          "line": 55,
-          "column": 16
-        },
-        {
-          "file": "frontend/src/components/Table.tsx",
-          "line": 67,
-          "column": 16
-        },
-        {
-          "file": "frontend/src/components/Table.tsx",
-          "line": 72,
-          "column": 15
-        },
-        {
-          "file": "frontend/src/components/Table.tsx",
-          "line": 77,
-          "column": 19
-        },
-        {
-          "file": "frontend/src/components/Table.tsx",
-          "line": 77,
-          "column": 90
-        },
-        {
-          "file": "frontend/src/types/api.ts",
-          "line": 83,
-          "column": 14
-        }
-      ],
-      "outliers": [],
-      "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.729Z",
-        "lastSeen": "2026-01-25T03:50:12.729Z",
-        "source": "auto-detected",
-        "tags": [
-          "components",
-          "duplicate-detection"
-        ]
-      },
-      "severity": "info",
-      "autoFixable": false
-    },
-    {
-      "id": "0286284bdd72a118",
-      "subcategory": "near-duplicate",
-      "name": "Near Duplicate Detector",
-      "description": "Learns near-duplicate component patterns from your codebase",
-      "detector": {
-        "type": "regex",
-        "config": {
-          "detectorId": "components/near-duplicate",
-          "patternId": "components/near-duplicate/function_call"
-        }
-      },
-      "confidence": {
-        "frequency": 0.15,
-        "consistency": 0.9,
-        "age": 0,
-        "spread": 7,
-        "score": 0.95,
-        "level": "high"
-      },
-      "locations": [
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 82,
-          "column": 47
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 112,
-          "column": 49
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 148,
-          "column": 29
-        },
-        {
-          "file": "frontend/.drift/dna/styling.json",
-          "line": 172,
-          "column": 31
-        },
-        {
-          "file": "frontend/src/components/Button.tsx",
-          "line": 47,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 16,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 29,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 42,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 55,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/Input.tsx",
-          "line": 37,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/Table.tsx",
-          "line": 37,
-          "column": 5
-        },
-        {
-          "file": "frontend/src/components/Table.tsx",
-          "line": 45,
-          "column": 5
-        },
-        {
-          "file": "frontend/src/components/Table.tsx",
-          "line": 52,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/legacy/OldButton.tsx",
-          "line": 29,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/legacy/UserCard.tsx",
-          "line": 25,
-          "column": 3
-        }
-      ],
-      "outliers": [],
-      "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.729Z",
-        "lastSeen": "2026-01-25T03:50:12.729Z",
-        "source": "auto-detected",
-        "tags": [
-          "components",
-          "near-duplicate"
-        ]
-      },
-      "severity": "info",
-      "autoFixable": false
-    },
-    {
-      "id": "c82728f0753823a2",
-      "subcategory": "composition",
-      "name": "Composition Detector",
-      "description": "Learns component composition patterns from your codebase",
-      "detector": {
-        "type": "regex",
-        "config": {
-          "detectorId": "components/composition",
-          "patternId": "components/composition/assignment"
-        }
-      },
-      "confidence": {
-        "frequency": 0.14,
-        "consistency": 0.9,
-        "age": 0,
-        "spread": 3,
-        "score": 0.8623076923076922,
-        "level": "high"
-      },
-      "locations": [
-        {
-          "file": "frontend/src/components/Button.tsx",
-          "line": 11,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 11,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 24,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 37,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 50,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/legacy/DataFetcher.tsx",
-          "line": 14,
-          "column": 36
-        },
-        {
-          "file": "frontend/src/components/legacy/DataFetcher.tsx",
-          "line": 14,
-          "column": 63
-        }
-      ],
-      "outliers": [],
-      "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
-        "source": "auto-detected",
-        "tags": [
-          "components",
-          "composition"
-        ]
-      },
-      "severity": "info",
-      "autoFixable": false
-    },
-    {
-      "id": "2504889d0f27e6a1",
-      "subcategory": "composition",
-      "name": "Composition Detector",
-      "description": "Learns component composition patterns from your codebase",
-      "detector": {
-        "type": "regex",
-        "config": {
-          "detectorId": "components/composition",
-          "patternId": "components/composition/unknown"
-        }
-      },
-      "confidence": {
-        "frequency": 0.24,
-        "consistency": 0.9,
-        "age": 0,
-        "spread": 3,
-        "score": 0.6623076923076923,
-        "level": "medium"
-      },
-      "locations": [
-        {
-          "file": "frontend/src/components/Button.tsx",
-          "line": 22,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/components/Button.tsx",
-          "line": 60,
-          "column": 9
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 15,
-          "column": 24
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 18,
-          "column": 8
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 28,
-          "column": 30
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 31,
-          "column": 8
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 41,
-          "column": 28
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 44,
-          "column": 8
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 54,
-          "column": 30
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 57,
-          "column": 8
-        },
-        {
-          "file": "frontend/src/components/Card.tsx",
-          "line": 5,
-          "column": 50
-        },
-        {
-          "file": "frontend/src/components/Table.tsx",
-          "line": 13,
-          "column": 3
-        }
-      ],
-      "outliers": [],
-      "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
-        "source": "auto-detected",
-        "tags": [
-          "components",
-          "composition"
-        ]
-      },
-      "severity": "info",
-      "autoFixable": false
-    },
-    {
-      "id": "b2b6118fea62b29b",
-      "subcategory": "props-patterns",
-      "name": "Props Patterns Detector",
-      "description": "Learns props patterns from your codebase",
-      "detector": {
-        "type": "regex",
-        "config": {
-          "detectorId": "components/props-patterns",
-          "patternId": "components/props-patterns/class_definition"
-        }
-      },
-      "confidence": {
-        "frequency": 0.02,
-        "consistency": 0.9,
-        "age": 0,
-        "spread": 1,
-        "score": 0.95,
-        "level": "high"
-      },
-      "locations": [
-        {
-          "file": "frontend/src/components/Input.tsx",
-          "line": 10,
-          "column": 18
-        }
-      ],
-      "outliers": [],
-      "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
-        "source": "auto-detected",
-        "tags": [
-          "components",
-          "props-patterns"
-        ]
-      },
-      "severity": "info",
-      "autoFixable": false
-    },
-    {
-      "id": "417109e8284b0e6b",
-      "subcategory": "props-patterns",
-      "name": "Props Patterns Detector",
-      "description": "Learns props patterns from your codebase",
-      "detector": {
-        "type": "regex",
-        "config": {
-          "detectorId": "components/props-patterns",
-          "patternId": "components/props-patterns/function_definition"
-        }
-      },
-      "confidence": {
-        "frequency": 0.02,
-        "consistency": 0.9,
-        "age": 0,
-        "spread": 1,
-        "score": 0.95,
-        "level": "high"
-      },
-      "locations": [
-        {
-          "file": "frontend/src/components/Input.tsx",
-          "line": 23,
-          "column": 17
-        }
-      ],
-      "outliers": [],
-      "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
-        "source": "auto-detected",
-        "tags": [
-          "components",
-          "props-patterns"
-        ]
-      },
-      "severity": "info",
-      "autoFixable": false
-    },
-    {
-      "id": "840e48b8603b11cf",
-      "subcategory": "state-patterns",
-      "name": "State Patterns Detector",
-      "description": "Learns state management patterns from your codebase",
-      "detector": {
-        "type": "regex",
-        "config": {
-          "detectorId": "components/state-patterns",
-          "patternId": "components/state-patterns/unknown"
-        }
-      },
-      "confidence": {
-        "frequency": 0.16,
-        "consistency": 0.9,
-        "age": 0,
-        "spread": 4,
-        "score": 0.77,
-        "level": "medium"
-      },
-      "locations": [
-        {
-          "file": "frontend/src/components/Input.tsx",
-          "line": 5,
-          "column": 48
-        },
-        {
-          "file": "frontend/src/components/legacy/DataFetcher.tsx",
-          "line": 17,
-          "column": 29
-        },
-        {
-          "file": "frontend/src/hooks/useApi.ts",
-          "line": 4,
-          "column": 65
-        },
-        {
-          "file": "frontend/src/hooks/useApi.ts",
-          "line": 23,
-          "column": 10
-        },
-        {
-          "file": "frontend/src/hooks/useApi.ts",
-          "line": 23,
-          "column": 29
-        },
-        {
-          "file": "frontend/src/hooks/useApi.ts",
-          "line": 54,
-          "column": 29
-        },
-        {
-          "file": "frontend/src/hooks/useApi.ts",
-          "line": 23,
-          "column": 17
-        },
-        {
-          "file": "frontend/src/hooks/useAuth.ts",
-          "line": 4,
-          "column": 42
-        },
-        {
-          "file": "frontend/src/hooks/useAuth.ts",
-          "line": 36,
-          "column": 10
-        },
-        {
-          "file": "frontend/src/hooks/useAuth.ts",
-          "line": 36,
-          "column": 29
-        },
-        {
-          "file": "frontend/src/hooks/useAuth.ts",
-          "line": 36,
-          "column": 17
-        }
-      ],
-      "outliers": [],
-      "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
-        "source": "auto-detected",
-        "tags": [
-          "components",
-          "state-patterns"
         ]
       },
       "severity": "info",
@@ -3026,12 +3451,897 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.729Z",
-        "lastSeen": "2026-01-25T03:50:12.729Z",
+        "firstSeen": "2026-01-27T00:35:46.643Z",
+        "lastSeen": "2026-01-27T00:35:46.643Z",
         "source": "auto-detected",
         "tags": [
           "components",
           "component-structure"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "ca7c9f0e6b726262",
+      "subcategory": "duplicate-detection",
+      "name": "Duplicate Detection Detector",
+      "description": "Learns duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/duplicate-detection",
+          "patternId": "components/duplicate-detection/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.15,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 7,
+        "score": 0.9199999999999999,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 82,
+          "column": 47
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 112,
+          "column": 49
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 148,
+          "column": 29
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 172,
+          "column": 31
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 47,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 29,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 42,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 55,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 37,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 37,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 45,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 52,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 29,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 25,
+          "column": 3
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "duplicate-detection"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "891e71a737704f18",
+      "subcategory": "duplicate-detection",
+      "name": "Duplicate Detection Detector",
+      "description": "Learns duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/duplicate-detection",
+          "patternId": "components/duplicate-detection/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 6,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 69,
+          "column": 36
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 70,
+          "column": 66
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 70,
+          "column": 122
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 75,
+          "column": 51
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 76,
+          "column": 58
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 76,
+          "column": 156
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 81,
+          "column": 33
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 99,
+          "column": 38
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 100,
+          "column": 68
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 100,
+          "column": 124
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 105,
+          "column": 53
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 106,
+          "column": 60
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 106,
+          "column": 158
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 111,
+          "column": 35
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 141,
+          "column": 38
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 142,
+          "column": 59
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 142,
+          "column": 115
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 147,
+          "column": 36
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 165,
+          "column": 40
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 166,
+          "column": 61
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 166,
+          "column": 117
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 171,
+          "column": 38
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 29,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 52,
+          "column": 7
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 52,
+          "column": 99
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 55,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 56,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 15,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 17,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 17,
+          "column": 77
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 28,
+          "column": 40
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 30,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 30,
+          "column": 59
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 41,
+          "column": 38
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 43,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 43,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 54,
+          "column": 40
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 56,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 56,
+          "column": 70
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 33,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 38,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 38,
+          "column": 44
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 40,
+          "column": 34
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 42,
+          "column": 30
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 53,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 61,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 34,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 38,
+          "column": 12
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 39,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 46,
+          "column": 12
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 53,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 53,
+          "column": 40
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 54,
+          "column": 14
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 55,
+          "column": 16
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 67,
+          "column": 16
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 72,
+          "column": 15
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 77,
+          "column": 19
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 77,
+          "column": 90
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 83,
+          "column": 14
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "duplicate-detection"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "0286284bdd72a118",
+      "subcategory": "near-duplicate",
+      "name": "Near Duplicate Detector",
+      "description": "Learns near-duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/near-duplicate",
+          "patternId": "components/near-duplicate/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.15,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 7,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 82,
+          "column": 47
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 112,
+          "column": 49
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 148,
+          "column": 29
+        },
+        {
+          "file": "frontend/.drift/dna/styling.json",
+          "line": 172,
+          "column": 31
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 47,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 29,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 42,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 55,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 37,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 37,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 45,
+          "column": 5
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 52,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/OldButton.tsx",
+          "line": 29,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/UserCard.tsx",
+          "line": 25,
+          "column": 3
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "near-duplicate"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "c82728f0753823a2",
+      "subcategory": "composition",
+      "name": "Composition Detector",
+      "description": "Learns component composition patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/composition",
+          "patternId": "components/composition/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.14,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.8623076923076922,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 11,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 11,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 24,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 37,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 50,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 14,
+          "column": 36
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 14,
+          "column": 63
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "composition"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "2504889d0f27e6a1",
+      "subcategory": "composition",
+      "name": "Composition Detector",
+      "description": "Learns component composition patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/composition",
+          "patternId": "components/composition/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.24,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.6623076923076923,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 22,
+          "column": 3
+        },
+        {
+          "file": "frontend/src/components/Button.tsx",
+          "line": 60,
+          "column": 9
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 15,
+          "column": 24
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 18,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 28,
+          "column": 30
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 31,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 41,
+          "column": 28
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 44,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 54,
+          "column": 30
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 57,
+          "column": 8
+        },
+        {
+          "file": "frontend/src/components/Card.tsx",
+          "line": 5,
+          "column": 50
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 13,
+          "column": 3
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "composition"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "b2b6118fea62b29b",
+      "subcategory": "props-patterns",
+      "name": "Props Patterns Detector",
+      "description": "Learns props patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/props-patterns",
+          "patternId": "components/props-patterns/class_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 10,
+          "column": 18
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "props-patterns"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "417109e8284b0e6b",
+      "subcategory": "props-patterns",
+      "name": "Props Patterns Detector",
+      "description": "Learns props patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/props-patterns",
+          "patternId": "components/props-patterns/function_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 23,
+          "column": 17
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "props-patterns"
+        ]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "840e48b8603b11cf",
+      "subcategory": "state-patterns",
+      "name": "State Patterns Detector",
+      "description": "Learns state management patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/state-patterns",
+          "patternId": "components/state-patterns/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.16,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "frontend/src/components/Input.tsx",
+          "line": 5,
+          "column": 48
+        },
+        {
+          "file": "frontend/src/components/legacy/DataFetcher.tsx",
+          "line": 17,
+          "column": 29
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 4,
+          "column": 65
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 23,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 23,
+          "column": 29
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 54,
+          "column": 29
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 23,
+          "column": 17
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 4,
+          "column": 42
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 36,
+          "column": 10
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 36,
+          "column": 29
+        },
+        {
+          "file": "frontend/src/hooks/useAuth.ts",
+          "line": 36,
+          "column": 17
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
+        "source": "auto-detected",
+        "tags": [
+          "components",
+          "state-patterns"
         ]
       },
       "severity": "info",
@@ -3196,8 +4506,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -3301,8 +4611,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -3406,8 +4716,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -3456,8 +4766,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -3541,8 +4851,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -3581,8 +4891,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -3621,8 +4931,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -3661,8 +4971,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -3701,8 +5011,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -3741,242 +5051,12 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
         "source": "auto-detected",
         "tags": [
           "components",
           "near-duplicate"
-        ]
-      },
-      "severity": "info",
-      "autoFixable": false
-    },
-    {
-      "id": "9b480fc681bcb899",
-      "subcategory": "ref-forwarding",
-      "name": "Ref Forwarding Detector",
-      "description": "Learns ref forwarding patterns from your codebase",
-      "detector": {
-        "type": "regex",
-        "config": {
-          "detectorId": "components/ref-forwarding",
-          "patternId": "components/ref-forwarding/assignment"
-        }
-      },
-      "confidence": {
-        "frequency": 0.78,
-        "consistency": 0.9,
-        "age": 0,
-        "spread": 4,
-        "score": 0.95,
-        "level": "high"
-      },
-      "locations": [
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 271,
-          "column": 55
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 272,
-          "column": 63
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 281,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 295,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 309,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 322,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 338,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 352,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 366,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 381,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 395,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 408,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 421,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 435,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 800,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 11390,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 15668,
-          "column": 55
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 15689,
-          "column": 55
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 22,
-          "column": 55
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 43,
-          "column": 55
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 349,
-          "column": 55
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 350,
-          "column": 63
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 359,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 373,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 387,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 400,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 416,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 430,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 444,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 459,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 473,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 486,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 499,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 513,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 878,
-          "column": 73
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 11468,
-          "column": 73
-        },
-        {
-          "file": "frontend/src/components/legacy/UserCard.tsx",
-          "line": 27,
-          "column": 7
-        },
-        {
-          "file": "frontend/src/hooks/useApi.ts",
-          "line": 16,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/hooks/useApi.ts",
-          "line": 43,
-          "column": 22
-        }
-      ],
-      "outliers": [],
-      "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.729Z",
-        "lastSeen": "2026-01-25T03:50:12.729Z",
-        "source": "auto-detected",
-        "tags": [
-          "components",
-          "ref-forwarding"
         ]
       },
       "severity": "info",
@@ -4011,8 +5091,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -4051,8 +5131,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -4436,307 +5516,12 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
         "source": "auto-detected",
         "tags": [
           "components",
           "state-patterns"
-        ]
-      },
-      "severity": "info",
-      "autoFixable": false
-    },
-    {
-      "id": "88edac070400b512",
-      "subcategory": "modal-patterns",
-      "name": "Modal Patterns Detector",
-      "description": "Learns modal/dialog patterns from your codebase",
-      "detector": {
-        "type": "regex",
-        "config": {
-          "detectorId": "components/modal-patterns",
-          "patternId": "components/modal-patterns/assignment"
-        }
-      },
-      "confidence": {
-        "frequency": 0.52,
-        "consistency": 0.9,
-        "age": 0,
-        "spread": 3,
-        "score": 0.95,
-        "level": "high"
-      },
-      "locations": [
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 9091,
-          "column": 66
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 9098,
-          "column": 56
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 9518,
-          "column": 48
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 9519,
-          "column": 56
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 9530,
-          "column": 66
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 9537,
-          "column": 56
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 81,
-          "column": 64
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 89,
-          "column": 54
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 4540,
-          "column": 64
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 11040,
-          "column": 47
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 11041,
-          "column": 55
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 12316,
-          "column": 46
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 12317,
-          "column": 54
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 12326,
-          "column": 64
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 12342,
-          "column": 64
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 12357,
-          "column": 64
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 12370,
-          "column": 64
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 12383,
-          "column": 64
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 12401,
-          "column": 64
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 12409,
-          "column": 54
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 12532,
-          "column": 64
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 12662,
-          "column": 64
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 15727,
-          "column": 46
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 9169,
-          "column": 66
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 9176,
-          "column": 56
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 9596,
-          "column": 48
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 9597,
-          "column": 56
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 9608,
-          "column": 66
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 9615,
-          "column": 56
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 81,
-          "column": 46
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 159,
-          "column": 64
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 167,
-          "column": 54
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 4618,
-          "column": 64
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 11118,
-          "column": 47
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 11119,
-          "column": 55
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 12394,
-          "column": 46
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 12395,
-          "column": 54
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 12404,
-          "column": 64
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 12420,
-          "column": 64
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 12435,
-          "column": 64
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 12448,
-          "column": 64
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 12461,
-          "column": 64
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 12479,
-          "column": 64
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 12487,
-          "column": 54
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 12610,
-          "column": 64
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 12740,
-          "column": 64
-        },
-        {
-          "file": "frontend/src/hooks/useAuth.ts",
-          "line": 14,
-          "column": 3
-        },
-        {
-          "file": "frontend/src/hooks/useAuth.ts",
-          "line": 39,
-          "column": 5
-        },
-        {
-          "file": "frontend/src/hooks/useAuth.ts",
-          "line": 43,
-          "column": 34
-        },
-        {
-          "file": "frontend/src/hooks/useAuth.ts",
-          "line": 52,
-          "column": 9
-        },
-        {
-          "file": "frontend/src/hooks/useAuth.ts",
-          "line": 55,
-          "column": 36
-        },
-        {
-          "file": "frontend/src/hooks/useAuth.ts",
-          "line": 65,
-          "column": 7
-        }
-      ],
-      "outliers": [],
-      "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.729Z",
-        "lastSeen": "2026-01-25T03:50:12.729Z",
-        "source": "auto-detected",
-        "tags": [
-          "components",
-          "modal-patterns"
         ]
       },
       "severity": "info",
@@ -4851,8 +5636,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -4891,527 +5676,12 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
         "source": "auto-detected",
         "tags": [
           "components",
           "near-duplicate"
-        ]
-      },
-      "severity": "info",
-      "autoFixable": false
-    },
-    {
-      "id": "08b1cd5f220cd676",
-      "subcategory": "modal-patterns",
-      "name": "Modal Patterns Detector",
-      "description": "Learns modal/dialog patterns from your codebase",
-      "detector": {
-        "type": "regex",
-        "config": {
-          "detectorId": "components/modal-patterns",
-          "patternId": "components/modal-patterns/conditional"
-        }
-      },
-      "confidence": {
-        "frequency": 0.09,
-        "consistency": 0.9,
-        "age": 0,
-        "spread": 5,
-        "score": 0.95,
-        "level": "high"
-      },
-      "locations": [
-        {
-          "file": "backend/.drift/call-graph/graph.json",
-          "line": 6718,
-          "column": 25
-        },
-        {
-          "file": "backend/.drift/callgraph/graph.json",
-          "line": 6748,
-          "column": 25
-        },
-        {
-          "file": "backend/.drift/error-handling/topology.json",
-          "line": 773,
-          "column": 27
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 9521,
-          "column": 38
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 11043,
-          "column": 38
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 12319,
-          "column": 37
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 9599,
-          "column": 38
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 11121,
-          "column": 38
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 12397,
-          "column": 37
-        }
-      ],
-      "outliers": [],
-      "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.727Z",
-        "lastSeen": "2026-01-25T03:50:12.727Z",
-        "source": "auto-detected",
-        "tags": [
-          "components",
-          "modal-patterns"
-        ]
-      },
-      "severity": "info",
-      "autoFixable": false
-    },
-    {
-      "id": "704af11c849b7187",
-      "subcategory": "props-patterns",
-      "name": "Props Patterns Detector",
-      "description": "Learns props patterns from your codebase",
-      "detector": {
-        "type": "regex",
-        "config": {
-          "detectorId": "components/props-patterns",
-          "patternId": "components/props-patterns/function_call"
-        }
-      },
-      "confidence": {
-        "frequency": 0.64,
-        "consistency": 0.9,
-        "age": 0,
-        "spread": 2,
-        "score": 0.7949999999999999,
-        "level": "medium"
-      },
-      "locations": [
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3155,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3169,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3197,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3211,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3239,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3253,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3281,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3295,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3351,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3365,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3393,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3421,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3435,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3505,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3645,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3673,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3233,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3247,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3275,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3289,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3317,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3331,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3359,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3373,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3429,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3443,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3471,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3499,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3513,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3583,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3723,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3751,
-          "column": 31
-        }
-      ],
-      "outliers": [],
-      "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.729Z",
-        "lastSeen": "2026-01-25T03:50:12.729Z",
-        "source": "auto-detected",
-        "tags": [
-          "components",
-          "props-patterns"
-        ]
-      },
-      "severity": "info",
-      "autoFixable": false
-    },
-    {
-      "id": "dadd7480144a5b94",
-      "subcategory": "props-patterns",
-      "name": "Props Patterns Detector",
-      "description": "Learns props patterns from your codebase",
-      "detector": {
-        "type": "regex",
-        "config": {
-          "detectorId": "components/props-patterns",
-          "patternId": "components/props-patterns/property_access"
-        }
-      },
-      "confidence": {
-        "frequency": 0.64,
-        "consistency": 0.9,
-        "age": 0,
-        "spread": 2,
-        "score": 0.7949999999999999,
-        "level": "medium"
-      },
-      "locations": [
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3155,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3169,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3197,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3211,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3239,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3253,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3281,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3295,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3351,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3365,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3393,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3421,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3435,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3505,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3645,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 3673,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3233,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3247,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3275,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3289,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3317,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3331,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3359,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3373,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3429,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3443,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3471,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3499,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3513,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3583,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3723,
-          "column": 31
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 3751,
-          "column": 31
-        }
-      ],
-      "outliers": [],
-      "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.729Z",
-        "lastSeen": "2026-01-25T03:50:12.729Z",
-        "source": "auto-detected",
-        "tags": [
-          "components",
-          "props-patterns"
-        ]
-      },
-      "severity": "info",
-      "autoFixable": false
-    },
-    {
-      "id": "48c8b9ee522d33b0",
-      "subcategory": "ref-forwarding",
-      "name": "Ref Forwarding Detector",
-      "description": "Learns ref forwarding patterns from your codebase",
-      "detector": {
-        "type": "regex",
-        "config": {
-          "detectorId": "components/ref-forwarding",
-          "patternId": "components/ref-forwarding/conditional"
-        }
-      },
-      "confidence": {
-        "frequency": 0.04,
-        "consistency": 0.9,
-        "age": 0,
-        "spread": 2,
-        "score": 0.95,
-        "level": "high"
-      },
-      "locations": [
-        {
-          "file": "csharp-backend/.drift/call-graph/graph.json",
-          "line": 274,
-          "column": 40
-        },
-        {
-          "file": "csharp-backend/.drift/callgraph/graph.json",
-          "line": 352,
-          "column": 40
-        }
-      ],
-      "outliers": [],
-      "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.729Z",
-        "lastSeen": "2026-01-25T03:50:12.729Z",
-        "source": "auto-detected",
-        "tags": [
-          "components",
-          "ref-forwarding"
         ]
       },
       "severity": "info",
@@ -5501,8 +5771,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -5566,8 +5836,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -5616,8 +5886,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.730Z",
-        "lastSeen": "2026-01-25T03:50:12.730Z",
+        "firstSeen": "2026-01-27T00:35:46.644Z",
+        "lastSeen": "2026-01-27T00:35:46.644Z",
         "source": "auto-detected",
         "tags": [
           "components",
@@ -5626,48 +5896,8 @@
       },
       "severity": "info",
       "autoFixable": false
-    },
-    {
-      "id": "1a7b07394c32adea",
-      "subcategory": "state-patterns",
-      "name": "State Patterns Detector",
-      "description": "Learns state management patterns from your codebase",
-      "detector": {
-        "type": "regex",
-        "config": {
-          "detectorId": "components/state-patterns",
-          "patternId": "components/state-patterns/assignment"
-        }
-      },
-      "confidence": {
-        "frequency": 0.02,
-        "consistency": 0.9,
-        "age": 0,
-        "spread": 1,
-        "score": 0.7949999999999999,
-        "level": "medium"
-      },
-      "locations": [
-        {
-          "file": "timing-test.mjs",
-          "line": 35,
-          "column": 9
-        }
-      ],
-      "outliers": [],
-      "metadata": {
-        "firstSeen": "2026-01-22T14:16:03.113Z",
-        "lastSeen": "2026-01-22T14:16:03.113Z",
-        "source": "auto-detected",
-        "tags": [
-          "components",
-          "state-patterns"
-        ]
-      },
-      "severity": "info",
-      "autoFixable": false
     }
   ],
-  "lastUpdated": "2026-01-26T05:14:32.369Z",
-  "checksum": "9cdc75463fcfbcfa"
+  "lastUpdated": "2026-01-27T00:35:46.649Z",
+  "checksum": "b9897b365a092a47"
 }

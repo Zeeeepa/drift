@@ -15,10 +15,10 @@
         }
       },
       "confidence": {
-        "frequency": 0.06,
+        "frequency": 0.1,
         "consistency": 0.9,
         "age": 0,
-        "spread": 6,
+        "spread": 10,
         "score": 0.95,
         "level": "high"
       },
@@ -52,6 +52,26 @@
           "file": "backend/src/routes/users.ts",
           "line": 20,
           "column": 1
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 13,
+          "column": 52
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 15,
+          "column": 46
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 15,
+          "column": 48
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 11,
+          "column": 45
         }
       ],
       "outliers": [
@@ -61,11 +81,18 @@
           "column": 1,
           "reason": "Resource 'dashboard' should use plural form for RESTful consistency",
           "deviationScore": 0.4
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 13,
+          "column": 52,
+          "reason": "Resource 'dashboard' should use plural form for RESTful consistency",
+          "deviationScore": 0.4
         }
       ],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.364Z",
-        "lastSeen": "2026-01-26T05:14:32.365Z",
+        "firstSeen": "2026-01-27T00:35:46.642Z",
+        "lastSeen": "2026-01-27T00:35:46.642Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -129,8 +156,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.365Z",
-        "lastSeen": "2026-01-26T05:14:32.365Z",
+        "firstSeen": "2026-01-27T00:35:46.642Z",
+        "lastSeen": "2026-01-27T00:35:46.642Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -153,10 +180,10 @@
         }
       },
       "confidence": {
-        "frequency": 0.03,
+        "frequency": 0.07,
         "consistency": 0.9,
         "age": 0,
-        "spread": 3,
+        "spread": 7,
         "score": 0.95,
         "level": "high"
       },
@@ -175,12 +202,32 @@
           "file": "backend/src/routes/legacy.ts",
           "line": 31,
           "column": 12
+        },
+        {
+          "file": "frontend/src/api/admin.ts",
+          "line": 13,
+          "column": 52
+        },
+        {
+          "file": "frontend/src/api/orders.ts",
+          "line": 15,
+          "column": 46
+        },
+        {
+          "file": "frontend/src/api/products.ts",
+          "line": 15,
+          "column": 48
+        },
+        {
+          "file": "frontend/src/api/users.ts",
+          "line": 11,
+          "column": 45
         }
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.365Z",
-        "lastSeen": "2026-01-26T05:14:32.365Z",
+        "firstSeen": "2026-01-27T00:35:46.642Z",
+        "lastSeen": "2026-01-27T00:35:46.642Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -244,8 +291,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.365Z",
-        "lastSeen": "2026-01-26T05:14:32.365Z",
+        "firstSeen": "2026-01-27T00:35:46.642Z",
+        "lastSeen": "2026-01-27T00:35:46.642Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -309,8 +356,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.365Z",
-        "lastSeen": "2026-01-26T05:14:32.365Z",
+        "firstSeen": "2026-01-27T00:35:46.642Z",
+        "lastSeen": "2026-01-27T00:35:46.642Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -333,10 +380,10 @@
         }
       },
       "confidence": {
-        "frequency": 0.06,
+        "frequency": 0.09,
         "consistency": 0.9,
         "age": 0,
-        "spread": 6,
+        "spread": 9,
         "score": 0.95,
         "level": "high"
       },
@@ -370,6 +417,21 @@
           "file": "backend/src/utils/response.ts",
           "line": 34,
           "column": 3
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 17,
+          "column": 32
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 9,
+          "column": 26
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 10,
+          "column": 33
         }
       ],
       "outliers": [
@@ -393,11 +455,32 @@
           "column": 5,
           "reason": "Direct array/data return without envelope wrapper",
           "deviationScore": 0.4
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 10,
+          "column": 33,
+          "reason": "Response envelope is missing a data field",
+          "deviationScore": 0.4
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 21,
+          "column": 27,
+          "reason": "Response envelope is missing a data field",
+          "deviationScore": 0.4
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 13,
+          "column": 10,
+          "reason": "Response envelope is missing a data field",
+          "deviationScore": 0.4
         }
       ],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.365Z",
-        "lastSeen": "2026-01-26T05:14:32.365Z",
+        "firstSeen": "2026-01-27T00:35:46.642Z",
+        "lastSeen": "2026-01-27T00:35:46.642Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -451,8 +534,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.365Z",
-        "lastSeen": "2026-01-26T05:14:32.365Z",
+        "firstSeen": "2026-01-27T00:35:46.642Z",
+        "lastSeen": "2026-01-27T00:35:46.642Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -475,10 +558,10 @@
         }
       },
       "confidence": {
-        "frequency": 0.03,
+        "frequency": 0.06,
         "consistency": 0.9,
         "age": 0,
-        "spread": 3,
+        "spread": 6,
         "score": 0.95,
         "level": "high"
       },
@@ -497,12 +580,27 @@
           "file": "backend/src/utils/response.ts",
           "line": 10,
           "column": 33
+        },
+        {
+          "file": "frontend/src/components/Table.tsx",
+          "line": 17,
+          "column": 32
+        },
+        {
+          "file": "frontend/src/hooks/useApi.ts",
+          "line": 9,
+          "column": 26
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 10,
+          "column": 33
         }
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.365Z",
-        "lastSeen": "2026-01-26T05:14:32.365Z",
+        "firstSeen": "2026-01-27T00:35:46.642Z",
+        "lastSeen": "2026-01-27T00:35:46.642Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -561,8 +659,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.365Z",
-        "lastSeen": "2026-01-26T05:14:32.366Z",
+        "firstSeen": "2026-01-27T00:35:46.642Z",
+        "lastSeen": "2026-01-27T00:35:46.642Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -611,8 +709,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.366Z",
-        "lastSeen": "2026-01-26T05:14:32.366Z",
+        "firstSeen": "2026-01-27T00:35:46.642Z",
+        "lastSeen": "2026-01-27T00:35:46.642Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -635,10 +733,10 @@
         }
       },
       "confidence": {
-        "frequency": 0.03,
+        "frequency": 0.04,
         "consistency": 0.9,
         "age": 0,
-        "spread": 3,
+        "spread": 4,
         "score": 0.95,
         "level": "high"
       },
@@ -657,12 +755,17 @@
           "file": "backend/src/services/productService.ts",
           "line": 40,
           "column": 26
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 13,
+          "column": 10
         }
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.366Z",
-        "lastSeen": "2026-01-26T05:14:32.366Z",
+        "firstSeen": "2026-01-27T00:35:46.642Z",
+        "lastSeen": "2026-01-27T00:35:46.642Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -711,8 +814,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.366Z",
-        "lastSeen": "2026-01-26T05:14:32.366Z",
+        "firstSeen": "2026-01-27T00:35:46.642Z",
+        "lastSeen": "2026-01-27T00:35:46.642Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -751,8 +854,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.366Z",
-        "lastSeen": "2026-01-26T05:14:32.366Z",
+        "firstSeen": "2026-01-27T00:35:46.642Z",
+        "lastSeen": "2026-01-27T00:35:46.642Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -775,10 +878,10 @@
         }
       },
       "confidence": {
-        "frequency": 0.02,
+        "frequency": 0.03,
         "consistency": 0.9,
         "age": 0,
-        "spread": 2,
+        "spread": 3,
         "score": 0.95,
         "level": "high"
       },
@@ -792,12 +895,17 @@
           "file": "backend/src/services/productService.ts",
           "line": 40,
           "column": 26
+        },
+        {
+          "file": "frontend/src/types/api.ts",
+          "line": 13,
+          "column": 10
         }
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.366Z",
-        "lastSeen": "2026-01-26T05:14:32.366Z",
+        "firstSeen": "2026-01-27T00:35:46.643Z",
+        "lastSeen": "2026-01-27T00:35:46.643Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -836,8 +944,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-26T05:14:32.366Z",
-        "lastSeen": "2026-01-26T05:14:32.366Z",
+        "firstSeen": "2026-01-27T00:35:46.643Z",
+        "lastSeen": "2026-01-27T00:35:46.643Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -1106,8 +1214,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.731Z",
-        "lastSeen": "2026-01-25T03:50:12.731Z",
+        "firstSeen": "2026-01-27T00:35:46.645Z",
+        "lastSeen": "2026-01-27T00:35:46.645Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -1641,8 +1749,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.731Z",
-        "lastSeen": "2026-01-25T03:50:12.731Z",
+        "firstSeen": "2026-01-27T00:35:46.645Z",
+        "lastSeen": "2026-01-27T00:35:46.645Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -2031,8 +2139,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.731Z",
-        "lastSeen": "2026-01-25T03:50:12.731Z",
+        "firstSeen": "2026-01-27T00:35:46.645Z",
+        "lastSeen": "2026-01-27T00:35:46.645Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -2306,8 +2414,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.731Z",
-        "lastSeen": "2026-01-25T03:50:12.731Z",
+        "firstSeen": "2026-01-27T00:35:46.645Z",
+        "lastSeen": "2026-01-27T00:35:46.645Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -2366,8 +2474,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.731Z",
-        "lastSeen": "2026-01-25T03:50:12.731Z",
+        "firstSeen": "2026-01-27T00:35:46.645Z",
+        "lastSeen": "2026-01-27T00:35:46.645Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -2446,8 +2554,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.731Z",
-        "lastSeen": "2026-01-25T03:50:12.731Z",
+        "firstSeen": "2026-01-27T00:35:46.645Z",
+        "lastSeen": "2026-01-27T00:35:46.645Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -2616,8 +2724,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.731Z",
-        "lastSeen": "2026-01-25T03:50:12.731Z",
+        "firstSeen": "2026-01-27T00:35:46.645Z",
+        "lastSeen": "2026-01-27T00:35:46.645Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -2671,8 +2779,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.731Z",
-        "lastSeen": "2026-01-25T03:50:12.731Z",
+        "firstSeen": "2026-01-27T00:35:46.645Z",
+        "lastSeen": "2026-01-27T00:35:46.645Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -2826,8 +2934,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.731Z",
-        "lastSeen": "2026-01-25T03:50:12.731Z",
+        "firstSeen": "2026-01-27T00:35:46.645Z",
+        "lastSeen": "2026-01-27T00:35:46.645Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -2991,8 +3099,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.732Z",
-        "lastSeen": "2026-01-25T03:50:12.732Z",
+        "firstSeen": "2026-01-27T00:35:46.645Z",
+        "lastSeen": "2026-01-27T00:35:46.645Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -3061,8 +3169,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.732Z",
-        "lastSeen": "2026-01-25T03:50:12.732Z",
+        "firstSeen": "2026-01-27T00:35:46.645Z",
+        "lastSeen": "2026-01-27T00:35:46.645Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -3106,8 +3214,8 @@
       ],
       "outliers": [],
       "metadata": {
-        "firstSeen": "2026-01-25T03:50:12.732Z",
-        "lastSeen": "2026-01-25T03:50:12.732Z",
+        "firstSeen": "2026-01-27T00:35:46.645Z",
+        "lastSeen": "2026-01-27T00:35:46.645Z",
         "source": "auto-detected",
         "tags": [
           "api",
@@ -3118,6 +3226,6 @@
       "autoFixable": false
     }
   ],
-  "lastUpdated": "2026-01-26T05:14:32.371Z",
-  "checksum": "1eb7ed2e709df1f9"
+  "lastUpdated": "2026-01-27T00:35:46.653Z",
+  "checksum": "6b9ebe9c942ede62"
 }
