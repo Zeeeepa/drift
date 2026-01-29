@@ -519,6 +519,7 @@ impl SqliteReachabilityEngine {
 }
 
 /// Internal function info struct
+#[allow(dead_code)]
 struct FunctionInfo {
     id: String,
     name: String,

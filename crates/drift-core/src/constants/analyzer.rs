@@ -14,7 +14,9 @@ use super::secrets::SecretDetector;
 
 /// Main analyzer for constants
 pub struct ConstantsAnalyzer {
+    #[allow(dead_code)]
     extractor: ConstantExtractor,
+    #[allow(dead_code)]
     secret_detector: SecretDetector,
 }
 

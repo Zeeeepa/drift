@@ -10,7 +10,6 @@
 //! - Class hierarchies
 //! - Method calls and receivers
 
-use std::collections::HashMap;
 use tree_sitter::{Query, QueryCursor, Tree, Node};
 
 use super::types::{

@@ -86,11 +86,13 @@ impl StringInterner {
     }
     
     /// Get the number of interned strings
+    #[allow(dead_code)]
     pub fn len(&self) -> usize {
         self.strings.len()
     }
     
     /// Check if the interner is empty
+    #[allow(dead_code)]
     pub fn is_empty(&self) -> bool {
         self.strings.is_empty()
     }
@@ -153,11 +155,13 @@ impl PathInterner {
     }
     
     /// Get the number of interned paths
+    #[allow(dead_code)]
     pub fn len(&self) -> usize {
         self.interner.len()
     }
     
     /// Check if empty
+    #[allow(dead_code)]
     pub fn is_empty(&self) -> bool {
         self.interner.is_empty()
     }
@@ -187,6 +191,7 @@ impl FunctionInterner {
     }
     
     /// Intern a qualified function name (class.method)
+    #[allow(dead_code)]
     pub fn intern_qualified(&mut self, class: &str, method: &str) -> Symbol {
         let qualified = format!("{}.{}", class, method);
         self.interner.intern(&qualified)
@@ -198,11 +203,13 @@ impl FunctionInterner {
     }
     
     /// Get the number of interned function names
+    #[allow(dead_code)]
     pub fn len(&self) -> usize {
         self.interner.len()
     }
     
     /// Check if empty
+    #[allow(dead_code)]
     pub fn is_empty(&self) -> bool {
         self.interner.is_empty()
     }

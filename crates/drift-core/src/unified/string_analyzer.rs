@@ -26,6 +26,7 @@ pub struct StringLiteralAnalyzer {
     /// Environment variable patterns
     env_patterns: RegexSet,
     /// Logging patterns
+    #[allow(dead_code)]
     log_patterns: RegexSet,
 }
 

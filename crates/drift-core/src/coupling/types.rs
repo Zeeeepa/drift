@@ -1,7 +1,6 @@
 //! Coupling analysis types
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 
 /// Module coupling metrics (Robert C. Martin metrics)
 #[derive(Debug, Clone, Serialize, Deserialize)]

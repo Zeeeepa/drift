@@ -1,7 +1,6 @@
 //! Test topology types
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 
 /// Test file information
 #[derive(Debug, Clone, Serialize, Deserialize)]

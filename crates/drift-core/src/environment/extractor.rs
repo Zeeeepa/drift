@@ -5,9 +5,8 @@
 
 use regex::Regex;
 use once_cell::sync::Lazy;
-use crate::parsers::{Language, ParseResult};
+use crate::parsers::Language;
 use super::types::{EnvAccess, EnvSensitivity};
-use tree_sitter::{Query, QueryCursor};
 
 /// Patterns for env var access by language
 static TS_ENV_REGEX: Lazy<Regex> = Lazy::new(|| {

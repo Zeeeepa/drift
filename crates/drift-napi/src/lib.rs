@@ -1723,7 +1723,7 @@ pub struct JsConstantsResult {
 pub fn analyze_constants(files: Vec<String>) -> Result<JsConstantsResult> {
     use drift_core::constants::{ConstantsAnalyzer, ConstantValue, SecretSeverity};
     
-    let mut analyzer = ConstantsAnalyzer::new();
+    let analyzer = ConstantsAnalyzer::new();
     let result = analyzer.analyze(&files);
     
     let value_to_string = |v: &ConstantValue| -> String {

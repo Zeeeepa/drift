@@ -4,7 +4,7 @@
 //! the call graph and function bodies.
 
 use std::collections::{HashMap, HashSet};
-use crate::parsers::{ParseResult, Language};
+use crate::parsers::ParseResult;
 use super::types::*;
 
 /// Detects wrapper patterns in code
@@ -134,7 +134,7 @@ impl WrapperDetector {
         None
     }
 
-    fn calculate_confidence(&self, func_name: &str, wrapped_call: &str, total_calls: usize) -> f32 {
+    fn calculate_confidence(&self, func_name: &str, _wrapped_call: &str, total_calls: usize) -> f32 {
         let mut confidence = 0.6f32; // Base confidence
         
         // Higher confidence if function name suggests wrapper

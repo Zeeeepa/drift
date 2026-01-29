@@ -23,6 +23,7 @@ pub struct UnifiedAnalyzer {
     /// String literal analyzer (regex fallback)
     string_analyzer: StringLiteralAnalyzer,
     /// Parser manager for function extraction
+    #[allow(dead_code)]
     parser_manager: ParserManager,
 }
 

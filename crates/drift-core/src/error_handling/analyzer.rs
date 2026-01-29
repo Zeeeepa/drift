@@ -6,7 +6,7 @@
 use std::time::Instant;
 
 use super::types::*;
-use crate::parsers::{ParserManager, ParseResult, FunctionInfo, CallSite, ClassInfo};
+use crate::parsers::{ParserManager, ParseResult, FunctionInfo};
 
 /// Error handling analyzer - AST-first
 pub struct ErrorHandlingAnalyzer {

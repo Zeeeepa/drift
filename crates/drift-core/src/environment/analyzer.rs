@@ -25,7 +25,7 @@ impl EnvironmentAnalyzer {
     /// Analyze files for environment variable usage
     pub fn analyze(&self, files: &[String]) -> EnvironmentResult {
         let start = Instant::now();
-        let parser = ParserManager::new();
+        let _parser = ParserManager::new();
 
         // Process files in parallel
         let all_accesses: Vec<EnvAccess> = files

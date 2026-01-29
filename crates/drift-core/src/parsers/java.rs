@@ -15,6 +15,7 @@ pub struct JavaParser {
     class_query: Query,
     import_query: Query,
     call_query: Query,
+    #[allow(dead_code)]
     annotation_query: Query,
 }
 
@@ -139,7 +140,7 @@ impl JavaParser {
             let mut name = String::new();
             let mut range = Range::new(0, 0, 0, 0);
             let mut is_public = false;
-            let mut is_static = false;
+            let mut _is_static = false;
             
             for capture in m.captures {
                 let node = capture.node;
@@ -152,7 +153,7 @@ impl JavaParser {
                     "modifiers" => {
                         let mods = node.utf8_text(source).unwrap_or("");
                         is_public = mods.contains("public");
-                        is_static = mods.contains("static");
+                        _is_static = mods.contains("static");
                     }
                     "method" | "constructor" => {
                         range = node_range(&node);

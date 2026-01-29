@@ -26,7 +26,7 @@ use crate::scanner::{Scanner, ScanConfig};
 use super::types::*;
 use super::extractor::to_function_entries;
 use super::universal_extractor::UniversalExtractor;
-use super::storage::{CallGraphDb, ParallelWriter, FunctionBatch};
+use super::storage::{ParallelWriter, FunctionBatch};
 
 /// Configuration for the streaming builder
 pub struct BuilderConfig {
