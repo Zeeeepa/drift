@@ -60,6 +60,48 @@ impl DataAccessDetector {
             });
         }
         
+        // Supabase chain methods: .select(), .insert(), .update(), .delete(), .upsert()
+        // These are called on the result of supabase.from('table')
+        let is_supabase_chain = matches!(callee,
+            "select" | "insert" | "update" | "delete" | "upsert" |
+            "eq" | "neq" | "gt" | "gte" | "lt" | "lte" | "like" | "ilike" |
+            "is_" | "in_" | "contains" | "contained_by" | "range_lt" | "range_gt" |
+            "order" | "limit" | "offset" | "range" | "single" | "maybeSingle" |
+            "filter" | "not_" | "or_" | "match" | "textSearch"
+        );
+        if is_supabase_chain {
+            // Check if this looks like a Supabase query chain (receiver ends with query-like pattern)
+            if receiver.is_some() {
+                let operation = match callee {
+                    "insert" | "update" | "upsert" => DataOperation::Write,
+                    "delete" => DataOperation::Delete,
+                    _ => DataOperation::Read,
+                };
+                return Some(DataAccessPoint {
+                    table: "unknown".to_string(),
+                    operation,
+                    fields: Vec::new(),
+                    file: file.to_string(),
+                    line: call.range.start.line,
+                    confidence: 0.7, // Lower confidence since we can't confirm it's Supabase
+                    framework: Some("supabase-chain".to_string()),
+                });
+            }
+        }
+        
+        // Supabase RPC: supabase.rpc('function_name')
+        if callee == "rpc" && receiver.map_or(false, |r| r.contains("supabase")) {
+            return Some(DataAccessPoint {
+                table: "rpc".to_string(),
+                operation: DataOperation::Read, // Could be read or write
+                fields: Vec::new(),
+                file: file.to_string(),
+                line: call.range.start.line,
+                confidence: 0.9,
+                framework: Some("supabase-rpc".to_string()),
+            });
+        }
+        
         // Supabase auth: supabase.auth.sign_up(), supabase.auth.sign_in_with_password()
         if let Some(recv) = receiver {
             if recv.contains("supabase") && recv.contains("auth") {
@@ -866,6 +908,7 @@ impl DataAccessDetector {
         
         // Entity Framework: context.Users.Where(), context.SaveChanges(), context.Add()
         if let Some(recv) = receiver {
+            // Direct context operations: _context.SaveChanges(), _context.Add()
             if recv.ends_with("Context") || recv.ends_with("context") || recv == "_context" || recv == "db" || recv == "_db" {
                 // DbSet operations
                 let is_ef = matches!(callee,
@@ -890,6 +933,67 @@ impl DataAccessDetector {
                         framework: Some("entity-framework".to_string()),
                     });
                 }
+            }
+            
+            // DbSet chain operations: _context.Users.Where(), _context.Products.ToListAsync()
+            // Receiver will be like "_context.Users" or "db.Products"
+            if recv.contains(".") {
+                let parts: Vec<&str> = recv.split('.').collect();
+                if parts.len() >= 2 {
+                    let context_part = parts[0];
+                    let dbset_part = parts[parts.len() - 1];
+                    
+                    // Check if first part looks like a context
+                    let is_context = context_part.ends_with("Context") || 
+                                    context_part.ends_with("context") || 
+                                    context_part == "_context" || 
+                                    context_part == "db" || 
+                                    context_part == "_db";
+                    
+                    if is_context {
+                        let is_linq = matches!(callee,
+                            "Where" | "Select" | "OrderBy" | "OrderByDescending" | "ThenBy" | "ThenByDescending" |
+                            "Include" | "ThenInclude" | "AsNoTracking" | "AsTracking" |
+                            "FirstOrDefault" | "FirstOrDefaultAsync" | "First" | "FirstAsync" |
+                            "SingleOrDefault" | "SingleOrDefaultAsync" | "Single" | "SingleAsync" |
+                            "ToList" | "ToListAsync" | "ToArray" | "ToArrayAsync" |
+                            "Any" | "AnyAsync" | "All" | "AllAsync" | "Count" | "CountAsync" |
+                            "Sum" | "SumAsync" | "Average" | "AverageAsync" | "Max" | "MaxAsync" | "Min" | "MinAsync" |
+                            "Skip" | "Take" | "Distinct" | "GroupBy" | "Join" | "GroupJoin"
+                        );
+                        if is_linq {
+                            return Some(DataAccessPoint {
+                                table: dbset_part.to_lowercase(),
+                                operation: DataOperation::Read,
+                                fields: Vec::new(),
+                                file: file.to_string(),
+                                line: call.range.start.line,
+                                confidence: 0.9,
+                                framework: Some("entity-framework".to_string()),
+                            });
+                        }
+                    }
+                }
+            }
+            
+            // LINQ extension methods on any IQueryable/IEnumerable (common in EF Core)
+            // These are called on the result of previous LINQ operations
+            let is_linq_terminal = matches!(callee,
+                "ToList" | "ToListAsync" | "ToArray" | "ToArrayAsync" |
+                "FirstOrDefault" | "FirstOrDefaultAsync" | "First" | "FirstAsync" |
+                "SingleOrDefault" | "SingleOrDefaultAsync" | "Single" | "SingleAsync" |
+                "Any" | "AnyAsync" | "All" | "AllAsync" | "Count" | "CountAsync"
+            );
+            if is_linq_terminal {
+                return Some(DataAccessPoint {
+                    table: "unknown".to_string(),
+                    operation: DataOperation::Read,
+                    fields: Vec::new(),
+                    file: file.to_string(),
+                    line: call.range.start.line,
+                    confidence: 0.7,
+                    framework: Some("linq".to_string()),
+                });
             }
         }
         
@@ -978,6 +1082,50 @@ impl DataAccessDetector {
         // PHP ORMs
         // =========================================================================
         
+        // Laravel Eloquent Relationships: $this->hasMany(), $this->belongsTo(), etc.
+        if let Some(recv) = receiver {
+            if recv == "this" || recv == "self" {
+                let is_eloquent_relationship = matches!(callee,
+                    "hasMany" | "hasOne" | "belongsTo" | "belongsToMany" | "hasManyThrough" |
+                    "hasOneThrough" | "morphTo" | "morphMany" | "morphOne" | "morphToMany" |
+                    "morphedByMany"
+                );
+                if is_eloquent_relationship {
+                    return Some(DataAccessPoint {
+                        table: "relationship".to_string(),
+                        operation: DataOperation::Read,
+                        fields: Vec::new(),
+                        file: file.to_string(),
+                        line: call.range.start.line,
+                        confidence: 0.9,
+                        framework: Some("eloquent-relationship".to_string()),
+                    });
+                }
+                
+                // Instance methods on $this in Eloquent models
+                let is_eloquent_instance = matches!(callee,
+                    "save" | "delete" | "update" | "refresh" | "fresh" | "load" | "loadMissing" |
+                    "push" | "touch" | "increment" | "decrement" | "fill" | "forceFill"
+                );
+                if is_eloquent_instance {
+                    let operation = match callee {
+                        "save" | "update" | "push" | "touch" | "increment" | "decrement" | "fill" | "forceFill" => DataOperation::Write,
+                        "delete" => DataOperation::Delete,
+                        _ => DataOperation::Read,
+                    };
+                    return Some(DataAccessPoint {
+                        table: "model".to_string(),
+                        operation,
+                        fields: Vec::new(),
+                        file: file.to_string(),
+                        line: call.range.start.line,
+                        confidence: 0.85,
+                        framework: Some("eloquent".to_string()),
+                    });
+                }
+            }
+        }
+        
         // Laravel Eloquent: Model::find(), Model::create(), $model->save()
         if let Some(recv) = receiver {
             // Static calls: User::find(), User::where()
@@ -986,7 +1134,9 @@ impl DataAccessDetector {
                     "find" | "findOrFail" | "first" | "firstOrFail" | "get" | "all" |
                     "where" | "whereIn" | "whereBetween" | "orderBy" | "limit" |
                     "create" | "insert" | "update" | "delete" | "destroy" |
-                    "save" | "updateOrCreate" | "firstOrCreate" | "upsert"
+                    "save" | "updateOrCreate" | "firstOrCreate" | "upsert" |
+                    "with" | "without" | "load" | "paginate" | "simplePaginate" |
+                    "count" | "max" | "min" | "avg" | "sum" | "exists" | "doesntExist"
                 );
                 if is_eloquent {
                     let operation = match callee {
@@ -1001,6 +1151,32 @@ impl DataAccessDetector {
                         file: file.to_string(),
                         line: call.range.start.line,
                         confidence: 0.85,
+                        framework: Some("eloquent".to_string()),
+                    });
+                }
+            }
+            
+            // Instance method calls on model variables: $user->save(), $post->delete()
+            // These are lowercase variable names that aren't "this"
+            if recv != "this" && recv != "self" && recv.chars().next().map_or(false, |c| c.is_lowercase()) {
+                let is_eloquent_instance = matches!(callee,
+                    "save" | "delete" | "update" | "refresh" | "fresh" | "load" | "loadMissing" |
+                    "push" | "touch" | "increment" | "decrement" | "fill" | "forceFill" |
+                    "replicate" | "trashed" | "restore" | "forceDelete"
+                );
+                if is_eloquent_instance {
+                    let operation = match callee {
+                        "save" | "update" | "push" | "touch" | "increment" | "decrement" | "fill" | "forceFill" | "restore" => DataOperation::Write,
+                        "delete" | "forceDelete" => DataOperation::Delete,
+                        _ => DataOperation::Read,
+                    };
+                    return Some(DataAccessPoint {
+                        table: recv.to_string(),
+                        operation,
+                        fields: Vec::new(),
+                        file: file.to_string(),
+                        line: call.range.start.line,
+                        confidence: 0.75,
                         framework: Some("eloquent".to_string()),
                     });
                 }
@@ -1405,6 +1581,159 @@ impl DataAccessDetector {
                         line: call.range.start.line,
                         confidence: 0.8,
                         framework: Some("activerecord".to_string()),
+                    });
+                }
+            }
+        }
+        
+        // =========================================================================
+        // HTTP Clients (API calls - useful for data flow tracking)
+        // =========================================================================
+        
+        // Axios: axios.get(), axios.post(), axios.put(), axios.delete()
+        if let Some(recv) = receiver {
+            if recv == "axios" || recv.ends_with("axios") || recv == "api" || recv == "http" || recv == "client" {
+                let is_axios = matches!(callee, "get" | "post" | "put" | "patch" | "delete" | "request" | "head" | "options");
+                if is_axios {
+                    let operation = match callee {
+                        "post" | "put" | "patch" => DataOperation::Write,
+                        "delete" => DataOperation::Delete,
+                        _ => DataOperation::Read,
+                    };
+                    return Some(DataAccessPoint {
+                        table: "api".to_string(),
+                        operation,
+                        fields: Vec::new(),
+                        file: file.to_string(),
+                        line: call.range.start.line,
+                        confidence: 0.7,
+                        framework: Some("http-client".to_string()),
+                    });
+                }
+            }
+        }
+        
+        // Python requests/httpx: requests.get(), httpx.post(), session.get()
+        if let Some(recv) = receiver {
+            if recv == "requests" || recv == "httpx" || recv == "session" || recv == "client" || recv == "aiohttp" {
+                let is_http = matches!(callee, "get" | "post" | "put" | "patch" | "delete" | "request" | "head" | "options");
+                if is_http {
+                    let operation = match callee {
+                        "post" | "put" | "patch" => DataOperation::Write,
+                        "delete" => DataOperation::Delete,
+                        _ => DataOperation::Read,
+                    };
+                    return Some(DataAccessPoint {
+                        table: "api".to_string(),
+                        operation,
+                        fields: Vec::new(),
+                        file: file.to_string(),
+                        line: call.range.start.line,
+                        confidence: 0.7,
+                        framework: Some("http-client".to_string()),
+                    });
+                }
+            }
+        }
+        
+        // fetch() - browser/Node.js
+        if callee == "fetch" && receiver.is_none() {
+            return Some(DataAccessPoint {
+                table: "api".to_string(),
+                operation: DataOperation::Read, // Could be any, but default to read
+                fields: Vec::new(),
+                file: file.to_string(),
+                line: call.range.start.line,
+                confidence: 0.6,
+                framework: Some("fetch".to_string()),
+            });
+        }
+        
+        // =========================================================================
+        // Redis (all languages)
+        // =========================================================================
+        
+        // Redis: redis.get(), redis.set(), redis.hget(), redis.lpush()
+        if let Some(recv) = receiver {
+            if recv == "redis" || recv == "r" || recv == "cache" || recv.contains("redis") || recv.ends_with("Redis") {
+                let is_redis = matches!(callee,
+                    // String operations
+                    "get" | "set" | "setex" | "setnx" | "mget" | "mset" | "incr" | "decr" | "incrby" | "decrby" |
+                    "append" | "getset" | "strlen" | "getrange" | "setrange" |
+                    // Hash operations
+                    "hget" | "hset" | "hmget" | "hmset" | "hgetall" | "hdel" | "hexists" | "hincrby" | "hkeys" | "hvals" |
+                    // List operations
+                    "lpush" | "rpush" | "lpop" | "rpop" | "lrange" | "llen" | "lindex" | "lset" | "lrem" |
+                    // Set operations
+                    "sadd" | "srem" | "smembers" | "sismember" | "scard" | "sunion" | "sinter" | "sdiff" |
+                    // Sorted set operations
+                    "zadd" | "zrem" | "zrange" | "zrangebyscore" | "zscore" | "zcard" | "zincrby" |
+                    // Key operations
+                    "del" | "exists" | "expire" | "ttl" | "keys" | "scan" | "type" |
+                    // Pub/Sub
+                    "publish" | "subscribe" | "unsubscribe" |
+                    // Transactions
+                    "multi" | "exec" | "watch" | "unwatch" |
+                    // Lua scripting
+                    "eval" | "evalsha"
+                );
+                if is_redis {
+                    let operation = match callee {
+                        "get" | "mget" | "hget" | "hmget" | "hgetall" | "hkeys" | "hvals" | "hexists" |
+                        "lrange" | "llen" | "lindex" | "smembers" | "sismember" | "scard" |
+                        "zrange" | "zrangebyscore" | "zscore" | "zcard" |
+                        "exists" | "ttl" | "keys" | "scan" | "type" => DataOperation::Read,
+                        "del" | "hdel" | "lrem" | "srem" | "zrem" => DataOperation::Delete,
+                        _ => DataOperation::Write,
+                    };
+                    return Some(DataAccessPoint {
+                        table: "redis".to_string(),
+                        operation,
+                        fields: Vec::new(),
+                        file: file.to_string(),
+                        line: call.range.start.line,
+                        confidence: 0.85,
+                        framework: Some("redis".to_string()),
+                    });
+                }
+            }
+        }
+        
+        // =========================================================================
+        // Message Queues (Celery, Bull, RabbitMQ, etc.)
+        // =========================================================================
+        
+        // Celery: task.delay(), task.apply_async()
+        if callee == "delay" || callee == "apply_async" || callee == "send_task" {
+            return Some(DataAccessPoint {
+                table: "queue".to_string(),
+                operation: DataOperation::Write,
+                fields: Vec::new(),
+                file: file.to_string(),
+                line: call.range.start.line,
+                confidence: 0.7,
+                framework: Some("celery".to_string()),
+            });
+        }
+        
+        // Bull/BullMQ: queue.add(), queue.process()
+        if let Some(recv) = receiver {
+            if recv == "queue" || recv.ends_with("Queue") || recv.contains("queue") {
+                let is_bull = matches!(callee, "add" | "addBulk" | "process" | "getJob" | "getJobs" | "removeJobs" | "clean");
+                if is_bull {
+                    let operation = match callee {
+                        "add" | "addBulk" => DataOperation::Write,
+                        "removeJobs" | "clean" => DataOperation::Delete,
+                        _ => DataOperation::Read,
+                    };
+                    return Some(DataAccessPoint {
+                        table: "queue".to_string(),
+                        operation,
+                        fields: Vec::new(),
+                        file: file.to_string(),
+                        line: call.range.start.line,
+                        confidence: 0.75,
+                        framework: Some("bull".to_string()),
                     });
                 }
             }

@@ -68,7 +68,7 @@ impl PhpParser {
             "#,
         ).map_err(|e| format!("Failed to create use query: {}", e))?;
 
-        // Simplified call query
+        // Call query with receiver extraction for method calls
         let call_query = Query::new(
             &language.into(),
             r#"
@@ -80,8 +80,14 @@ impl PhpParser {
             ) @call
             
             (member_call_expression
+                object: (_) @receiver
                 name: (name) @callee
             ) @method_call
+            
+            (scoped_call_expression
+                scope: (_) @receiver
+                name: (name) @callee
+            ) @static_call
             "#,
         ).map_err(|e| format!("Failed to create call query: {}", e))?;
         
@@ -245,6 +251,7 @@ impl PhpParser {
         
         for m in matches {
             let mut callee = String::new();
+            let mut receiver = None;
             let mut range = Range::new(0, 0, 0, 0);
             
             for capture in m.captures {
@@ -255,7 +262,12 @@ impl PhpParser {
                     "callee" => {
                         callee = node.utf8_text(source).unwrap_or("").to_string();
                     }
-                    "call" | "method_call" => {
+                    "receiver" => {
+                        let recv_text = node.utf8_text(source).unwrap_or("").to_string();
+                        // Strip leading $ from PHP variables for consistent matching
+                        receiver = Some(recv_text.trim_start_matches('$').to_string());
+                    }
+                    "call" | "method_call" | "static_call" => {
                         range = node_range(&node);
                     }
                     _ => {}
@@ -265,7 +277,7 @@ impl PhpParser {
             if !callee.is_empty() {
                 result.calls.push(CallSite {
                     callee,
-                    receiver: None,
+                    receiver,
                     arg_count: 0,
                     range,
                 });
@@ -313,5 +325,35 @@ mod tests {
         
         assert_eq!(result.functions.len(), 1);
         assert_eq!(result.functions[0].name, "hello");
+    }
+
+    #[test]
+    fn test_parse_method_call_with_receiver() {
+        let mut parser = PhpParser::new().unwrap();
+        let result = parser.parse("<?php $user->save();");
+        
+        assert!(result.calls.len() >= 1);
+        let call = result.calls.iter().find(|c| c.callee == "save").unwrap();
+        assert_eq!(call.receiver, Some("user".to_string()));
+    }
+
+    #[test]
+    fn test_parse_static_call_with_receiver() {
+        let mut parser = PhpParser::new().unwrap();
+        let result = parser.parse("<?php User::find(1);");
+        
+        assert!(result.calls.len() >= 1);
+        let call = result.calls.iter().find(|c| c.callee == "find").unwrap();
+        assert_eq!(call.receiver, Some("User".to_string()));
+    }
+
+    #[test]
+    fn test_parse_eloquent_relationship() {
+        let mut parser = PhpParser::new().unwrap();
+        let result = parser.parse("<?php return $this->hasMany(Post::class);");
+        
+        assert!(result.calls.len() >= 1);
+        let call = result.calls.iter().find(|c| c.callee == "hasMany").unwrap();
+        assert_eq!(call.receiver, Some("this".to_string()));
     }
 }

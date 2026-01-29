@@ -61,6 +61,7 @@ impl CSharpParser {
             "#,
         ).map_err(|e| format!("Failed to create using query: {}", e))?;
 
+        // Call query with receiver extraction for method calls
         let call_query = Query::new(
             &language.into(),
             r#"
@@ -68,6 +69,7 @@ impl CSharpParser {
                 function: [
                     (identifier) @callee
                     (member_access_expression
+                        expression: (_) @receiver
                         name: (identifier) @callee
                     )
                 ]
@@ -234,6 +236,7 @@ impl CSharpParser {
         
         for m in matches {
             let mut callee = String::new();
+            let mut receiver = None;
             let mut range = Range::new(0, 0, 0, 0);
             
             for capture in m.captures {
@@ -243,6 +246,9 @@ impl CSharpParser {
                 match capture_name {
                     "callee" => {
                         callee = node.utf8_text(source).unwrap_or("").to_string();
+                    }
+                    "receiver" => {
+                        receiver = Some(node.utf8_text(source).unwrap_or("").to_string());
                     }
                     "call" => {
                         range = node_range(&node);
@@ -254,7 +260,7 @@ impl CSharpParser {
             if !callee.is_empty() {
                 result.calls.push(CallSite {
                     callee,
-                    receiver: None,
+                    receiver,
                     arg_count: 0,
                     range,
                 });
@@ -301,5 +307,37 @@ mod tests {
         let result = parser.parse("public class Test { public void Hello() { } }");
         
         assert!(result.functions.len() >= 1);
+    }
+
+    #[test]
+    fn test_parse_method_call_with_receiver() {
+        let mut parser = CSharpParser::new().unwrap();
+        let result = parser.parse("public class Test { void M() { _context.SaveChanges(); } }");
+        
+        assert!(result.calls.len() >= 1);
+        let call = result.calls.iter().find(|c| c.callee == "SaveChanges").unwrap();
+        assert_eq!(call.receiver, Some("_context".to_string()));
+    }
+
+    #[test]
+    fn test_parse_linq_chain() {
+        let mut parser = CSharpParser::new().unwrap();
+        let result = parser.parse("public class Test { void M() { users.Where(u => u.Active).ToList(); } }");
+        
+        // Should capture both Where and ToList calls
+        assert!(result.calls.len() >= 2);
+        let where_call = result.calls.iter().find(|c| c.callee == "Where").unwrap();
+        assert_eq!(where_call.receiver, Some("users".to_string()));
+    }
+
+    #[test]
+    fn test_parse_ef_core_pattern() {
+        let mut parser = CSharpParser::new().unwrap();
+        let result = parser.parse("public class Test { void M() { _context.Users.FirstOrDefaultAsync(); } }");
+        
+        assert!(result.calls.len() >= 1);
+        let call = result.calls.iter().find(|c| c.callee == "FirstOrDefaultAsync").unwrap();
+        // Receiver should be the full chain "_context.Users"
+        assert!(call.receiver.is_some());
     }
 }
