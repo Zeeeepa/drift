@@ -372,19 +372,20 @@ All data is combined into a unified call graph:
 
 ## Storage & Performance
 
-### Sharded Storage
+### SQLite Storage (v1.0+)
 
-For large codebases, Drift uses sharded storage:
+Call graph data is stored in SQLite for optimal performance:
 
 ```
 .drift/lake/callgraph/
-├── files/
-│   ├── src_api_users.json
-│   ├── src_api_auth.json
-│   └── ...
-├── index.json
-└── metadata.json
+└── callgraph.db          # SQLite database with WAL mode
 ```
+
+**Key benefits:**
+- **O(1) memory queries** — No need to load entire graph
+- **Concurrent access** — Multiple tools can query simultaneously
+- **8x faster builds** — Parallel parsing with batched writes
+- **No OOM** — Handles 10K+ file codebases that previously crashed
 
 ### Incremental Updates
 
@@ -401,14 +402,16 @@ drift callgraph build --incremental
 drift callgraph build --force
 ```
 
-### Performance
+### Performance (v1.0 Rust Core)
 
 | Codebase Size | Build Time | Query Time |
 |---------------|------------|------------|
-| <10K LOC | <5s | <100ms |
-| 10-100K LOC | 10-60s | <500ms |
-| 100K-1M LOC | 1-10min | <2s |
-| >1M LOC | 10-30min | <5s |
+| <10K LOC | <1s | <50ms |
+| 10-100K LOC | 1-5s | <100ms |
+| 100K-1M LOC | 5-30s | <500ms |
+| >1M LOC | 30s-2min | <1s |
+
+**Note:** v1.0 introduced SQLite-backed storage and Rust-native parsing, providing 4-8x performance improvements over previous versions.
 
 ---
 

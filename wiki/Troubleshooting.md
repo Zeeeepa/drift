@@ -2,6 +2,49 @@
 
 Common issues and solutions.
 
+## Native Module Issues (v1.0+)
+
+### Native module not loading
+
+**Symptoms:** Drift falls back to TypeScript (slower), or shows "native not available"
+
+**Solutions:**
+1. Check native module status:
+   ```bash
+   drift --version --verbose
+   # Should show: Native module: ✓ available
+   ```
+
+2. Rebuild native modules:
+   ```bash
+   npm rebuild @drift/native
+   ```
+
+3. Ensure you have build tools:
+   - macOS: `xcode-select --install`
+   - Ubuntu: `sudo apt-get install build-essential`
+   - Windows: Install Visual Studio Build Tools
+
+4. Check Node.js version (18-20 recommended):
+   ```bash
+   node --version
+   # v18.x or v20.x recommended
+   ```
+
+### ESM module loading errors
+
+**Symptoms:** `require is not defined` or similar ESM errors
+
+**Solutions:**
+1. This was fixed in v1.0.0. Update to latest:
+   ```bash
+   npm install -g driftdetect@latest
+   ```
+
+2. If using custom setup, ensure `createRequire` is used for native modules
+
+---
+
 ## Installation Issues
 
 ### `npm install` fails

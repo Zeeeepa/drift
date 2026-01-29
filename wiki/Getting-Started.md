@@ -36,10 +36,16 @@ npm install --save-dev driftdetect driftdetect-mcp
 
 ```bash
 drift --version
-# driftdetect v0.9.27
+# driftdetect v1.0.0
 
 driftdetect-mcp --help
 # Shows MCP server options
+```
+
+**Check native module status:**
+```bash
+drift --version --verbose
+# Should show: Native module: ✓ available
 ```
 
 ---

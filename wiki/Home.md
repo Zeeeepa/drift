@@ -2,7 +2,19 @@
 
 **The most comprehensive MCP server for codebase intelligence**
 
-Drift scans your codebase, learns YOUR patterns, and gives AI agents deep understanding of your conventions. 45+ CLI commands. 50 MCP tools. 9 languages. Your AI finally writes code that fits.
+Drift scans your codebase, learns YOUR patterns, and gives AI agents deep understanding of your conventions. 45+ CLI commands. 50 MCP tools. 9 languages. **Native Rust core.** Your AI finally writes code that fits.
+
+---
+
+## 🦀 v1.0 — The Rust Core Release
+
+Drift's entire analysis engine has been rewritten in Rust. Call graphs that used to OOM on 1600 files now process 10,000 files in 2.3 seconds.
+
+| Metric | Before | After |
+|--------|--------|-------|
+| Call graph (10K files) | OOM crash | **2.34s** |
+| Memory usage | Unbounded | **O(1) queries** |
+| Parsing speed | ~5ms/file | **~0.5ms/file** |
 
 ---
 
@@ -170,11 +182,18 @@ drift approve <pattern-id>
 
 ## Architecture Overview
 
-Drift is a **monorepo** with 10 packages:
+Drift is a **monorepo** with a Rust core and TypeScript packages:
 
+### Rust Core (v1.0+)
+| Crate | Purpose |
+|-------|---------|
+| `drift-core` | 12 native analysis modules |
+| `drift-napi` | Node.js bindings via NAPI |
+
+### TypeScript Packages
 | Package | Purpose |
 |---------|---------|
-| `@drift/core` | Multi-language analysis engine |
+| `@drift/core` | Analysis orchestration + native bindings |
 | `@drift/detectors` | 400+ pattern detectors |
 | `@drift/cli` | Command-line interface |
 | `@drift/mcp` | MCP server for AI agents |

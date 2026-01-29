@@ -2,10 +2,12 @@
 
 Drift supports **9 programming languages** with full feature parity across all analysis capabilities.
 
+**As of v1.0, all parsing is done natively in Rust** using tree-sitter bindings, providing 10x faster parsing than the previous WASM-based approach.
+
 ## Language Matrix
 
-| Language | Tree-Sitter | Call Graph | Data Access | Regex Fallback | Test Topology |
-|----------|-------------|------------|-------------|----------------|---------------|
+| Language | Native Rust Parser | Call Graph | Data Access | Regex Fallback | Test Topology |
+|----------|-------------------|------------|-------------|----------------|---------------|
 | TypeScript | ✅ | ✅ | ✅ | ✅ | ✅ |
 | JavaScript | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Python | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -282,20 +284,23 @@ drift cpp templates
 
 ## How Parsing Works
 
-### Tree-sitter (Primary)
+### Native Rust Parsing (v1.0+)
 
-Drift uses Tree-sitter for accurate AST parsing:
+Drift uses native Rust tree-sitter bindings for maximum performance:
 
-1. **Parse** — Source code → Abstract Syntax Tree
+1. **Parse** — Source code → Abstract Syntax Tree (native Rust)
 2. **Extract** — Functions, classes, decorators, imports
 3. **Resolve** — Call targets, data access points
-4. **Build** — Call graph, pattern index
+4. **Build** — Call graph stored in SQLite
 
-Tree-sitter provides:
+**Performance:** ~0.5ms per file (10x faster than WASM)
+
+Native tree-sitter provides:
 - Fast incremental parsing
 - Error recovery (partial parsing on syntax errors)
 - Language-agnostic queries
 - Consistent API across languages
+- No WASM overhead
 
 ### Regex Fallback
 

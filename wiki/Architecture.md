@@ -6,6 +6,8 @@ How Drift works under the hood.
 
 Drift is a **codebase intelligence platform** that learns patterns from your code and provides that knowledge to AI agents. It combines static analysis, call graph construction, and pattern detection into a unified system.
 
+**As of v1.0.0, Drift's core analysis engine is written in Rust** for maximum performance and memory efficiency. The Rust core handles parsing, call graph construction, and all heavy analysis, while TypeScript provides the CLI, MCP server, and pattern detection layers.
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                         Your Codebase                            │
@@ -13,15 +15,16 @@ Drift is a **codebase intelligence platform** that learns patterns from your cod
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Drift Core Engine                             │
+│                    Drift Rust Core (Native)                      │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │
-│  │ Tree-sitter │  │ Call Graph  │  │  Pattern    │              │
-│  │   Parsers   │──│   Builder   │──│  Detector   │              │
+│  │ Tree-sitter │  │ Call Graph  │  │  Analysis   │              │
+│  │   Parsers   │──│   Builder   │──│   Engines   │              │
+│  │  (9 langs)  │  │  (SQLite)   │  │ (12 modules)│              │
 │  └─────────────┘  └─────────────┘  └─────────────┘              │
 │         │                │                │                      │
 │         ▼                ▼                ▼                      │
 │  ┌─────────────────────────────────────────────────────────────┐│
-│  │                    Data Lake (.drift/)                       ││
+│  │              SQLite Data Lake (.drift/)                      ││
 │  └─────────────────────────────────────────────────────────────┘│
 └─────────────────────────────────────────────────────────────────┘
                               │
@@ -29,8 +32,61 @@ Drift is a **codebase intelligence platform** that learns patterns from your cod
               ▼               ▼               ▼
         ┌─────────┐     ┌─────────┐     ┌─────────┐
         │   CLI   │     │   MCP   │     │   LSP   │
-        │ Commands│     │  Server │     │  Server │
+        │(TypeScript)   │  Server │     │  Server │
         └─────────┘     └─────────┘     └─────────┘
+```
+
+---
+
+## Rust Core Architecture
+
+The Rust core (`drift-core` crate) provides 12 native analysis modules:
+
+| Module | Purpose | Performance |
+|--------|---------|-------------|
+| **Scanner** | Parallel file discovery with rayon | 10K files in <1s |
+| **Parsers** | Tree-sitter AST parsing for 9 languages | Native bindings, no WASM |
+| **Call Graph** | Function call mapping with SQLite storage | 10K files in 2.3s |
+| **Boundaries** | Data access and sensitive field detection | AST-first + regex fallback |
+| **Coupling** | Module dependency analysis (Tarjan's algorithm) | O(V+E) cycle detection |
+| **Test Topology** | Test-to-code mapping | 30+ test frameworks |
+| **Error Handling** | Error boundary and gap detection | Multi-language support |
+| **Reachability** | Forward/inverse data flow queries | O(1) memory via SQLite |
+| **Constants** | Constant extraction and secret detection | AST-based |
+| **Environment** | Env var access pattern detection | 9 languages |
+| **Wrappers** | Framework wrapper pattern detection | Transitive analysis |
+| **Unified Analyzer** | Combined pattern detection | String interning for 60-80% memory reduction |
+
+### NAPI Bindings
+
+The Rust core is exposed to Node.js via NAPI bindings (`drift-napi` crate):
+
+```typescript
+// Native functions available from @drift/native
+import {
+  scan,
+  parse,
+  buildCallGraph,
+  scanBoundaries,
+  analyzeCoupling,
+  analyzeTestTopology,
+  analyzeErrorHandling,
+  analyzeReachabilitySqlite,
+  analyzeInverseReachabilitySqlite,
+  analyzeConstants,
+  analyzeEnvironment,
+  analyzeWrappers,
+} from '@drift/native';
+```
+
+### Automatic Fallback
+
+If native modules are unavailable (rare), Drift automatically falls back to TypeScript implementations:
+
+```typescript
+// Native-first with TypeScript fallback
+const result = await analyzeTestTopologyWithFallback(rootDir, files);
+// Uses native if available, TypeScript otherwise
 ```
 
 ---
@@ -52,8 +108,8 @@ All Drift data is stored in the `.drift/` directory at your project root.
 │   ├── ignored/             # Ignored patterns
 │   └── variants/            # Pattern variants
 ├── lake/
-│   ├── callgraph/           # Call graph data
-│   │   └── files/           # Per-file call data
+│   ├── callgraph/
+│   │   └── callgraph.db     # SQLite call graph database (NEW in v1.0)
 │   ├── examples/            # Code examples
 │   │   └── patterns/        # Examples by pattern
 │   ├── patterns/            # Pattern definitions
@@ -78,14 +134,19 @@ All Drift data is stored in the `.drift/` directory at your project root.
 └── reports/                 # Generated reports
 ```
 
-### Data Lake Layer
+### SQLite Call Graph Storage (v1.0+)
 
-The Data Lake provides optimized storage for large-scale analysis:
+The call graph is now stored in SQLite (`callgraph.db`) instead of JSON shards:
 
-- **Sharded storage** — Large datasets split across files
-- **Incremental updates** — Only changed files re-analyzed
-- **Lazy loading** — Data loaded on demand
-- **Compression** — Efficient storage format
+- **WAL mode** — Concurrent reads during writes
+- **MPSC pattern** — Parallel parsing, single-threaded writes
+- **Batched inserts** — 100 files per transaction
+- **SQL-based resolution** — Single JOIN query instead of O(n²) file I/O
+
+This enables:
+- **8x faster builds** — 10K files in 2.3s vs 19.5s
+- **O(1) memory queries** — No need to load entire graph
+- **Concurrent access** — Multiple tools can query simultaneously
 
 ---
 
@@ -153,7 +214,7 @@ Each pattern has a confidence score (0.0-1.0):
 
 ## Call Graph
 
-The call graph maps function calls across your codebase.
+The call graph maps function calls across your codebase. **In v1.0+, this is built entirely in Rust with SQLite storage.**
 
 ### Building the Call Graph
 
@@ -162,25 +223,46 @@ Source Files
     │
     ▼
 ┌─────────────────┐
-│  Tree-sitter    │ ← Parse AST
+│  Rust Scanner   │ ← Parallel file discovery (rayon)
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Tree-sitter    │ ← Native Rust bindings (no WASM)
 │    Parsing      │
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│   Extraction    │ ← Extract functions, calls
+│   Extraction    │ ← Functions, calls, data access
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│   Resolution    │ ← Resolve call targets
+│   Resolution    │ ← Cross-file call target resolution
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│   Call Graph    │ ← Build graph structure
+│  SQLite Storage │ ← WAL mode, batched inserts
 └─────────────────┘
 ```
+
+### Performance (v1.0 Rust Core)
+
+| Files | Before (TypeScript) | After (Rust + SQLite) | Improvement |
+|-------|---------------------|----------------------|-------------|
+| 5,000 | 4.86s | 1.11s | **4.4x** |
+| 10,000 | OOM crash | 2.34s | **∞** |
+| 50,000 | N/A | ~12s | Works |
+
+### Key Optimizations
+
+1. **Thread-local parsers** — Avoid re-initializing tree-sitter per file
+2. **MPSC channel pattern** — Parallel parsing, single-threaded writes
+3. **Batched inserts** — 100 files per transaction
+4. **SQL-based resolution** — Single JOIN query instead of O(n²) file I/O
+5. **SQLite WAL mode** — Concurrent reads during writes
 
 ### Unified Provider
 
@@ -367,23 +449,36 @@ drift scan --force
 
 ## Performance
 
+### Rust Core Performance (v1.0+)
+
+The Rust core provides dramatic performance improvements:
+
+| Operation | TypeScript (pre-v1.0) | Rust (v1.0+) | Improvement |
+|-----------|----------------------|--------------|-------------|
+| Call graph (5K files) | 4.86s | 1.11s | **4.4x** |
+| Call graph (10K files) | OOM crash | 2.34s | **∞** |
+| Reachability query | Load entire graph | O(1) memory | **Constant** |
+| Parsing (per file) | ~5ms | ~0.5ms | **10x** |
+
 ### Memory Optimization
 
+- **SQLite-backed queries** — No need to load entire call graph into memory
+- **String interning** — 60-80% memory reduction in unified analyzer
 - **Streaming parsing** — Process files without loading all into memory
-- **Lazy loading** — Load data on demand
-- **Sharded storage** — Split large datasets
+- **Thread-local parsers** — Reuse tree-sitter instances
 
 ### Speed Optimization
 
-- **Parallel parsing** — Multi-threaded file processing
-- **Incremental updates** — Only re-analyze changes
-- **Caching** — Cache expensive computations
+- **Parallel parsing** — Multi-threaded file processing with rayon
+- **Batched writes** — 100 files per SQLite transaction
+- **Incremental updates** — Only re-analyze changed files
+- **Pre-compiled queries** — Cached tree-sitter queries
 
-### Typical Performance
+### Typical Performance (v1.0+)
 
-| Codebase Size | Initial Scan | Incremental |
-|---------------|--------------|-------------|
-| Small (<10K LOC) | <5s | <1s |
-| Medium (10-100K) | 10-30s | 1-5s |
-| Large (100K-1M) | 1-5min | 5-30s |
-| Enterprise (>1M) | 5-15min | 30s-2min |
+| Codebase Size | Initial Scan | Incremental | Call Graph |
+|---------------|--------------|-------------|------------|
+| Small (<10K LOC) | <3s | <1s | <1s |
+| Medium (10-100K) | 5-15s | 1-3s | 1-3s |
+| Large (100K-1M) | 30s-2min | 5-15s | 5-15s |
+| Enterprise (>1M) | 2-10min | 15s-1min | 30s-2min |
