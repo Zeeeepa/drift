@@ -12,11 +12,17 @@ import type { ValidationIssue } from './engine.js';
  * Half-lives in days for different memory types
  */
 const HALF_LIVES: Record<MemoryType, number> = {
+  // Domain-agnostic
   core: Infinity,
   tribal: 365,
   procedural: 180,
   semantic: 90,
   episodic: 7,
+  decision: 180,
+  insight: 90,
+  reference: 60,
+  preference: 120,
+  // Code-specific
   pattern_rationale: 180,
   constraint_override: 90,
   decision_context: 180,
@@ -27,11 +33,17 @@ const HALF_LIVES: Record<MemoryType, number> = {
  * Validation thresholds in days
  */
 const VALIDATION_THRESHOLDS: Record<MemoryType, number> = {
+  // Domain-agnostic
   core: 365,
   tribal: 90,
   procedural: 60,
   semantic: 30,
   episodic: 7,
+  decision: 90,
+  insight: 45,
+  reference: 30,
+  preference: 60,
+  // Code-specific
   pattern_rationale: 60,
   constraint_override: 30,
   decision_context: 90,

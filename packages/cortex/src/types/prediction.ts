@@ -118,6 +118,13 @@ export interface GitSignals {
  * Intent types for prediction
  */
 export type Intent =
+  // Domain-agnostic intents
+  | 'create'
+  | 'investigate'
+  | 'decide'
+  | 'recall'
+  | 'learn'
+  // Code-specific intents
   | 'add_feature'
   | 'fix_bug'
   | 'refactor'
@@ -127,6 +134,7 @@ export type Intent =
   | 'debug'
   | 'optimize'
   | 'document'
+  | 'security_audit'
   | 'unknown';
 
 /**

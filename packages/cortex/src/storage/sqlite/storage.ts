@@ -527,11 +527,17 @@ export class SQLiteMemoryStorage implements IMemoryStorage {
     const rows = stmt.all() as Array<{ type: MemoryType; count: number }>;
 
     const result: Record<MemoryType, number> = {
+      // Domain-agnostic
       core: 0,
       tribal: 0,
       procedural: 0,
       semantic: 0,
       episodic: 0,
+      decision: 0,
+      insight: 0,
+      reference: 0,
+      preference: 0,
+      // Code-specific
       pattern_rationale: 0,
       constraint_override: 0,
       decision_context: 0,

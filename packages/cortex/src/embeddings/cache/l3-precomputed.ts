@@ -11,6 +11,13 @@
  * Intent types for precomputed embeddings
  */
 export type Intent =
+  // Domain-agnostic
+  | 'create'
+  | 'investigate'
+  | 'decide'
+  | 'recall'
+  | 'learn'
+  // Code-specific
   | 'add_feature'
   | 'fix_bug'
   | 'refactor'
@@ -85,6 +92,13 @@ const FILE_TYPE_EMBEDDINGS: Record<string, number[]> = {
  * Precomputed intent embeddings
  */
 const INTENT_EMBEDDINGS: Record<Intent, number[]> = {
+  // Domain-agnostic
+  'create': generatePatternEmbedding('create', 768),
+  'investigate': generatePatternEmbedding('investigate', 768),
+  'decide': generatePatternEmbedding('decide', 768),
+  'recall': generatePatternEmbedding('recall', 768),
+  'learn': generatePatternEmbedding('learn', 768),
+  // Code-specific
   'add_feature': generatePatternEmbedding('add_feature', 768),
   'fix_bug': generatePatternEmbedding('fix_bug', 768),
   'refactor': generatePatternEmbedding('refactor', 768),

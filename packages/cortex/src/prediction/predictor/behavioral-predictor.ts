@@ -46,6 +46,14 @@ const DEFAULT_CONFIG: BehavioralPredictorConfig = {
  * Intent to memory type mapping
  */
 const INTENT_MEMORY_TYPES: Record<Intent, string[]> = {
+  // Domain-agnostic
+  create: ['tribal', 'procedural', 'preference', 'insight'],
+  investigate: ['semantic', 'insight', 'reference', 'decision'],
+  decide: ['decision', 'tribal', 'insight', 'preference'],
+  recall: ['semantic', 'tribal', 'decision', 'insight'],
+  learn: ['insight', 'reference', 'tribal'],
+  security_audit: ['tribal', 'code_smell', 'constraint_override'],
+  // Code-specific
   add_feature: ['pattern_rationale', 'tribal', 'decision_context'],
   fix_bug: ['code_smell', 'tribal', 'decision_context'],
   refactor: ['pattern_rationale', 'code_smell', 'tribal'],

@@ -17,14 +17,20 @@ import type { TransactionTime, ValidTime } from './bitemporal.js';
  * All supported memory types
  */
 export type MemoryType =
+  // Domain-agnostic types
   | 'core'
   | 'tribal'
   | 'procedural'
   | 'semantic'
   | 'episodic'
+  | 'decision'           // Standalone decisions (business, personal, etc.)
+  | 'insight'            // Learned insights/observations
+  | 'reference'          // External references/citations
+  | 'preference'         // User/team preferences
+  // Code-specific types
   | 'pattern_rationale'
   | 'constraint_override'
-  | 'decision_context'
+  | 'decision_context'   // Code decision context (linked to ADRs)
   | 'code_smell';
 
 /**
@@ -102,11 +108,17 @@ export interface BaseMemory {
  * Union type of all memory types
  */
 export type Memory =
+  // Domain-agnostic
   | import('./core-memory.js').CoreMemory
   | import('./tribal-memory.js').TribalMemory
   | import('./procedural-memory.js').ProceduralMemory
   | import('./semantic-memory.js').SemanticMemory
   | import('./episodic-memory.js').EpisodicMemory
+  | import('./decision-memory.js').DecisionMemory
+  | import('./insight-memory.js').InsightMemory
+  | import('./reference-memory.js').ReferenceMemory
+  | import('./preference-memory.js').PreferenceMemory
+  // Code-specific
   | import('./pattern-rationale.js').PatternRationaleMemory
   | import('./constraint-override.js').ConstraintOverrideMemory
   | import('./decision-context.js').DecisionContextMemory

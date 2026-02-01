@@ -18,6 +18,13 @@ import { ResultRanker } from './ranking.js';
  * Intent types for retrieval
  */
 export type Intent =
+  // Domain-agnostic intents
+  | 'create'           // Creating something new
+  | 'investigate'      // Understanding/researching
+  | 'decide'           // Making a decision
+  | 'recall'           // Finding past knowledge
+  | 'learn'            // Adding new knowledge
+  // Code-specific intents
   | 'add_feature'
   | 'fix_bug'
   | 'refactor'
