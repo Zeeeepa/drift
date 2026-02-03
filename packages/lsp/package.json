@@ -34,8 +34,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "driftdetect-core": "0.9.45",
-    "driftdetect-detectors": "0.9.45",
+    "driftdetect-core": "workspace:0.9.47",
+    "driftdetect-detectors": "workspace:0.9.47",
     "vscode-languageserver": "^9.0.1",
     "vscode-languageserver-textdocument": "^1.0.11",
     "vscode-uri": "^3.0.8"

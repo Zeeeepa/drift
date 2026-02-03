@@ -30,7 +30,12 @@ export type Intent =
   | 'refactor'
   | 'security_audit'
   | 'understand_code'
-  | 'add_test';
+  | 'add_test'
+  // Universal memory intents (v2)
+  | 'spawn_agent'      // Looking for agent configs
+  | 'execute_workflow' // Running a workflow
+  | 'track_progress'   // Checking goal progress
+  | 'diagnose_issue';  // Investigating a problem
 
 /**
  * Context for retrieval

@@ -40,12 +40,17 @@ export { AbstractionPhase, type AbstractedKnowledge } from './consolidation/abst
 export { IntegrationPhase } from './consolidation/integration.js';
 export { PruningPhase, type PruneResult } from './consolidation/pruning.js';
 export { StrengtheningPhase } from './consolidation/strengthening.js';
+export { AdaptiveConsolidationScheduler, type ConsolidationTriggerType, type ConsolidationTrigger, type ConsolidationScope, type TokenUsage, type QualityMetrics, type AdaptiveSchedulerConfig } from './consolidation/adaptive-scheduler.js';
+
+// Contradiction Detection
+export { ContradictionDetector, type ContradictionResult, type ContradictionType, type ContradictionDetectorConfig } from './contradiction/detector.js';
+export { ConfidencePropagator, recalculateConfidences, type ConfidenceUpdate, type PropagationRules } from './contradiction/propagator.js';
 
 // Validation
 export { ValidationEngine, type ValidationResult, type ValidationDetail, type ValidationIssue } from './validation/engine.js';
 export { CitationValidator } from './validation/citation-validator.js';
 export { TemporalValidator } from './validation/temporal-validator.js';
-export { ContradictionDetector } from './validation/contradiction-detector.js';
+export { ContradictionDetector as ValidationContradictionDetector } from './validation/contradiction-detector.js';
 export { PatternAlignmentValidator } from './validation/pattern-alignment.js';
 export { HealingEngine, type HealResult } from './validation/healing.js';
 

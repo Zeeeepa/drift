@@ -118,6 +118,92 @@ export class HierarchicalCompressor {
         parts.push(`Project: ${memory.project.name}`);
         parts.push(`Stack: ${memory.project.techStack.join(', ')}`);
         break;
+
+      // Universal memory types (v2)
+      case 'agent_spawn':
+        parts.push(`Agent: ${memory.name}`);
+        parts.push(`Description: ${memory.description}`);
+        parts.push(`Tools: ${memory.tools.join(', ')}`);
+        parts.push(`Triggers: ${memory.triggerPatterns.join(', ')}`);
+        break;
+
+      case 'entity':
+        parts.push(`${memory.entityType}: ${memory.name}`);
+        parts.push(`Status: ${memory.status}`);
+        parts.push(`Facts: ${memory.keyFacts.join('. ')}`);
+        if (memory.warnings?.length) {
+          parts.push(`Warnings: ${memory.warnings.join(', ')}`);
+        }
+        break;
+
+      case 'goal':
+        parts.push(`Goal: ${memory.title}`);
+        parts.push(`Status: ${memory.status} (${memory.progress}%)`);
+        parts.push(`Description: ${memory.description}`);
+        if (memory.blockers?.length) {
+          parts.push(`Blockers: ${memory.blockers.length}`);
+        }
+        break;
+
+      case 'feedback':
+        parts.push(`Type: ${memory.feedbackType}`);
+        parts.push(`Correction: ${memory.correction}`);
+        if (memory.extractedRule) {
+          parts.push(`Rule: ${memory.extractedRule}`);
+        }
+        break;
+
+      case 'workflow':
+        parts.push(`Workflow: ${memory.name}`);
+        parts.push(`Steps: ${memory.steps.length}`);
+        parts.push(`Triggers: ${memory.triggerPhrases.join(', ')}`);
+        break;
+
+      case 'conversation':
+        parts.push(`Conversation: ${memory.title}`);
+        parts.push(`Participants: ${memory.participants.join(', ')}`);
+        parts.push(`Summary: ${memory.conversationSummary}`);
+        if (memory.keyDecisions?.length) {
+          parts.push(`Decisions: ${memory.keyDecisions.join('; ')}`);
+        }
+        break;
+
+      case 'incident':
+        parts.push(`Incident: ${memory.title}`);
+        parts.push(`Severity: ${memory.severity}`);
+        parts.push(`Impact: ${memory.impact}`);
+        if (memory.rootCause) {
+          parts.push(`Root cause: ${memory.rootCause}`);
+        }
+        parts.push(`Lessons: ${memory.lessonsLearned.join('; ')}`);
+        break;
+
+      case 'meeting':
+        parts.push(`Meeting: ${memory.title}`);
+        parts.push(`Type: ${memory.meetingType}`);
+        parts.push(`Summary: ${memory.meetingSummary}`);
+        if (memory.decisions?.length) {
+          parts.push(`Decisions: ${memory.decisions.join('; ')}`);
+        }
+        break;
+
+      case 'skill':
+        parts.push(`Skill: ${memory.name}`);
+        parts.push(`Domain: ${memory.domain}`);
+        parts.push(`Level: ${memory.proficiencyLevel}`);
+        if (memory.keyPrinciples?.length) {
+          parts.push(`Principles: ${memory.keyPrinciples.join('; ')}`);
+        }
+        break;
+
+      case 'environment':
+        parts.push(`Environment: ${memory.name}`);
+        parts.push(`Type: ${memory.environmentType}`);
+        parts.push(`Warnings: ${memory.warnings.join('; ')}`);
+        if (memory.accessInstructions) {
+          parts.push(`Access: ${memory.accessInstructions}`);
+        }
+        break;
     }
 
     return parts.join('\n');
@@ -146,6 +232,27 @@ export class HierarchicalCompressor {
         return `💭 ${memory.context?.focus || 'Interaction'}`;
       case 'core':
         return `🏠 ${memory.project?.name || 'Project'}`;
+      // Universal memory types (v2)
+      case 'agent_spawn':
+        return `🤖 ${memory.name}: ${memory.tools?.length || 0} tools`;
+      case 'entity':
+        return `📦 ${memory.entityType}: ${memory.name}`;
+      case 'goal':
+        return `🎯 ${memory.title}: ${memory.progress}% (${memory.status})`;
+      case 'workflow':
+        return `📋 ${memory.name}: ${memory.steps?.length || 0} steps`;
+      case 'conversation':
+        return `💬 ${memory.title}: ${memory.participants?.length || 0} participants`;
+      case 'feedback':
+        return `📝 ${memory.feedbackType}: ${memory.extractedRule?.slice(0, 40) || memory.correction?.slice(0, 40)}...`;
+      case 'incident':
+        return `🚨 ${memory.severity}: ${memory.title}`;
+      case 'meeting':
+        return `📅 ${memory.meetingType}: ${memory.title}`;
+      case 'skill':
+        return `🧠 ${memory.name}: ${memory.proficiencyLevel}`;
+      case 'environment':
+        return `🌍 ${memory.environmentType}: ${memory.name}`;
       default:
         return 'Memory';
     }

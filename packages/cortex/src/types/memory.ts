@@ -31,7 +31,18 @@ export type MemoryType =
   | 'pattern_rationale'
   | 'constraint_override'
   | 'decision_context'   // Code decision context (linked to ADRs)
-  | 'code_smell';
+  | 'code_smell'
+  // Universal memory types (v2)
+  | 'agent_spawn'        // Reusable agent configurations
+  | 'entity'             // Projects, products, teams, systems
+  | 'goal'               // Objectives with progress tracking
+  | 'feedback'           // Corrections and learning signals
+  | 'workflow'           // Step-by-step processes
+  | 'conversation'       // Summarized past discussions
+  | 'incident'           // Postmortems and lessons learned
+  | 'meeting'            // Meeting notes and action items
+  | 'skill'              // Knowledge domains and proficiency
+  | 'environment';       // System/environment configurations
 
 /**
  * Importance levels for memories
@@ -122,7 +133,18 @@ export type Memory =
   | import('./pattern-rationale.js').PatternRationaleMemory
   | import('./constraint-override.js').ConstraintOverrideMemory
   | import('./decision-context.js').DecisionContextMemory
-  | import('./code-smell.js').CodeSmellMemory;
+  | import('./code-smell.js').CodeSmellMemory
+  // Universal memory types (v2)
+  | import('./agent-spawn-memory.js').AgentSpawnMemory
+  | import('./entity-memory.js').EntityMemory
+  | import('./goal-memory.js').GoalMemory
+  | import('./feedback-memory.js').FeedbackMemory
+  | import('./workflow-memory.js').WorkflowMemory
+  | import('./conversation-memory.js').ConversationMemory
+  | import('./incident-memory.js').IncidentMemory
+  | import('./meeting-memory.js').MeetingMemory
+  | import('./skill-memory.js').SkillMemory
+  | import('./environment-memory.js').EnvironmentMemory;
 
 /**
  * Memory summary for list views

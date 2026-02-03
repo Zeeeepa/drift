@@ -4,12 +4,13 @@
  * Connects the LSP diagnostics handler to driftdetect-core scanner
  * and driftdetect-detectors for pattern detection and violation generation.
  *
+ * Phase 3: Now uses async factory for automatic SQLite support.
+ *
  * @requirements 27.3 - THE LSP_Server SHALL publish diagnostics for violations
  * @requirements 27.7 - THE LSP_Server SHALL respond to diagnostics within 200ms of file change
  */
 
 import {
-  PatternStore,
   Evaluator,
   ParserManager,
   TypeScriptParser,
@@ -18,9 +19,12 @@ import {
   JSONParser,
   MarkdownParser,
   type Pattern,
-  type PatternStoreConfig,
   type EvaluatorConfig,
 } from 'driftdetect-core';
+import {
+  createPatternStore,
+  type PatternStoreInterface,
+} from 'driftdetect-core/storage';
 import { URI } from 'vscode-uri';
 
 import { DEFAULT_CORE_INTEGRATION_CONFIG } from './types.js';
@@ -53,7 +57,7 @@ interface Logger {
 export class CoreScanner {
   private config: CoreIntegrationConfig;
   private logger: Logger;
-  private patternStore: PatternStore | null = null;
+  private patternStore: PatternStoreInterface | null = null;
   private parserManager: ParserManager | null = null;
   private evaluator: Evaluator | null = null;
   private initialized: boolean = false;
@@ -69,6 +73,7 @@ export class CoreScanner {
    * Initialize the core scanner
    *
    * Sets up the pattern store, parser manager, evaluator, and detector registry.
+   * Phase 3: Now uses async factory for automatic SQLite support.
    */
   async initialize(): Promise<void> {
     if (this.initialized) {
@@ -78,15 +83,11 @@ export class CoreScanner {
     this.logger.info('Initializing core scanner...');
 
     try {
-      // Initialize pattern store
-      const storeConfig: Partial<PatternStoreConfig> = {
+      // Initialize pattern store using factory (Phase 3: auto-detects SQLite)
+      this.patternStore = await createPatternStore({
         rootDir: this.config.rootDir,
-        validateSchema: this.config.validateSchema,
-        trackHistory: this.config.trackHistory,
         autoSave: this.config.autoSave,
-      };
-      this.patternStore = new PatternStore(storeConfig);
-      await this.patternStore.initialize();
+      });
       this.logger.info('Pattern store initialized');
 
       // Initialize parser manager with language parsers
@@ -126,7 +127,7 @@ export class CoreScanner {
   /**
    * Get the pattern store instance
    */
-  getPatternStore(): PatternStore | null {
+  getPatternStore(): PatternStoreInterface | null {
     return this.patternStore;
   }
 

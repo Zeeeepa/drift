@@ -4,6 +4,8 @@
  * Adapts driftdetect-core PatternStore and VariantManager for use in LSP commands.
  * Provides approve, ignore, and variant operations that persist to disk.
  *
+ * Phase 3: Now uses async factory for automatic SQLite support.
+ *
  * @requirements 28.1 - drift.approvePattern
  * @requirements 28.2 - drift.ignorePattern
  * @requirements 28.3 - drift.ignoreOnce
@@ -11,13 +13,15 @@
  */
 
 import {
-  PatternStore,
   VariantManager,
-  type PatternStoreConfig,
   type VariantManagerConfig,
   type PatternLocation,
   type VariantScope,
 } from 'driftdetect-core';
+import {
+  createPatternStore,
+  type PatternStoreInterface,
+} from 'driftdetect-core/storage';
 
 import { DEFAULT_CORE_INTEGRATION_CONFIG, patternToInfo } from './types.js';
 
@@ -49,7 +53,7 @@ interface Logger {
 export class PatternStoreAdapter {
   private config: CoreIntegrationConfig;
   private logger: Logger;
-  private patternStore: PatternStore | null = null;
+  private patternStore: PatternStoreInterface | null = null;
   private variantManager: VariantManager | null = null;
   private initialized: boolean = false;
 
@@ -60,6 +64,7 @@ export class PatternStoreAdapter {
 
   /**
    * Initialize the adapter
+   * Phase 3: Now uses async factory for automatic SQLite support.
    */
   async initialize(): Promise<void> {
     if (this.initialized) {
@@ -69,15 +74,11 @@ export class PatternStoreAdapter {
     this.logger.info('Initializing pattern store adapter...');
 
     try {
-      // Initialize pattern store
-      const storeConfig: Partial<PatternStoreConfig> = {
+      // Initialize pattern store using factory (Phase 3: auto-detects SQLite)
+      this.patternStore = await createPatternStore({
         rootDir: this.config.rootDir,
-        validateSchema: this.config.validateSchema,
-        trackHistory: this.config.trackHistory,
         autoSave: this.config.autoSave,
-      };
-      this.patternStore = new PatternStore(storeConfig);
-      await this.patternStore.initialize();
+      });
       this.logger.info('Pattern store initialized');
 
       // Initialize variant manager
@@ -107,7 +108,7 @@ export class PatternStoreAdapter {
   /**
    * Get the pattern store instance
    */
-  getPatternStore(): PatternStore | null {
+  getPatternStore(): PatternStoreInterface | null {
     return this.patternStore;
   }
 

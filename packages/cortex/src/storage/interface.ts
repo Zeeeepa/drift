@@ -41,7 +41,22 @@ export interface Citation {
 /**
  * Relationship types between memories
  */
-export type RelationshipType = 'supersedes' | 'supports' | 'contradicts' | 'related' | 'derived_from';
+export type RelationshipType = 
+  // Core relationships
+  | 'supersedes'     // New memory replaces old
+  | 'supports'       // Memory supports/confirms another
+  | 'contradicts'    // Memory contradicts another
+  | 'related'        // General relationship
+  | 'derived_from'   // Memory derived from another
+  // Semantic relationships (v2)
+  | 'owns'           // Entity owns Entity/Goal/Workflow
+  | 'affects'        // Incident affects Entity/Environment
+  | 'blocks'         // Incident/Blocker blocks Goal
+  | 'requires'       // Workflow requires Skill/Environment
+  | 'references'     // Any memory references another
+  | 'learned_from'   // Feedback/Tribal learned from Incident/Conversation
+  | 'assigned_to'    // Goal/ActionItem assigned to Entity (person/team)
+  | 'depends_on';    // Entity/Workflow depends on Entity/Environment
 
 /**
  * Memory storage interface

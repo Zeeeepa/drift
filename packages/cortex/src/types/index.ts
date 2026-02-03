@@ -2,9 +2,10 @@
  * Drift Cortex Type Definitions
  * 
  * Complete type system for the memory architecture including:
- * - 13 memory types:
+ * - 23 memory types:
  *   - Domain-agnostic: Core, Tribal, Procedural, Semantic, Episodic, Decision, Insight, Reference, Preference
  *   - Code-specific: PatternRationale, ConstraintOverride, DecisionContext, CodeSmell
+ *   - Universal (v2): AgentSpawn, Entity, Goal, Feedback, Workflow, Conversation, Incident, Meeting, Skill, Environment
  * - Bitemporal tracking (transaction time + valid time)
  * - Memory citations for code references
  * - Causal relationships (v2)
@@ -34,6 +35,18 @@ export * from './pattern-rationale.js';
 export * from './constraint-override.js';
 export * from './decision-context.js';
 export * from './code-smell.js';
+
+// Universal memory types (v2)
+export * from './agent-spawn-memory.js';
+export * from './entity-memory.js';
+export * from './goal-memory.js';
+export * from './feedback-memory.js';
+export * from './workflow-memory.js';
+export * from './conversation-memory.js';
+export * from './incident-memory.js';
+export * from './meeting-memory.js';
+export * from './skill-memory.js';
+export * from './environment-memory.js';
 
 // Supporting types
 export * from './bitemporal.js';

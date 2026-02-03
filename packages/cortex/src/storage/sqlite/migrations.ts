@@ -157,6 +157,132 @@ export const MIGRATIONS: Migration[] = [
       DROP TABLE IF EXISTS memory_usage_history;
     `,
   },
+  {
+    version: 6,
+    description: 'Contradiction tracking table',
+    up: `
+      -- Contradiction tracking for detecting and resolving memory conflicts
+      CREATE TABLE IF NOT EXISTS memory_contradictions (
+        id TEXT PRIMARY KEY,
+        memory_a_id TEXT NOT NULL,
+        memory_b_id TEXT NOT NULL,
+        contradiction_type TEXT NOT NULL CHECK (contradiction_type IN ('direct', 'partial', 'supersedes', 'temporal')),
+        confidence REAL NOT NULL CHECK (confidence >= 0 AND confidence <= 1),
+        evidence TEXT,
+        suggested_action TEXT CHECK (suggested_action IN ('lower_confidence', 'archive', 'merge', 'flag_for_review')),
+        resolution_status TEXT DEFAULT 'pending' CHECK (resolution_status IN ('pending', 'resolved', 'rejected', 'merged')),
+        resolved_at TEXT,
+        resolved_by TEXT,
+        created_at TEXT DEFAULT (datetime('now')),
+        
+        FOREIGN KEY (memory_a_id) REFERENCES memories(id) ON DELETE CASCADE,
+        FOREIGN KEY (memory_b_id) REFERENCES memories(id) ON DELETE CASCADE
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_contradiction_a ON memory_contradictions(memory_a_id);
+      CREATE INDEX IF NOT EXISTS idx_contradiction_b ON memory_contradictions(memory_b_id);
+      CREATE INDEX IF NOT EXISTS idx_contradiction_status ON memory_contradictions(resolution_status);
+      CREATE INDEX IF NOT EXISTS idx_contradiction_type ON memory_contradictions(contradiction_type);
+    `,
+    down: `
+      DROP INDEX IF EXISTS idx_contradiction_type;
+      DROP INDEX IF EXISTS idx_contradiction_status;
+      DROP INDEX IF EXISTS idx_contradiction_b;
+      DROP INDEX IF EXISTS idx_contradiction_a;
+      DROP TABLE IF EXISTS memory_contradictions;
+    `,
+  },
+  {
+    version: 7,
+    description: 'Consolidation triggers and token usage tracking',
+    up: `
+      -- Consolidation triggers for adaptive consolidation
+      CREATE TABLE IF NOT EXISTS consolidation_triggers (
+        id TEXT PRIMARY KEY,
+        trigger_type TEXT NOT NULL CHECK (trigger_type IN (
+          'scheduled', 'token_pressure', 'memory_count', 
+          'confidence_degradation', 'contradiction_density', 
+          'context_cluster', 'manual'
+        )),
+        trigger_data TEXT,  -- JSON with trigger-specific data
+        urgency TEXT CHECK (urgency IN ('low', 'medium', 'high', 'critical')),
+        triggered_at TEXT NOT NULL DEFAULT (datetime('now')),
+        consolidation_run_id TEXT,
+        
+        FOREIGN KEY (consolidation_run_id) REFERENCES consolidation_runs(id) ON DELETE SET NULL
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_trigger_type ON consolidation_triggers(trigger_type);
+      CREATE INDEX IF NOT EXISTS idx_trigger_time ON consolidation_triggers(triggered_at);
+      CREATE INDEX IF NOT EXISTS idx_trigger_urgency ON consolidation_triggers(urgency);
+
+      -- Token usage snapshots for monitoring
+      CREATE TABLE IF NOT EXISTS token_usage_snapshots (
+        id TEXT PRIMARY KEY,
+        total_tokens INTEGER NOT NULL,
+        by_type TEXT,  -- JSON: Record<MemoryType, number>
+        by_age TEXT,   -- JSON: { last24h, last7d, last30d, older }
+        compression_potential INTEGER,
+        recorded_at TEXT DEFAULT (datetime('now'))
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_token_snapshot_time ON token_usage_snapshots(recorded_at);
+    `,
+    down: `
+      DROP INDEX IF EXISTS idx_token_snapshot_time;
+      DROP TABLE IF EXISTS token_usage_snapshots;
+      DROP INDEX IF EXISTS idx_trigger_urgency;
+      DROP INDEX IF EXISTS idx_trigger_time;
+      DROP INDEX IF EXISTS idx_trigger_type;
+      DROP TABLE IF EXISTS consolidation_triggers;
+    `,
+  },
+  {
+    version: 8,
+    description: 'Memory clusters for context-aware consolidation',
+    up: `
+      -- Memory clusters for grouping related memories
+      CREATE TABLE IF NOT EXISTS memory_clusters (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        description TEXT,
+        coherence_score REAL CHECK (coherence_score >= 0 AND coherence_score <= 1),
+        token_estimate INTEGER,
+        dominant_types TEXT,  -- JSON array of MemoryType
+        avg_confidence REAL,
+        avg_age_days REAL,
+        consolidation_priority INTEGER DEFAULT 0,
+        created_at TEXT DEFAULT (datetime('now')),
+        updated_at TEXT DEFAULT (datetime('now'))
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_cluster_name ON memory_clusters(name);
+      CREATE INDEX IF NOT EXISTS idx_cluster_priority ON memory_clusters(consolidation_priority);
+      CREATE INDEX IF NOT EXISTS idx_cluster_coherence ON memory_clusters(coherence_score);
+
+      -- Cluster membership
+      CREATE TABLE IF NOT EXISTS memory_cluster_members (
+        cluster_id TEXT NOT NULL,
+        memory_id TEXT NOT NULL,
+        added_at TEXT DEFAULT (datetime('now')),
+        PRIMARY KEY (cluster_id, memory_id),
+        FOREIGN KEY (cluster_id) REFERENCES memory_clusters(id) ON DELETE CASCADE,
+        FOREIGN KEY (memory_id) REFERENCES memories(id) ON DELETE CASCADE
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_cluster_member_cluster ON memory_cluster_members(cluster_id);
+      CREATE INDEX IF NOT EXISTS idx_cluster_member_memory ON memory_cluster_members(memory_id);
+    `,
+    down: `
+      DROP INDEX IF EXISTS idx_cluster_member_memory;
+      DROP INDEX IF EXISTS idx_cluster_member_cluster;
+      DROP TABLE IF EXISTS memory_cluster_members;
+      DROP INDEX IF EXISTS idx_cluster_coherence;
+      DROP INDEX IF EXISTS idx_cluster_priority;
+      DROP INDEX IF EXISTS idx_cluster_name;
+      DROP TABLE IF EXISTS memory_clusters;
+    `,
+  },
 ];
 
 /**

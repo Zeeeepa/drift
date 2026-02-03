@@ -26,6 +26,17 @@ export const HALF_LIVES: Record<MemoryType, number> = {
   constraint_override: 90,  // Overrides need periodic review
   decision_context: 180,    // Decision context is stable
   code_smell: 90,           // Smell patterns need validation
+  // Universal memory types (v2)
+  agent_spawn: 365,         // Agent configs are stable
+  entity: 180,              // Entities are fairly stable
+  goal: 90,                 // Goals need regular review
+  feedback: 120,            // Feedback needs reinforcement
+  workflow: 180,            // Workflows are stable
+  conversation: 30,         // Conversations fade quickly
+  incident: 365,            // Incidents are critical knowledge
+  meeting: 60,              // Meeting details fade
+  skill: 180,               // Skills are stable
+  environment: 90,          // Environments change frequently
 };
 
 /**
@@ -47,4 +58,15 @@ export const MIN_CONFIDENCE: Record<MemoryType, number> = {
   constraint_override: 0.2,
   decision_context: 0.3,
   code_smell: 0.2,
+  // Universal memory types (v2)
+  agent_spawn: 0.3,         // Keep agent configs
+  entity: 0.2,              // Keep entity knowledge
+  goal: 0.2,                // Archive completed goals
+  feedback: 0.2,            // Keep validated feedback
+  workflow: 0.3,            // Keep workflows
+  conversation: 0.1,        // Let conversations fade
+  incident: 0.2,            // Keep incident knowledge
+  meeting: 0.1,             // Let meeting details fade
+  skill: 0.2,               // Keep skill knowledge
+  environment: 0.2,         // Keep environment info
 };

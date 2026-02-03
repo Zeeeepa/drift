@@ -27,6 +27,17 @@ const HALF_LIVES: Record<MemoryType, number> = {
   constraint_override: 90,
   decision_context: 180,
   code_smell: 90,
+  // Universal memory types (v2)
+  agent_spawn: 365,
+  entity: 180,
+  goal: 90,
+  feedback: 120,
+  workflow: 180,
+  conversation: 30,
+  incident: 365,
+  meeting: 60,
+  skill: 180,
+  environment: 90,
 };
 
 /**
@@ -48,6 +59,17 @@ const VALIDATION_THRESHOLDS: Record<MemoryType, number> = {
   constraint_override: 30,
   decision_context: 90,
   code_smell: 30,
+  // Universal memory types (v2)
+  agent_spawn: 90,
+  entity: 60,
+  goal: 30,
+  feedback: 45,
+  workflow: 60,
+  conversation: 14,
+  incident: 90,
+  meeting: 30,
+  skill: 60,
+  environment: 30,
 };
 
 /**

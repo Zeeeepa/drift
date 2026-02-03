@@ -542,6 +542,17 @@ export class SQLiteMemoryStorage implements IMemoryStorage {
       constraint_override: 0,
       decision_context: 0,
       code_smell: 0,
+      // Universal memory types (v2)
+      agent_spawn: 0,
+      entity: 0,
+      goal: 0,
+      feedback: 0,
+      workflow: 0,
+      conversation: 0,
+      incident: 0,
+      meeting: 0,
+      skill: 0,
+      environment: 0,
     };
 
     for (const row of rows) {
@@ -663,6 +674,27 @@ export class SQLiteMemoryStorage implements IMemoryStorage {
         return `💭 ${memory.context?.focus || 'Interaction'}`;
       case 'core':
         return `🏠 ${memory.project?.name || 'Project'}`;
+      // Universal memory types (v2)
+      case 'agent_spawn':
+        return `🤖 ${memory.name}: ${memory.tools?.length || 0} tools`;
+      case 'entity':
+        return `📦 ${memory.entityType}: ${memory.name}`;
+      case 'goal':
+        return `🎯 ${memory.title}: ${memory.progress}% (${memory.status})`;
+      case 'workflow':
+        return `📋 ${memory.name}: ${memory.steps?.length || 0} steps`;
+      case 'conversation':
+        return `💬 ${memory.title}: ${memory.participants?.length || 0} participants`;
+      case 'feedback':
+        return `📝 ${memory.feedbackType}: ${memory.extractedRule?.slice(0, 40) || memory.correction.slice(0, 40)}...`;
+      case 'incident':
+        return `🚨 ${memory.severity}: ${memory.title}`;
+      case 'meeting':
+        return `📅 ${memory.meetingType}: ${memory.title}`;
+      case 'skill':
+        return `🧠 ${memory.name}: ${memory.proficiencyLevel}`;
+      case 'environment':
+        return `🌍 ${memory.environmentType}: ${memory.name}`;
       default:
         return (memory as Memory).summary || 'Memory';
     }

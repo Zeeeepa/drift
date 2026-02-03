@@ -13,8 +13,11 @@ import { createEmbeddingProvider, autoDetectEmbeddingProvider, type EmbeddingCon
 import { RetrievalEngine, type RetrievalContext, type RetrievalResult } from './retrieval/engine.js';
 import { ConsolidationEngine, type ConsolidationResult, type ConsolidationConfig } from './consolidation/engine.js';
 import { ConsolidationScheduler, type SchedulerConfig } from './consolidation/scheduler.js';
+import { AdaptiveConsolidationScheduler, type AdaptiveSchedulerConfig, type TokenUsage, type QualityMetrics } from './consolidation/adaptive-scheduler.js';
 import { ValidationEngine, type ValidationResult } from './validation/engine.js';
 import { DecayCalculator, type DecayFactors } from './decay/calculator.js';
+import { ContradictionDetector, type ContradictionResult } from './contradiction/detector.js';
+import { ConfidencePropagator } from './contradiction/propagator.js';
 
 /**
  * Cortex configuration
@@ -28,6 +31,10 @@ export interface CortexConfig {
   consolidation?: Partial<ConsolidationConfig>;
   /** Scheduler configuration */
   scheduler?: Partial<SchedulerConfig>;
+  /** Adaptive scheduler configuration (v2) */
+  adaptiveScheduler?: Partial<AdaptiveSchedulerConfig>;
+  /** Use adaptive scheduler instead of basic scheduler */
+  useAdaptiveScheduler?: boolean;
   /** Auto-initialize on creation */
   autoInitialize?: boolean;
 }
@@ -50,14 +57,23 @@ export class Cortex {
   readonly decay: DecayCalculator;
   /** Consolidation scheduler */
   readonly scheduler: ConsolidationScheduler;
+  /** Adaptive consolidation scheduler (v2) */
+  readonly adaptiveScheduler?: AdaptiveConsolidationScheduler;
+  /** Contradiction detector (v2) */
+  readonly contradictionDetector: ContradictionDetector;
+  /** Confidence propagator (v2) */
+  readonly confidencePropagator: ConfidencePropagator;
 
   private initialized = false;
+  private useAdaptive = false;
 
   private constructor(
     storage: IMemoryStorage,
     embeddings: IEmbeddingProvider,
     consolidationConfig?: Partial<ConsolidationConfig>,
-    schedulerConfig?: Partial<SchedulerConfig>
+    schedulerConfig?: Partial<SchedulerConfig>,
+    adaptiveSchedulerConfig?: Partial<AdaptiveSchedulerConfig>,
+    useAdaptiveScheduler?: boolean
   ) {
     this.storage = storage;
     this.embeddings = embeddings;
@@ -66,6 +82,20 @@ export class Cortex {
     this.validation = new ValidationEngine(storage);
     this.decay = new DecayCalculator();
     this.scheduler = new ConsolidationScheduler(this.consolidation, schedulerConfig);
+    
+    // V2: Adaptive scheduler
+    this.useAdaptive = useAdaptiveScheduler ?? false;
+    if (this.useAdaptive) {
+      this.adaptiveScheduler = new AdaptiveConsolidationScheduler(
+        storage,
+        this.consolidation,
+        adaptiveSchedulerConfig
+      );
+    }
+    
+    // V2: Contradiction detection
+    this.contradictionDetector = new ContradictionDetector(storage, embeddings);
+    this.confidencePropagator = new ConfidencePropagator(storage);
   }
 
   /**
@@ -86,7 +116,9 @@ export class Cortex {
       storage,
       embeddings,
       config?.consolidation,
-      config?.scheduler
+      config?.scheduler,
+      config?.adaptiveScheduler,
+      config?.useAdaptiveScheduler
     );
 
     if (config?.autoInitialize !== false) {
@@ -113,6 +145,7 @@ export class Cortex {
    */
   async close(): Promise<void> {
     this.scheduler.stop();
+    this.adaptiveScheduler?.stop();
     await this.storage.close();
   }
 
@@ -242,7 +275,11 @@ export class Cortex {
    * Start the consolidation scheduler
    */
   startScheduler(): void {
-    this.scheduler.start();
+    if (this.useAdaptive && this.adaptiveScheduler) {
+      this.adaptiveScheduler.start();
+    } else {
+      this.scheduler.start();
+    }
   }
 
   /**
@@ -250,6 +287,34 @@ export class Cortex {
    */
   stopScheduler(): void {
     this.scheduler.stop();
+    this.adaptiveScheduler?.stop();
+  }
+
+  /**
+   * Get memory quality metrics (v2)
+   */
+  async getQualityMetrics(): Promise<{ tokens: TokenUsage; quality: QualityMetrics } | null> {
+    if (this.adaptiveScheduler) {
+      return this.adaptiveScheduler.refreshMetrics();
+    }
+    return null;
+  }
+
+  /**
+   * Detect contradictions for a memory (v2)
+   */
+  async detectContradictions(memory: Memory): Promise<ContradictionResult[]> {
+    return this.contradictionDetector.detectContradictions(memory);
+  }
+
+  /**
+   * Apply contradiction and propagate confidence (v2)
+   */
+  async applyContradiction(
+    contradiction: ContradictionResult,
+    newMemoryId: string
+  ): Promise<Array<{ memoryId: string; previousConfidence: number; newConfidence: number; reason: string }>> {
+    return this.confidencePropagator.applyContradiction(contradiction, newMemoryId);
   }
 
   // Private helpers
@@ -274,6 +339,27 @@ export class Cortex {
         return `${memory.context.focus || ''}: ${memory.interaction.userQuery}`;
       case 'core':
         return `${memory.project.name}: ${memory.project.description || ''}`;
+      // Universal memory types (v2)
+      case 'agent_spawn':
+        return `Agent: ${memory.name}. ${memory.description}. Triggers: ${memory.triggerPatterns.join(', ')}`;
+      case 'entity':
+        return `${memory.entityType}: ${memory.name}. ${memory.keyFacts.join('. ')}`;
+      case 'goal':
+        return `Goal: ${memory.title}. ${memory.description}. Status: ${memory.status}`;
+      case 'workflow':
+        return `Workflow: ${memory.name}. ${memory.description}. Steps: ${memory.steps.map(s => s.name).join(', ')}`;
+      case 'conversation':
+        return `Conversation: ${memory.title}. ${memory.conversationSummary}`;
+      case 'feedback':
+        return `Feedback: ${memory.feedbackType}. ${memory.correction}. Rule: ${memory.extractedRule || ''}`;
+      case 'incident':
+        return `Incident: ${memory.title}. ${memory.rootCause || memory.impact}. Lessons: ${memory.lessonsLearned.join('. ')}`;
+      case 'meeting':
+        return `Meeting: ${memory.title}. ${memory.meetingSummary}`;
+      case 'skill':
+        return `Skill: ${memory.name}. Domain: ${memory.domain}. ${memory.keyPrinciples?.join('. ') || ''}`;
+      case 'environment':
+        return `Environment: ${memory.name}. Type: ${memory.environmentType}. Warnings: ${memory.warnings.join('. ')}`;
       default:
         return (memory as Memory).summary;
     }
