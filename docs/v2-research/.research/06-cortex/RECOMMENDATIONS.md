@@ -104,12 +104,13 @@ Replace string-length approximation with actual tokenizer-based counting. Use `t
 ## CX8: Evidence-Based Memory Promotion
 
 **Priority**: P1
-**Evidence**: R15 (Governed Memory Fabric), R7 (neuroscience-inspired consolidation)
+**Evidence**: R15 (Governed Memory Fabric), R7 (neuroscience-inspired consolidation), R18 (EDM — metric-guided selective consolidation), R19 (recall-gated consolidation)
 
 Replace time-only consolidation triggers with evidence-based promotion thresholds:
 - Memory promoted to semantic only if confirmed by ≥2 episodes, validated by user feedback, or supported by pattern data
 - Add retrieval-difficulty triggers: if a memory that should be relevant keeps scoring low, it needs reinforcement or embedding refresh
 - Per-memory adaptive decay rates based on access patterns (not just type-based half-lives)
+- **Recall-gated quality gate**: Before consolidating a cluster, run test queries (cluster key phrases) against the embedding index. Only consolidate if episodes rank highly — this prevents consolidating poorly-encoded memories (R19)
 
 ---
 
@@ -181,25 +182,599 @@ This bridges the gap between query style and memory content style, improving rec
 
 ---
 
+---
+
+## CX14: Algorithmic Consolidation Engine (No LLM Required)
+
+**Priority**: P0
+**Evidence**: R16 (TextRank + TF-IDF extractive summarization), R17 (HDBSCAN clustering), R19 (recall-gated consolidation)
+
+Replace LLM-dependent consolidation abstraction with a fully algorithmic pipeline that works offline, is deterministic, auditable, and fast. LLM-enhanced consolidation becomes an optional quality upgrade, not a requirement.
+
+**Pipeline: Cluster → Rank → Merge → Distill → Gate**
+
+**Step 1 — Cluster (HDBSCAN)**:
+Group episodic memories using HDBSCAN on a composite similarity signal:
+- Embedding cosine similarity (primary signal, weighted 0.5)
+- Shared linked files count (weighted 0.2)
+- Shared linked patterns count (weighted 0.15)
+- Shared linked functions count (weighted 0.1)
+- Shared tags count (weighted 0.05)
+
+HDBSCAN is ideal because: (1) no predefined cluster count needed, (2) identifies noise points (episodes too unique to consolidate), (3) handles varying cluster densities. Minimum cluster size = 2 (aligns with evidence-based promotion threshold from CX8).
+
+Use `hdbscan` Rust crate (pure Rust, accepts `Vec<Vec<f32>>`).
+
+**Step 2 — Rank within cluster (Anchor Selection)**:
+Select the anchor memory — the episode with the highest composite score:
+```
+anchor_score = confidence × importance_weight × log2(accessCount + 1)
+```
+Where importance_weight: critical=4.0, high=2.0, normal=1.0, low=0.5.
+
+The anchor provides the structural template for the consolidated semantic memory.
+
+**Step 3 — Merge unique details (Embedding-Based Deduplication)**:
+For each non-anchor episode in the cluster:
+1. Split content into sentences.
+2. Compute embedding for each sentence (already available or cheap to generate via `ort`).
+3. Compare each sentence against the anchor's sentences using cosine similarity.
+4. Sentences with similarity < 0.85 to all anchor sentences are "novel" — pull them in.
+5. Sentences with similarity ≥ 0.85 are near-duplicates — drop them.
+
+This gives the anchor's core content enriched with unique details from supporting episodes, without redundancy.
+
+**Step 4 — Distill summary (TextRank + TF-IDF)**:
+Generate the consolidated memory's summary using a hybrid approach:
+1. Build a TextRank graph across all sentences in the cluster (nodes = sentences, edges = embedding cosine similarity). Run PageRank iteration to identify the most central sentences.
+2. Use TF-IDF across the cluster to identify distinctive key phrases (terms that are frequent in this cluster but rare across all memories).
+3. Take the top-1 TextRank sentence as the summary base. Append the top-3 TF-IDF key phrases if they're not already present.
+4. Truncate to ~20 tokens (summary target length).
+
+**Step 5 — Metadata union**:
+- Tags: union of all tags across the cluster
+- Linked files: union with citation preservation (keep the most recent content_hash per file)
+- Linked patterns: union
+- Linked functions: union
+- Confidence: `weighted_avg(cluster_confidences) × cluster_size_boost` where cluster_size_boost = `min(1.3, 1.0 + (cluster_size - 2) × 0.05)` — more episodes confirming = higher confidence
+- Importance: max importance from the cluster
+
+**Step 6 — Recall gate (Quality check)**:
+Before finalizing, run a recall test (R19):
+1. Extract the top-3 TF-IDF key phrases from the cluster.
+2. Run them as queries against the embedding index.
+3. If the cluster's episodes rank in the top-10 results for at least 2/3 queries, the cluster is well-encoded → proceed with consolidation.
+4. If not, the episodes may be poorly encoded → refresh embeddings first, then re-test. If still failing, defer consolidation and flag for review.
+
+**Optional LLM enhancement**:
+When an LLM is available (API key configured or cloud-connected), offer an optional polish step:
+- Take the algorithmically consolidated memory and ask the LLM to rephrase it into more natural language.
+- The LLM does NOT do the consolidation logic — it only polishes the output.
+- Track whether LLM-polished memories have higher retrieval rates than unpolished ones to validate the value.
+
+**Why this is better than LLM-first**:
+- Deterministic: same inputs always produce the same output. Testable, reproducible, debuggable.
+- Fast: runs in microseconds in Rust. No API latency, no token cost.
+- Auditable: every sentence in the output traces to a source episode with a similarity score.
+- Offline-first: works everywhere, no external dependencies.
+- The LLM becomes an optional quality enhancer, not a critical dependency.
+
+---
+
+## CX15: Consolidation Quality Monitoring
+
+**Priority**: P0
+**Evidence**: R18 (EDM — metric-guided selective consolidation, 2× memory precision with 50% fewer retained experiences)
+
+Track consolidation quality over time and use metrics to auto-tune thresholds. This is the monitoring and weighting layer that makes algorithmic consolidation self-improving.
+
+**Core Metrics**:
+
+1. **Memory Precision** (most important): After consolidation, track whether the consolidated memory gets retrieved and used within 30 days.
+   - `precision = consolidated_memories_accessed / total_consolidated_memories`
+   - Target: ≥ 0.7 (70% of consolidated memories should be accessed at least once)
+   - If below target: cluster similarity threshold may be too loose (consolidating unrelated episodes)
+
+2. **Compression Ratio**: Total tokens in source episodes → tokens in consolidated memory.
+   - `ratio = source_tokens / consolidated_tokens`
+   - Target: 3:1 to 5:1
+   - Below 3:1: not enough consolidation (too much content preserved)
+   - Above 5:1: potential information loss (too aggressive)
+
+3. **Retrieval Lift**: Does the consolidated memory get retrieved more often than the individual episodes it replaced?
+   - `lift = consolidated_access_rate / avg_episode_access_rate`
+   - Target: ≥ 1.5 (consolidated memory should be 50% more discoverable)
+   - Below 1.0: consolidation hurt discoverability — investigate
+
+4. **Contradiction Rate**: How often does a consolidated memory get contradicted within 30 days of creation?
+   - `contradiction_rate = contradicted_consolidations / total_consolidations`
+   - Target: ≤ 0.05 (5% or less)
+   - Above target: merge logic may be combining conflicting episodes
+
+5. **Stability Score**: How much does a consolidated memory's confidence change in the first 30 days?
+   - `stability = 1.0 - abs(confidence_at_30d - confidence_at_creation)`
+   - Target: ≥ 0.85
+   - Below target: the consolidated memory is being frequently challenged
+
+**Auto-Tuning Feedback Loop**:
+- Store metrics per consolidation event in a `consolidation_metrics` table.
+- Every 100 consolidation events (or weekly, whichever comes first), compute aggregate metrics.
+- If Memory Precision drops below 0.7: increase minimum cluster size by 1 and tighten similarity threshold by 0.05.
+- If Compression Ratio exceeds 5:1: lower the sentence novelty threshold (include more content).
+- If Contradiction Rate exceeds 0.05: add a pre-consolidation contradiction check — scan cluster episodes for internal contradictions before merging.
+- Log all threshold adjustments to the audit trail for transparency.
+
+**Dashboard exposure**: Surface these metrics through the health/observability system (CX10) so users can see consolidation quality trends.
+
+---
+
+## CX16: Updated Embedding Provider Hierarchy
+
+**Priority**: P0
+**Evidence**: R20 (Codestral Embed — new SOTA), R3 (code embedding comparison), R4 (ort crate)
+
+Update the embedding provider hierarchy to reflect the current state of the art (as of February 2026):
+
+**API providers (cloud-connected mode)**:
+1. Codestral Embed (Mistral) — new SOTA on SWE-Bench and Text2Code. Matryoshka support (truncate to 256-dim with INT8 and still beat competitors). Best quality-to-cost ratio.
+2. VoyageCode3 — 32K context, 2048 dims, 300+ languages. Strong fallback.
+3. OpenAI text-embedding-3-large — general purpose, widely available.
+
+**Local providers (offline OSS mode)**:
+1. Jina Code Embeddings v2 (137M params, Apache 2.0, 8192 context) via `ort` (ONNX Runtime). Default for offline use.
+2. CodeRankEmbed (137M, MIT, 8192 context) via `ort`. Alternative if Jina unavailable.
+
+**Fallback (air-gapped, no ONNX)**:
+1. all-MiniLM-L6-v2 via Transformers.js (current v1 behavior). For environments that can't run ONNX.
+
+**Matryoshka strategy**: Store embeddings at full model dimensions (1024 for Jina, 2048 for Voyage/Codestral). Use truncated dimensions (384 or 256) for fast candidate search. Use full dimensions for re-ranking (CX6). This gives the speed of small embeddings with the precision of large ones.
+
+---
+
+---
+
+## CX17: Testing Strategy
+
+**Priority**: P0
+**Evidence**: R21 (proptest — property-based testing in Rust)
+
+Define a multi-layer testing strategy that proves Cortex works correctly without relying on subjective evaluation.
+
+**Layer 1 — Property-Based Tests (proptest)**:
+Every subsystem has invariants that must hold for all inputs:
+
+| Subsystem | Properties |
+|---|---|
+| Consolidation | Idempotent (same cluster → same output). Deterministic (no randomness). Monotonic confidence (more supporting episodes → higher confidence). No orphaned links (every linked file/pattern in output exists in at least one input episode). Output token count < sum of input token counts. |
+| Decay | Monotonically decreasing over time without access. Bounded: 0.0 ≤ confidence ≤ 1.0. Importance anchor never increases confidence beyond base × 2.0. Access boost capped at 1.5×. |
+| Compression | Level ordering: tokens(L0) < tokens(L1) < tokens(L2) < tokens(L3). Level 3 is lossless (all content preserved). Level 0 contains only ID. compressToFit never exceeds budget. |
+| Retrieval | Higher-importance memories rank above lower-importance at equal similarity. Session deduplication never returns already-sent memories. Token budget never exceeded. |
+| Causal graph | DAG enforcement: no cycles after any insertion. Traversal depth ≤ maxDepth. Traversal nodes ≤ maxNodes. Bidirectional traversal = union of forward + backward. |
+| Hybrid search | RRF scores are monotonically decreasing. FTS5 results + vector results ⊆ RRF results. Empty query returns empty results. |
+| Privacy | Sanitized output never contains raw PII/secrets. Sanitization is idempotent (sanitizing twice = sanitizing once). |
+| Token counting | count(a + b) ≤ count(a) + count(b) + 1. count("") = 0. Cached count = uncached count. |
+
+**Layer 2 — Golden Dataset Tests**:
+Curated test fixtures with known expected outputs:
+- 10 consolidation scenarios: clusters of 2-5 episodic memories with expected semantic memory output (anchor selection, novel sentence extraction, summary generation).
+- 10 retrieval scenarios: queries with known relevant memories, expected ranking order.
+- 5 contradiction scenarios: pairs of conflicting memories with expected confidence propagation.
+- 5 causal inference scenarios: memory pairs with expected causal relationship type and strength.
+
+Golden datasets live in `crates/cortex/test-fixtures/` and are version-controlled. Updated when algorithms change.
+
+**Layer 3 — Performance Benchmarks (criterion)**:
+Track latency and throughput at various scales using the `criterion` crate:
+
+| Benchmark | Targets |
+|---|---|
+| Retrieval latency (100 memories) | < 5ms p95 |
+| Retrieval latency (10K memories) | < 50ms p95 |
+| Consolidation (cluster of 5) | < 10ms |
+| Embedding generation (single, local ONNX) | < 100ms |
+| Embedding generation (batch of 10, local ONNX) | < 500ms |
+| Hybrid search (FTS5 + vec + RRF, 10K memories) | < 30ms p95 |
+| Decay calculation (1K memories) | < 1ms |
+| Causal traversal (depth 5, 1K edges) | < 5ms |
+
+Benchmarks run in CI. Regressions > 20% fail the build.
+
+**Layer 4 — Integration Tests**:
+End-to-end flows through the full system:
+- Create 50 episodic memories → trigger consolidation → verify semantic memories created → query and verify retrieval → trigger decay → verify confidence changes → trigger validation → verify healing.
+- Concurrent access: 10 parallel read queries + 1 write (consolidation) → verify no data corruption.
+- Embedding model swap: create memories with model A → switch to model B → verify re-embedding pipeline → verify retrieval still works during transition.
+
+---
+
+## CX18: Graceful Degradation Matrix
+
+**Priority**: P0
+**Evidence**: R23 (fallback chain pattern, Rust error handling)
+
+Define fallback behavior for every component that can fail. The system should never crash or lose data — it degrades gracefully and tells the user what's happening.
+
+**Degradation Matrix**:
+
+| Component | Failure Mode | Fallback | User Impact |
+|---|---|---|---|
+| ONNX embedding model | Model file missing or corrupt | Try fallback model → use cached embeddings → use TF-IDF sparse vectors → return error | Retrieval quality degrades but still works. New memories created without embeddings are flagged for re-embedding. |
+| SQLite database | File corruption detected | Attempt WAL recovery → rebuild from most recent backup → start fresh with warning | If recovery succeeds: no data loss. If fresh start: memories lost, audit log explains what happened. |
+| sqlite-vec extension | Extension fails to load | Disable vector search → use FTS5-only retrieval → degrade to metadata-only filtering | Retrieval loses semantic similarity but keyword search still works. |
+| FTS5 index | Index corruption | Rebuild FTS5 index from memory content (non-blocking background task) | Brief period of keyword-search-only degradation during rebuild. |
+| Causal graph (petgraph) | In-memory graph inconsistent with SQLite | Rebuild graph from `causal_edges` table | Causal traversal temporarily unavailable during rebuild (~seconds). |
+| Embedding dimension mismatch | Model change (384→1024 or vice versa) | Detect dimension difference on startup → trigger background re-embedding pipeline → use FTS5-only search for un-migrated memories → complete when all re-embedded | Retrieval works throughout via FTS5. Quality improves as re-embedding progresses. |
+| HDBSCAN clustering | Fails on edge case input | Fall back to simple metadata-based grouping (shared files + patterns) | Consolidation quality slightly lower but still functional. |
+| Token counter (tiktoken) | Model file missing | Fall back to character-length approximation (length/4) | Budget management less accurate but functional. |
+| Privacy sanitizer | Regex compilation failure | Skip the failing pattern, log warning, continue with remaining patterns | One pattern type unsanitized. Audit log records the gap. |
+| Prediction cache (moka) | Memory pressure | Evict prediction cache first (it's regenerable) → reduce L1 embedding cache size | Prediction preloading disabled. Retrieval still works, just not pre-warmed. |
+
+**Implementation pattern**: Every fallback is a variant of Rust's `Result` chain:
+```rust
+async fn get_embedding(&self, text: &str) -> Result<Vec<f32>, CortexError> {
+    self.onnx_provider.embed(text).await
+        .or_else(|_| self.fallback_provider.embed(text).await)
+        .or_else(|_| self.cache.get_cached(text))
+        .or_else(|_| Ok(self.tfidf_fallback(text)))
+        .map_err(|e| {
+            self.health.record_degradation("embedding", &e);
+            e
+        })
+}
+```
+
+Every degradation event is logged to the audit trail with: component, failure mode, fallback used, timestamp, and recovery status.
+
+---
+
+## CX19: Versioned Embedding Migration Pipeline
+
+**Priority**: P0
+**Evidence**: R24 (storage growth model), R3/R20 (embedding model changes)
+
+Handle embedding model changes (dimension changes, model upgrades) without downtime or data loss.
+
+**Problem**: When switching from 384-dim general-purpose to 1024-dim code-specific embeddings, every existing memory's embedding becomes incompatible. Memories with old embeddings can't be compared against queries embedded with the new model.
+
+**Solution — Background Re-Embedding Pipeline**:
+
+1. **Detection**: On startup, compare the configured embedding model's dimensions and name against a `embedding_model_info` table. If they differ, a migration is needed.
+
+2. **Metadata tracking**:
+```sql
+CREATE TABLE embedding_model_info (
+  id INTEGER PRIMARY KEY,
+  model_name TEXT NOT NULL,
+  dimensions INTEGER NOT NULL,
+  activated_at TEXT NOT NULL,
+  migration_status TEXT DEFAULT 'pending'  -- pending|in_progress|complete
+);
+
+ALTER TABLE memory_embedding_link ADD COLUMN model_version INTEGER DEFAULT 1;
+```
+
+3. **Transition period**: During migration, memories have mixed embedding versions. The retrieval engine handles this:
+   - For queries: embed with the NEW model.
+   - For candidate scoring: if memory has new embedding → use cosine similarity. If memory has old embedding → fall back to FTS5 score only (skip vector similarity for that candidate).
+   - This means un-migrated memories are still retrievable via keyword search, just not via semantic similarity.
+
+4. **Background worker**: A low-priority background task re-embeds memories in batches:
+   - Batch size: 50 memories per cycle
+   - Throttle: 100ms pause between batches (don't starve foreground operations)
+   - Priority: high-importance and frequently-accessed memories first
+   - Progress tracked in `embedding_model_info.migration_status`
+   - Resumable: if interrupted, picks up where it left off via `model_version` column
+
+5. **Completion**: When all memories are re-embedded, update `migration_status = 'complete'`. Remove the FTS5-only fallback path for old embeddings. Optionally VACUUM to reclaim space from old embedding rows.
+
+6. **Matryoshka optimization**: If the new model supports Matryoshka (Jina Code, Codestral Embed), store full-dimension embeddings but create a truncated copy at 384-dim for fast search. The sqlite-vec virtual table uses the truncated version. Re-ranking (CX6) uses the full version.
+
+---
+
+## CX20: Concurrency Model
+
+**Priority**: P0
+**Evidence**: R22 (SQLite read-write connection pooling, WAL mode)
+
+Define the ownership and synchronization model for all shared state in Cortex.
+
+**SQLite Access Pattern — Read-Write Pool**:
+```
+┌─────────────────────────────────────────┐
+│           ConnectionPool                 │
+│                                          │
+│  Write Connection (1, exclusive)         │
+│  ├── Behind tokio::sync::Mutex           │
+│  ├── Used by: consolidation, decay,      │
+│  │   validation, learning, memory CRUD   │
+│  └── Serialized writes, no contention    │
+│                                          │
+│  Read Connections (N, concurrent)        │
+│  ├── Pool of 4-8 connections             │
+│  ├── Used by: retrieval, search, MCP     │
+│  │   queries, prediction, health checks  │
+│  └── Fully concurrent, never blocked     │
+│       by writer                          │
+└─────────────────────────────────────────┘
+```
+
+**SQLite Pragmas** (set on every connection):
+```sql
+PRAGMA journal_mode = WAL;
+PRAGMA synchronous = NORMAL;
+PRAGMA mmap_size = 268435456;    -- 256MB memory-mapped I/O
+PRAGMA cache_size = -64000;       -- 64MB page cache
+PRAGMA busy_timeout = 5000;       -- 5s retry on lock
+PRAGMA foreign_keys = ON;
+PRAGMA auto_vacuum = INCREMENTAL; -- Reclaim space incrementally
+```
+
+**In-Memory State Synchronization**:
+
+| State | Type | Access Pattern |
+|---|---|---|
+| Causal graph (petgraph) | `Arc<RwLock<StableGraph>>` | Many concurrent readers (traversal, narrative). Exclusive writer (inference, pruning). RwLock allows concurrent reads. |
+| Embedding cache L1 (moka) | `moka::sync::Cache` | Thread-safe internally. No external locking needed. |
+| Prediction cache (moka) | `moka::sync::Cache` | Thread-safe internally. No external locking needed. |
+| Session contexts | `Arc<DashMap<SessionId, SessionContext>>` | Concurrent per-session access. DashMap provides fine-grained locking per key. |
+| Consolidation state | `Arc<AtomicBool>` (is_running flag) | Only one consolidation cycle at a time. Check-and-set before starting. |
+| Health metrics | `Arc<RwLock<HealthMetrics>>` | Frequent reads (health checks), infrequent writes (metric updates). |
+
+**Background Task Scheduling**:
+```
+┌──────────────────────────────────────┐
+│         Cortex Runtime               │
+│                                      │
+│  Foreground (responds to queries):   │
+│  ├── Retrieval (read pool)           │
+│  ├── Search (read pool)              │
+│  ├── MCP tool handlers (read pool)   │
+│  └── Memory CRUD (write connection)  │
+│                                      │
+│  Background (periodic tasks):        │
+│  ├── Consolidation (every 6h or      │
+│  │   triggered by pressure)          │
+│  ├── Decay processing (every 1h)     │
+│  ├── Validation (every 4h)           │
+│  ├── Prediction preloading           │
+│  │   (on file change)                │
+│  ├── Re-embedding migration          │
+│  │   (when model changes)            │
+│  └── Compaction (weekly)             │
+│                                      │
+│  All background tasks use the write  │
+│  connection via Mutex — they queue   │
+│  behind each other, never starve     │
+│  foreground reads.                   │
+└──────────────────────────────────────┘
+```
+
+**Key principle**: Reads never wait for writes. Writes are serialized but fast (individual SQLite transactions). Background tasks yield between batches to prevent write-starvation of foreground CRUD operations.
+
+---
+
+## CX21: Data Budget and Storage Compaction
+
+**Priority**: P1
+**Evidence**: R24 (storage growth model — 7.5KB per memory, ~800MB-1GB at 5 years heavy use)
+
+Define storage growth expectations and compaction strategy to keep cortex.db manageable.
+
+**Storage Budget Per Memory**:
+| Component | Size | Notes |
+|---|---|---|
+| Content (JSON) | ~2KB | Typed struct, not raw text |
+| Embedding (1024-dim f32) | 4KB | Full dimension storage |
+| Embedding (384-dim f32, truncated) | 1.5KB | For fast search |
+| Metadata + indexes | ~1KB | Tags, links, timestamps |
+| FTS5 index contribution | ~0.5KB | ~30% of text content |
+| Audit log (per memory lifetime) | ~2.5KB | ~5 events × 0.5KB |
+| **Total per memory** | **~11.5KB** | Conservative estimate |
+
+**Growth Projections**:
+| Usage Level | Memories/Day | 1 Year | 3 Years | 5 Years |
+|---|---|---|---|---|
+| Light (solo dev) | 5 | 14MB | 42MB | 70MB |
+| Normal (active dev) | 15 | 42MB | 126MB | 210MB |
+| Heavy (team/enterprise) | 50 | 140MB | 420MB | 700MB |
+| Extreme (CI + multiple devs) | 100 | 280MB | 840MB | 1.4GB |
+
+**Compaction Strategy**:
+
+1. **Archived memory cleanup** (monthly): Memories archived for > 90 days with confidence < 0.1 and zero access in the last 90 days → permanently delete content and embedding. Keep a tombstone record (ID, type, archived_at, deletion_reason) for audit trail. Reclaim ~90% of the memory's storage.
+
+2. **Audit log rotation** (monthly): Audit entries older than 1 year → compress into monthly summary records (count of operations by type, not individual entries). Keeps the audit trail useful for trends without unbounded growth.
+
+3. **Embedding deduplication**: If two memories have identical content hashes, share the embedding row. Saves ~4KB per duplicate.
+
+4. **Incremental VACUUM** (weekly): `PRAGMA incremental_vacuum(1000)` — reclaim up to 1000 pages per run. Non-blocking, runs during low-activity periods.
+
+5. **Full VACUUM** (quarterly, optional): Only if fragmentation exceeds 30% (detected via `PRAGMA page_count` vs `PRAGMA freelist_count`). Requires temporary disk space equal to database size. Run during off-hours.
+
+6. **Storage health reporting**: Include in `getHealth()`:
+   - Database file size
+   - Active memory count vs archived count
+   - Embedding storage size
+   - FTS5 index size
+   - Fragmentation percentage
+   - Projected growth rate (based on last 30 days)
+   - Estimated time until 500MB / 1GB thresholds
+
+---
+
+## CX22: Memory Importance Auto-Reclassification
+
+**Priority**: P1
+**Evidence**: RECAP limitation #11 (importance is static at creation time)
+
+Automatically adjust memory importance based on observed usage patterns. A memory created as "normal" that gets accessed 50 times in a month is clearly more important than its label suggests.
+
+**Reclassification Signals**:
+
+| Signal | Weight | Logic |
+|---|---|---|
+| Access frequency (30-day) | 0.35 | > 20 accesses/month → candidate for upgrade. < 1 access/month for 3 months → candidate for downgrade. |
+| Retrieval rank (30-day avg) | 0.25 | Consistently in top-5 results → important. Consistently outside top-20 → less important. |
+| Linked entity count | 0.15 | Linked to ≥ 3 active patterns/constraints → structurally important. Zero links → isolated. |
+| Contradiction involvement | 0.10 | Frequently cited in contradiction resolution (as the "winner") → authoritative. |
+| User feedback | 0.15 | Explicitly confirmed by user → boost. Explicitly rejected → downgrade. |
+
+**Reclassification Rules**:
+```
+composite_score = Σ(signal × weight)
+
+If current = low AND composite_score > 0.7 for 2 consecutive months → upgrade to normal
+If current = normal AND composite_score > 0.85 for 2 consecutive months → upgrade to high
+If current = high AND composite_score > 0.95 for 3 consecutive months → upgrade to critical
+If current = critical AND composite_score < 0.5 for 3 consecutive months → downgrade to high
+If current = high AND composite_score < 0.3 for 3 consecutive months → downgrade to normal
+If current = normal AND composite_score < 0.15 for 3 consecutive months → downgrade to low
+```
+
+**Safeguards**:
+- Never auto-downgrade a memory that was manually set to critical by a user. Respect explicit user intent.
+- Reclassification changes are logged to the audit trail with the composite score and contributing signals.
+- Maximum one reclassification per memory per month (prevent oscillation).
+- Reclassification runs as a background task (monthly), not on every access.
+
+---
+
+## CX23: Cortex CLI Surface
+
+**Priority**: P1 (to be extracted into CLI research when that category is finalized)
+**Evidence**: Cortex subsystem capabilities, MCP tool surface
+
+Define the developer-facing CLI commands for Cortex. These will be integrated into the main `drift` CLI as subcommands.
+
+**Core Commands**:
+```
+drift cortex status              # Health dashboard: memory count, confidence avg,
+                                 # storage size, consolidation status, embedding model
+drift cortex search <query>      # Hybrid search with RRF, returns ranked memories
+drift cortex why <file|pattern>  # Trigger the "why" system — causal narrative
+drift cortex explain <memory-id> # Show full memory with causal chain, linked entities
+drift cortex add <type>          # Interactive memory creation (guided prompts)
+drift cortex learn               # Trigger learning from recent corrections
+drift cortex consolidate         # Manual consolidation trigger
+drift cortex validate            # Run validation across all memories
+drift cortex export              # Export memories as JSON (for backup/migration)
+drift cortex import <file>       # Import memories from JSON
+drift cortex gc                  # Run compaction (archived cleanup + vacuum)
+drift cortex metrics             # Consolidation quality metrics (CX15)
+drift cortex reembed             # Trigger re-embedding pipeline manually
+```
+
+**Flags**:
+```
+--format json|table|minimal      # Output format (default: table)
+--type <memory-type>             # Filter by memory type
+--importance <low|normal|high|critical>  # Filter by importance
+--limit <n>                      # Limit results
+--since <date>                   # Filter by date
+--verbose                        # Include full content, not just summaries
+```
+
+**Note**: This section defines the CLI surface for Cortex. Full implementation details, argument parsing, output formatting, and integration with the broader `drift` CLI will be planned in the CLI research category (10-cli). This section serves as the contract between Cortex and the CLI layer.
+
+---
+
 ## Summary Table
 
 | # | Recommendation | Priority | Evidence |
 |---|---------------|----------|----------|
 | CX1 | Hybrid search (FTS5 + sqlite-vec + RRF) | P0 | R2, R8 |
-| CX2 | Code-specific embedding model | P0 | R3, R4 |
+| CX2 | Code-specific embedding model | P0 | R3, R4, R20 |
 | CX3 | Embedding enrichment with metadata | P1 | R14, R8 |
 | CX4 | Two-phase memory pipeline (Mem0-inspired) | P1 | R1 |
 | CX5 | Graph-based memory layer | P2 | R1, R11 |
 | CX6 | Retrieval re-ranking stage | P1 | R10 |
 | CX7 | Accurate token counting (tiktoken) | P0 | R12 |
-| CX8 | Evidence-based memory promotion | P1 | R15, R7 |
+| CX8 | Evidence-based memory promotion | P1 | R15, R7, R18, R19 |
 | CX9 | Expanded privacy patterns (50+) | P0 | R9 |
 | CX10 | Memory system observability | P1 | R13 |
 | CX11 | Causal graph improvements | P2 | R11, R5 |
 | CX12 | Concurrent caching with moka | P1 | R6 |
 | CX13 | Query expansion for improved recall | P2 | R10 |
+| CX14 | Algorithmic consolidation engine (no LLM) | P0 | R16, R17, R19 |
+| CX15 | Consolidation quality monitoring | P0 | R18 |
+| CX16 | Updated embedding provider hierarchy | P0 | R3, R4, R20 |
+| CX17 | Testing strategy (property + golden + perf) | P0 | R21 |
+| CX18 | Graceful degradation matrix | P0 | R23 |
+| CX19 | Versioned embedding migration pipeline | P0 | R24 |
+| CX20 | Concurrency model (RW pool + state sync) | P0 | R22 |
+| CX21 | Data budget and storage compaction | P1 | R24 |
+| CX22 | Memory importance auto-reclassification | P1 | RECAP #11 |
+| CX23 | Cortex CLI surface (contract for 10-cli) | P1 | Cortex capabilities |
 
-**Why hybrid**: Vector-only search misses exact keyword matches (e.g., searching for "bcrypt" might return memories about "password hashing" but miss the one that literally says "use bcrypt"). FTS5 catches these. RRF combines both without requiring score normalization.
+## Phase 0: Foundational Architecture Decisions
+
+### FA1: Hybrid Database Schema (FTS5 + sqlite-vec + RRF)
+
+**Priority**: P0 (Build First)
+**Effort**: Medium
+**Impact**: Determines retrieval quality for all memory operations — the single most impactful architectural decision
+
+**What to Build**:
+A cortex.db schema that combines three search modalities in a single SQLite database: structured queries (standard tables + indexes), full-text search (FTS5 virtual table), and vector similarity search (sqlite-vec virtual table). Results are fused via Reciprocal Rank Fusion (RRF).
+
+**Why hybrid**: Vector-only search misses exact keyword matches (e.g., searching for "bcrypt" might return memories about "password hashing" but miss the one that literally says "use bcrypt"). FTS5 catches these. RRF combines both without requiring score normalization: `score = Σ 1/(60 + rank_i)`.
+
+**Schema additions**:
+```sql
+-- FTS5 virtual table for keyword search
+CREATE VIRTUAL TABLE memory_fts USING fts5(
+    summary,
+    content,
+    tags,
+    content=memories,
+    content_rowid=rowid
+);
+
+-- Triggers to keep FTS5 in sync with memories table
+CREATE TRIGGER memory_fts_insert AFTER INSERT ON memories BEGIN
+    INSERT INTO memory_fts(rowid, summary, content, tags)
+    VALUES (NEW.rowid, NEW.summary, NEW.content, NEW.tags);
+END;
+
+CREATE TRIGGER memory_fts_delete AFTER DELETE ON memories BEGIN
+    INSERT INTO memory_fts(memory_fts, rowid, summary, content, tags)
+    VALUES ('delete', OLD.rowid, OLD.summary, OLD.content, OLD.tags);
+END;
+
+CREATE TRIGGER memory_fts_update AFTER UPDATE ON memories BEGIN
+    INSERT INTO memory_fts(memory_fts, rowid, summary, content, tags)
+    VALUES ('delete', OLD.rowid, OLD.summary, OLD.content, OLD.tags);
+    INSERT INTO memory_fts(rowid, summary, content, tags)
+    VALUES (NEW.rowid, NEW.summary, NEW.content, NEW.tags);
+END;
+```
+
+**RRF fusion query pattern**:
+```sql
+-- Combine FTS5 and vector results with RRF
+WITH fts_results AS (
+    SELECT rowid, rank() OVER () as fts_rank
+    FROM memory_fts WHERE memory_fts MATCH ?
+    ORDER BY rank LIMIT 50
+),
+vec_results AS (
+    SELECT memory_id, row_number() OVER () as vec_rank
+    FROM memory_embeddings
+    WHERE embedding MATCH ? AND k = 50
+),
+combined AS (
+    SELECT COALESCE(f.rowid, v.memory_id) as memory_id,
+           1.0 / (60 + COALESCE(f.fts_rank, 999)) +
+           1.0 / (60 + COALESCE(v.vec_rank, 999)) as rrf_score
+    FROM fts_results f
+    FULL OUTER JOIN vec_results v ON f.rowid = v.memory_id
+)
+SELECT m.*, c.rrf_score
+FROM combined c
+JOIN memories m ON m.rowid = c.memory_id
+ORDER BY c.rrf_score DESC
+LIMIT ?;
+```
 
 **Evidence**:
 - Hybrid search with RRF: https://simonwillison.net/2024/Oct/4/hybrid-full-text-search-and-vector-search-with-sqlite/
@@ -484,30 +1059,45 @@ pattern_rationale = 1.2
 
 ## Phase 3: Knowledge Management
 
-### R7: Sleep-Inspired Consolidation with Evidence-Based Promotion
+### R7: Algorithmic Consolidation with Evidence-Based Promotion
 
-**Priority**: P1
+**Priority**: P0 (upgraded from P1 — core differentiator, no LLM dependency)
 **Effort**: High
 
 **What to Build**:
-Same 5-phase consolidation pipeline as v1, with these enhancements:
+A fully algorithmic 6-phase consolidation pipeline that works offline with zero LLM dependency. LLM polish is an optional enhancement, not a requirement. This is the primary consolidation path for both OSS and cloud versions.
 
-1. **Evidence-based promotion**: Episodic memories are only promoted to semantic if they have ≥3 supporting episodes OR have been confirmed by user feedback OR are linked to approved patterns. Time alone is not sufficient.
+**Phase 1 — Candidate Selection**: Select episodic memories eligible for consolidation (age > 7 days, status = pending, confidence > 0.3). Filter out memories already consolidated or archived.
 
-2. **Retrieval-difficulty trigger**: If a memory that should be relevant (high importance, linked to active patterns) consistently scores low in retrieval, trigger consolidation to refresh its embedding or merge it with supporting context.
+**Phase 2 — Clustering (HDBSCAN)**: Cluster candidates using HDBSCAN on composite similarity vectors (CX14). Minimum cluster size = 2. Memories flagged as noise are deferred — they need more supporting episodes.
 
-3. **Non-LLM fallback for abstraction**: The abstraction phase (extracting generalizable patterns from episodes) should have a rule-based fallback for air-gapped environments:
-   - Group episodes by linked files/patterns
-   - Extract common keywords and phrases
-   - Create semantic memory with merged content
-   - Flag for human review
+**Phase 3 — Recall Gate**: For each cluster, run a recall test (CX14 Step 6). Extract top-3 TF-IDF key phrases, query the embedding index. If episodes don't rank well, refresh embeddings and re-test. If still failing, defer and flag for review.
 
-4. **Adaptive scheduling** (same as v1): Token pressure, memory count, confidence degradation, contradiction density triggers.
+**Phase 4 — Algorithmic Abstraction**: For clusters that pass the recall gate:
+1. Select anchor memory (highest confidence × importance × accessCount).
+2. Merge novel sentences from supporting episodes (embedding similarity < 0.85 to anchor).
+3. Generate summary via TextRank + TF-IDF hybrid (CX14 Step 4).
+4. Union all metadata (tags, files, patterns, functions).
+5. Compute consolidated confidence with cluster size boost.
+
+**Phase 5 — Integration**: Merge new semantic memories with existing semantic memories. If a new consolidation overlaps significantly (embedding similarity > 0.9) with an existing semantic memory, UPDATE the existing one rather than creating a duplicate (Mem0-inspired deduplication from CX4).
+
+**Phase 6 — Pruning + Strengthening**: Archive consolidated episodic memories. Boost confidence of frequently accessed memories. Track tokensFreed metric.
+
+**Optional LLM Polish**: When an LLM is available, offer a post-consolidation polish step — rephrase the algorithmically generated content into more natural language. The LLM does NOT do consolidation logic. Track whether polished memories have higher retrieval rates to validate value.
+
+**Monitoring**: All consolidation events tracked via CX15 metrics (precision, compression ratio, retrieval lift, contradiction rate, stability). Auto-tuning feedback loop adjusts thresholds based on aggregate metrics.
+
+**Adaptive scheduling** (same as v1): Token pressure, memory count, confidence degradation, contradiction density triggers.
 
 **Evidence**:
+- Algorithmic consolidation: CX14 (TextRank, TF-IDF, HDBSCAN, recall gate)
+- Consolidation quality monitoring: CX15 (EDM metric-guided approach)
 - Evidence-based promotion: https://www.csharp.com/article/the-gdel-autonomous-memory-fabric-db-layer-the-database-substrate-that-makes-c/
+- Recall-gated consolidation: https://elifesciences.org/articles/90793
 - Retrieval-difficulty triggers: https://arxiv.org/html/2503.18371
-- Spaced repetition principles: https://link.springer.com/chapter/10.1007%2F978-3-030-52240-7_65
+- HDBSCAN: https://docs.rs/hdbscan
+- TextRank + TF-IDF: https://towardsai.net/p/machine-learning/mastering-extractive-summarization-a-theoretical-and-practical-guide-to-tf-idf-and-textrank
 
 ---
 
@@ -935,6 +1525,10 @@ crates/cortex/
 | `rayon` | Parallel batch operations |
 | `tokio` | Async embedding inference |
 | `regex` | Privacy sanitization |
+| `hdbscan` | Density-based clustering for consolidation (CX14) |
+| `dashmap` | Concurrent hashmap for session contexts (CX20) |
+| `proptest` | Property-based testing (CX17, dev dependency) |
+| `criterion` | Performance benchmarking (CX17, dev dependency) |
 
 ---
 
@@ -944,11 +1538,13 @@ crates/cortex/
 Phase 0 (Architecture):  FA1 + FA2 + FA3 + R22      [Decisions before code]
 Phase 1 (Storage):       R1 → R2 → R3                [Storage, Embeddings, Tokens]
 Phase 2 (Retrieval):     R4 → R5 → R6                [Hybrid Search, Compression, Intents]
-Phase 3 (Knowledge):     R7 → R8 → R9 → R10          [Consolidation, Decay, Contradiction, Validation]
+Phase 3 (Knowledge):     R7 → R8 → R9 → R10          [Algorithmic Consolidation, Decay, Contradiction, Validation]
 Phase 4 (Causal):        R11 → R12                    [Causal Graph, Why System]
 Phase 5 (Learning):      R13 → R14 → R15              [Corrections, Active Learning, Prediction]
 Phase 6 (Integration):   R16 → R17 → R18 → R19 → R20 → R21  [Session, Privacy, Generation, MCP, Observability, Versioning]
 ```
+
+Note: R7 (Algorithmic Consolidation) is now P0 and depends on R1 (Storage) + R2 (Embeddings) + R3 (Tokens). It uses HDBSCAN for clustering, TextRank + TF-IDF for summarization, and the recall gate requires the embedding index from R2. CX15 (Consolidation Quality Monitoring) is built alongside R7 as its monitoring layer.
 
 Note: Phase 6 items R16-R18 should be built alongside Phases 2-5 as they provide cross-cutting concerns. Listed separately for clarity.
 
@@ -964,7 +1560,8 @@ R22 (Crate Structure) ─→ ALL subsystems               R18 (Generation)
                                                               │
 R3 (Token Counting) ───→ R5 (Compression) ──→ R4             ↓
                                                        R19 (MCP Tools)
-R1 (Storage) ──────────→ R7 (Consolidation)
+R1 (Storage) ──────────→ R7 (Algorithmic Consolidation)
+R2 (Embedding Engine) ─→ R7 (HDBSCAN clustering + recall gate)
                     ├───→ R8 (Decay)
                     ├───→ R9 (Contradiction) ──→ R11 (Causal Graph)
                     ├───→ R10 (Validation)
@@ -974,6 +1571,7 @@ R1 (Storage) ──────────→ R7 (Consolidation)
                     ├───→ R17 (Privacy)
                     └───→ R21 (Versioning)
 
+R7 (Consolidation) ───→ CX15 (Quality Monitoring, built alongside)
 R11 (Causal) ──────────→ R12 (Why System)
 R4 (Retrieval) ────────→ R15 (Prediction, pre-compute)
 R16 (Session) ─────────→ R20 (Observability)
@@ -988,11 +1586,18 @@ R16 (Session) ─────────→ R20 (Observability)
 | ONNX model loading is slow on first run | Pre-download models during `drift setup`. Cache loaded models in L3. |
 | sqlite-vec brute-force search too slow at scale | Pre-filter by type/importance. Use Matryoshka truncation for fast search. |
 | Causal graph grows unbounded | Prune weak edges (strength < 0.2) and old unvalidated edges periodically. |
-| LLM dependency for consolidation abstraction | Rule-based fallback for air-gapped environments (R7). |
+| Algorithmic consolidation quality lower than LLM | CX15 monitoring detects quality issues. Optional LLM polish available. Recall gate (CX14) prevents bad consolidations. Auto-tuning feedback loop improves thresholds over time. |
+| HDBSCAN clustering produces too many noise points | Tune min_cluster_size and min_samples. Noise points are deferred, not lost — they consolidate when more supporting episodes arrive. |
 | NAPI bridge complexity for Rust ↔ TS | Use napi-rs with typed bindings. Keep MCP tools in TS as thin wrappers. |
 | Memory versioning storage growth | Limit to last 10 versions per memory. Compress old versions. |
 | Hybrid search query complexity | Abstract behind a `HybridSearcher` that encapsulates the FTS5 + vec + RRF logic. |
 | Token counting overhead | Cache counts per content hash (R3). Amortized cost is near-zero. |
+| Cloud sync conflicts | Local SQLite is source of truth. Sync log tracks mutations. Conflict resolution: last-write-wins with audit trail. |
+| Embedding model change breaks retrieval | CX19 migration pipeline: FTS5-only fallback during transition, background re-embedding, no downtime. |
+| Concurrent write contention | CX20: single write connection behind Mutex, serialized writes. Reads never blocked (WAL mode). |
+| cortex.db grows too large (>1GB) | CX21: archived cleanup, audit rotation, incremental VACUUM, storage health reporting. |
+| Importance oscillation from auto-reclassification | CX22: max 1 reclassification/month, 2-3 month consistency requirement, never auto-downgrade user-set critical. |
+| SQLite corruption | CX18: WAL recovery → rebuild from backup → fresh start with warning. Audit log preserved separately. |
 
 ---
 
@@ -1006,6 +1611,18 @@ R16 (Session) ─────────→ R20 (Observability)
 - [x] Build order defined with dependency graph
 - [x] No feature deferred to "add later" — everything built into the right phase
 - [x] Traceability: every source doc maps to at least one recommendation
-- [x] Risk assessment with mitigations
-- [x] Rust crate structure defined
+- [x] Risk assessment with mitigations (15 risks identified)
+- [x] Rust crate structure defined with all dependencies
 - [x] NAPI boundary clearly defined (MCP tools in TS, everything else in Rust)
+- [x] Consolidation is fully algorithmic — no LLM dependency for core functionality (CX14)
+- [x] Consolidation quality monitoring with auto-tuning feedback loop (CX15)
+- [x] Embedding provider hierarchy updated with Codestral Embed SOTA (CX16)
+- [x] Testing strategy: property-based + golden datasets + performance benchmarks + integration (CX17)
+- [x] Graceful degradation matrix for every failure mode (CX18)
+- [x] Embedding migration pipeline for model changes (CX19)
+- [x] Concurrency model: RW pool + state synchronization + background task scheduling (CX20)
+- [x] Data budget with storage projections and compaction strategy (CX21)
+- [x] Memory importance auto-reclassification (CX22)
+- [x] CLI surface defined as contract for 10-cli research (CX23)
+- [x] Cloud sync boundary identified (local SQLite as source of truth)
+- [x] Offline-first architecture — all core features work without cloud or API keys

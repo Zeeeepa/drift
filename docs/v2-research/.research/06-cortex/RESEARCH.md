@@ -406,3 +406,251 @@ Cortex's consolidation currently promotes episodic memories to semantic based on
 
 **Confidence**: Medium — the architectural principles are sound, but the specific implementation is novel and untested at scale.
 
+
+---
+
+## R16: Algorithmic Consolidation — Extractive Summarization Without LLMs
+
+**Source**: https://towardsai.net/p/machine-learning/mastering-extractive-summarization-a-theoretical-and-practical-guide-to-tf-idf-and-textrank
+**Type**: Tier 2 (Industry Expert — comprehensive guide to TF-IDF and TextRank)
+**Accessed**: 2026-02-06
+
+**Source**: https://lib.rs/crates/tfidf-text-summarizer
+**Type**: Tier 1 (Official crate — Rust TF-IDF summarizer with Rayon parallelization)
+**Accessed**: 2026-02-06
+
+**Source**: https://ar5iv.labs.arxiv.org/html/2302.12490
+**Type**: Tier 1 (Academic paper — improving sentence similarity for unsupervised extractive summarization)
+**Accessed**: 2026-02-06
+
+**Key Findings**:
+- TextRank is a graph-based ranking algorithm (derived from PageRank) that builds a graph where nodes are sentences and edge weights are similarity scores between sentence embeddings. PageRank iteration identifies the most "central" sentences — those most connected to the rest of the document. No LLM or training data required.
+- TF-IDF sentence scoring ranks sentences by the normalized sum of TF-IDF scores of their constituent words. Sentences containing rare, distinctive terms score higher. The `tfidf-text-summarizer` Rust crate implements this with Rayon parallelization for larger texts.
+- Embedding-based extractive summarization uses cosine similarity between sentence embeddings and the document centroid (mean embedding) to identify the most representative sentences. This leverages the same embedding engine already planned for Cortex (ort + code-specific models).
+- The academic paper on improving sentence similarity for extractive summarization shows that using embedding similarity (rather than word overlap) for the TextRank graph edges significantly improves summary quality — directly applicable since Cortex already generates embeddings for every memory.
+- Extractive methods are deterministic, fast (microseconds in Rust), auditable (every sentence in the output traces to a source), and require no external dependencies.
+
+**Applicability to Drift**:
+Cortex's consolidation abstraction phase can use a hybrid of these approaches without any LLM dependency:
+1. Cluster episodic memories using embedding cosine similarity + metadata overlap (shared files, patterns, functions, tags).
+2. Within each cluster, use embedding-based TextRank to identify the most representative sentences across all episodes.
+3. Use TF-IDF to identify distinctive key phrases that should be preserved in the consolidated memory.
+4. The anchor memory (highest confidence × importance × accessCount) provides the structural template; TextRank-selected sentences from supporting episodes fill in novel details.
+
+This produces consolidated semantic memories that are deterministic, traceable, and fast — with quality approaching LLM-based abstraction for structured, code-focused content where the key information is already explicit in the text.
+
+**Confidence**: High — TextRank and TF-IDF are well-established algorithms (TextRank: Mihalcea & Tarau, 2004; TF-IDF: Salton, 1975) with decades of validation. The Rust ecosystem has working implementations.
+
+---
+
+## R17: HDBSCAN Clustering in Rust — Density-Based Memory Grouping
+
+**Source**: https://docs.rs/hdbscan
+**Type**: Tier 1 (Official crate documentation — pure Rust HDBSCAN)
+**Accessed**: 2026-02-06
+
+**Source**: https://lib.rs/crates/petal-clustering
+**Type**: Tier 1 (Official crate — DBSCAN, HDBSCAN, OPTICS in Rust)
+**Accessed**: 2026-02-06
+
+**Key Findings**:
+- HDBSCAN (Hierarchical Density-Based Spatial Clustering of Applications with Noise) is ideal for memory consolidation because: (1) it does not require specifying the number of clusters in advance, (2) it identifies noise points (memories that don't belong to any cluster), (3) it handles clusters of varying densities (some topics have many episodes, others have few).
+- The `hdbscan` Rust crate provides a pure Rust implementation that accepts `Vec<Vec<f32>>` — directly compatible with Cortex's embedding vectors.
+- `petal-clustering` provides DBSCAN, HDBSCAN, and OPTICS with ndarray integration, offering more flexibility for different clustering strategies.
+- HDBSCAN's "persistence" concept — clusters that survive across many density thresholds are the most robust — maps naturally to memory consolidation: groups of episodes that cluster tightly across multiple similarity thresholds are the strongest candidates for consolidation.
+
+**Applicability to Drift**:
+For the consolidation clustering step, HDBSCAN on memory embeddings identifies natural groups of related episodes without requiring a predefined cluster count. Memories flagged as noise (not belonging to any cluster) are either too unique to consolidate or need more supporting episodes before consolidation. The minimum cluster size parameter controls how many episodes are needed before consolidation triggers — aligning with the evidence-based promotion threshold (≥2-3 episodes).
+
+**Confidence**: High — HDBSCAN is the standard density-based clustering algorithm, widely used in production NLP systems. Pure Rust implementations are available and actively maintained.
+
+---
+
+## R18: Eval-Driven Memory (EDM) — Metric-Guided Selective Consolidation
+
+**Source**: https://www.preprints.org/manuscript/202601.0195
+**Type**: Tier 1 (Academic preprint — January 2026)
+**Accessed**: 2026-02-06
+
+**Source**: https://www.preprints.org/manuscript/202601.0896/v1
+**Type**: Tier 1 (Academic preprint — HCI-EDM, human-centered interpretability via EDM)
+**Accessed**: 2026-02-06
+
+**Key Findings**:
+- Eval-Driven Memory (EDM) introduces a persistence governance layer that only consolidates memories meeting predefined reliability thresholds. Rather than consolidating everything after a time period, EDM evaluates each candidate memory against metrics (Planning Efficiency Index, Trust Index) before deciding to persist.
+- EDM retains 50% fewer experiences while achieving 2× higher memory precision. This validates the principle that selective consolidation (keeping less but keeping better) outperforms bulk consolidation.
+- The key metrics EDM tracks: Memory Retention Score (MRS = 0.08 indicates high stability), Cognitive Efficiency Ratio (CER = 0.75 indicates 25% reduction in reasoning burden), and memory precision (how often consolidated memories are actually useful when retrieved).
+- HCI-EDM extends this with human-centered interpretability — every consolidation decision is explainable, achieving mean trust score of 4.62/5.0 from human evaluators.
+
+**Applicability to Drift**:
+EDM's metric-guided approach directly validates Cortex's planned monitoring layer for algorithmic consolidation. Specific metrics to adopt:
+- **Memory Precision**: After consolidation, track whether the consolidated memory gets retrieved and used (access count > 0 within 30 days). If not, the consolidation was low quality.
+- **Compression Ratio**: episodic tokens in → semantic tokens out. Target 3:1 to 5:1. Too high = information loss. Too low = no real consolidation.
+- **Retrieval Lift**: Does the consolidated memory get retrieved more often than the individual episodes it replaced? If yes, consolidation improved discoverability.
+- **Contradiction Rate**: If a consolidated memory immediately gets contradicted, the merge was bad — flag for review or rollback.
+- **Stability Score**: How often does a consolidated memory's confidence change in the first 30 days? Low change = stable consolidation.
+
+These metrics feed back into threshold tuning: if consolidation quality is consistently low for a certain cluster size or similarity threshold, adjust automatically.
+
+**Confidence**: High — EDM is a January 2026 paper with empirical validation. The metric-guided approach is well-grounded and directly applicable.
+
+---
+
+## R19: Recall-Gated Consolidation — Neuroscience-Validated Selective Persistence
+
+**Source**: https://elifesciences.org/articles/90793
+**Type**: Tier 1 (Academic paper — eLife, peer-reviewed neuroscience journal)
+**Accessed**: 2026-02-06
+
+**Source**: https://www.biorxiv.org/content/10.1101/2022.12.08.519638v4.full
+**Type**: Tier 1 (Academic preprint — bioRxiv, detailed model)
+**Accessed**: 2026-02-06
+
+**Key Findings**:
+- Recall-gated consolidation proposes that short-term memory provides a gating signal for which memories get consolidated into long-term storage. Only memories that are successfully recalled (retrieved) during the consolidation window get promoted — this shields long-term memory from spurious or unreliable signals.
+- The mechanism: if a memory can be recalled (retrieved with high similarity) when tested, it's a reliable signal worth consolidating. If it can't be recalled despite being relevant, it's either poorly encoded (needs embedding refresh) or not actually useful.
+- This is biologically validated — it models how the hippocampus gates memory transfer to the neocortex during sleep.
+
+**Applicability to Drift**:
+This directly maps to Cortex's algorithmic consolidation: before consolidating a cluster of episodes into a semantic memory, test whether the episodes can be retrieved by queries they should match. Run the cluster's key phrases as test queries against the embedding index. If the episodes rank highly, they're well-encoded and ready for consolidation. If they rank poorly despite being relevant, refresh their embeddings first, then consolidate. This "recall test" acts as a quality gate — only well-encoded, retrievable memories get consolidated, preventing garbage-in-garbage-out.
+
+**Confidence**: High — peer-reviewed neuroscience with computational validation. The retrieval-test concept is straightforward to implement.
+
+---
+
+## R20: Codestral Embed — New State-of-the-Art Code Embedding Model
+
+**Source**: https://mistral.ai/news/codestral-embed
+**Type**: Tier 1 (Official documentation — Mistral AI)
+**Accessed**: 2026-02-06
+
+**Key Findings**:
+- Codestral Embed (May 2025) is Mistral's first code-specific embedding model. It outperforms VoyageCode3 and Cohere Embed v4 on real-world code retrieval benchmarks including SWE-Bench (actual GitHub issues and solutions).
+- Supports Matryoshka representation: embeddings can be truncated to any dimension (256, 512, 1024) with ordered relevance. At dimension 256 with INT8 precision, it still outperforms all competitors at full dimensions.
+- Evaluated on Text2Code (GitHub) benchmarks for code completion and editing context retrieval.
+- API-only (not open weights), but the Matryoshka + quantization support makes it cost-effective for high-volume use.
+
+**Applicability to Drift**:
+Updates the embedding provider hierarchy from R3/CX2:
+1. **API (highest quality)**: Codestral Embed (new SOTA) → VoyageCode3 (fallback)
+2. **Local (default)**: Jina Code Embeddings v2 via ONNX Runtime
+3. **Fallback**: all-MiniLM-L6-v2 via Transformers.js (air-gapped)
+
+For the cloud-connected version of Cortex, Codestral Embed with Matryoshka truncation provides the best quality-to-cost ratio. For the offline OSS version, Jina Code v2 via `ort` remains the right choice.
+
+**Confidence**: High — benchmarked on established code retrieval datasets by Mistral AI, validated by independent comparisons.
+
+---
+
+## R21: Testing Strategy — Property-Based Testing with proptest
+
+**Source**: https://github.com/proptest-rs/proptest
+**Type**: Tier 1 (Official repository — Hypothesis-like property testing for Rust)
+**Accessed**: 2026-02-06
+
+**Source**: https://lpalmieri.com/posts/an-introduction-to-property-based-testing-in-rust/
+**Type**: Tier 2 (Industry Expert — comprehensive proptest guide)
+**Accessed**: 2026-02-06
+
+**Source**: https://rust-training.ferrous-systems.com/latest/slides/property-testing
+**Type**: Tier 2 (Industry Expert — Ferrous Systems, Rust training)
+**Accessed**: 2026-02-06
+
+**Key Findings**:
+- `proptest` is the standard Rust property-based testing framework, inspired by Python's Hypothesis. It generates random inputs, checks properties, and automatically shrinks failing cases to minimal reproductions.
+- Property-based testing is ideal for codecs, serialization, compression, and any operations that should retain equality — directly applicable to Cortex's compression (4-level), serialization (serde), and consolidation (input/output properties).
+- Key properties to test in a memory system: idempotency (consolidating the same cluster twice produces the same result), monotonicity (adding more supporting episodes never decreases consolidated confidence), conservation (no information loss — every sentence in the output traces to a source), ordering (higher-importance memories always get more token budget than lower-importance ones).
+- proptest integrates with Rust's standard test framework and supports custom strategies for generating domain-specific types (like Memory, CausalEdge, etc.).
+
+**Applicability to Drift**:
+Every Cortex subsystem has testable properties that don't require golden datasets:
+- Consolidation: idempotent, deterministic, monotonic confidence, no orphaned links
+- Decay: monotonically decreasing over time (without access), bounded between 0.0 and 1.0
+- Compression: level 0 < level 1 < level 2 < level 3 in token count, lossless at level 3
+- Retrieval: higher-importance memories always rank above lower-importance at equal similarity
+- Causal graph: no cycles after DAG enforcement, traversal depth bounded by maxDepth
+
+**Confidence**: High — proptest is the de facto standard for Rust property testing, used by Fuchsia OS and other production systems.
+
+---
+
+## R22: Concurrency Model — SQLite Read-Write Connection Pooling
+
+**Source**: https://docs.rs/sqlite-rwc
+**Type**: Tier 1 (Official crate documentation — SQLite read-write connection pool)
+**Accessed**: 2026-02-06
+
+**Source**: https://cj.rs/blog/sqlite-pragma-cheatsheet-for-performance-and-consistency/
+**Type**: Tier 2 (Industry Expert — SQLite pragma performance guide)
+**Accessed**: 2026-02-06
+
+**Key Findings**:
+- SQLite in WAL mode supports concurrent readers with a single writer. Multiple read connections can operate simultaneously without blocking the writer, and vice versa.
+- The `sqlite-rwc` crate provides a connection pool that maintains multiple read-only connections and one exclusive write connection, enforcing this pattern at the type level.
+- Recommended SQLite pragmas for performance: `journal_mode=WAL`, `synchronous=NORMAL`, `mmap_size=268435456` (256MB), `cache_size=-64000` (64MB), `busy_timeout=5000` (5 seconds).
+- For Rust, `rusqlite` with `r2d2-sqlite` or the `sqlite-rwc` crate provides thread-safe connection pooling. The write connection should be behind a `tokio::sync::Mutex` or `std::sync::Mutex` to serialize writes.
+
+**Applicability to Drift**:
+Cortex needs concurrent access: MCP tool queries (reads), consolidation (reads + writes), decay processing (reads + writes), validation (reads + writes), prediction preloading (reads). The read-write pool pattern ensures reads never block on writes and writes are serialized. The in-memory petgraph (causal graph) needs its own synchronization — `Arc<RwLock<StableGraph>>` allows concurrent reads with exclusive writes.
+
+**Confidence**: High — WAL mode + read-write pooling is the standard SQLite concurrency pattern, well-documented and battle-tested.
+
+---
+
+## R23: Graceful Degradation — Fallback Chain Pattern
+
+**Source**: https://www.operion.io/learn/component/graceful-degradation
+**Type**: Tier 2 (Industry Expert — reliability patterns guide)
+**Accessed**: 2026-02-06
+
+**Source**: https://calmops.com/programming/rust/rust-async-error-handling-patterns
+**Type**: Tier 2 (Industry Expert — Rust async error handling with degradation)
+**Accessed**: 2026-02-06
+
+**Key Findings**:
+- Graceful degradation means designing systems to maintain partial functionality when components fail. Instead of crashing, the system detects what broke, routes around it, and continues delivering whatever value remains possible.
+- Fallback chains: when the primary path fails, try the next option. For AI systems: full model → smaller model → cached result → rule-based fallback → static default.
+- Circuit breaker pattern: after N consecutive failures, stop trying the failing component for a cooldown period. Prevents cascading failures and resource exhaustion.
+- In Rust, `Result<T, E>` types force explicit error handling at every step — the type system itself prevents ignoring failures.
+
+**Applicability to Drift**:
+Every Cortex component that can fail needs a defined fallback:
+- Embedding engine: ONNX model fails → try fallback model → use cached embedding → use TF-IDF vector → return error with explanation
+- SQLite corruption: detect via integrity check → attempt WAL recovery → rebuild from audit log → start fresh with warning
+- Dimension mismatch (model change): detect dimension difference → trigger background re-embedding → use FTS5-only search during transition → complete
+- Causal graph: petgraph corruption → rebuild from SQLite causal_edges table → continue with empty graph if rebuild fails
+- Consolidation: HDBSCAN fails → fall back to simple metadata-based grouping → skip consolidation cycle with warning
+
+**Confidence**: High — graceful degradation is a well-established reliability pattern. Rust's type system makes it natural to implement.
+
+---
+
+## R24: Storage Growth Model — Embedding and Memory Budget
+
+**Source**: https://milvus.io/ai-quick-reference/what-are-the-storage-requirements-for-embeddings
+**Type**: Tier 2 (Industry Expert — Milvus vector storage reference)
+**Accessed**: 2026-02-06
+
+**Source**: https://thelinuxcode.com/reduce-sqlite-file-size/
+**Type**: Tier 3 (Community validated — SQLite size management)
+**Accessed**: 2026-02-06
+
+**Key Findings**:
+- A single 1024-dim float32 embedding requires 4KB (1024 × 4 bytes). At 384-dim, it's 1.5KB.
+- 1 million 1024-dim embeddings = ~4GB of raw vector storage.
+- SQLite file bloat typically starts becoming noticeable at 100-500MB. VACUUM reclaims space but requires temporary disk space equal to the database size.
+- Incremental VACUUM (`PRAGMA auto_vacuum = INCREMENTAL`) reclaims space page-by-page without the full-copy overhead.
+- FTS5 indexes add ~30-50% overhead on top of the indexed text content.
+
+**Applicability to Drift**:
+Storage budget estimation for Cortex at various scales:
+- Per memory: ~2KB content + ~4KB embedding (1024-dim) + ~1KB metadata + ~0.5KB FTS5 index = ~7.5KB per memory
+- 1 year at 10 memories/day: 3,650 memories × 7.5KB = ~27MB
+- 1 year at 50 memories/day (heavy use): 18,250 × 7.5KB = ~137MB
+- 5 years at 50/day: ~685MB (approaching the bloat threshold)
+- Audit log: ~0.5KB per event × ~5 events per memory per year = ~45MB/year at heavy use
+- Causal edges: ~0.3KB per edge × ~2 edges per memory = ~11MB/year at heavy use
+
+Total at 5 years heavy use: ~800MB-1GB. Manageable but needs compaction strategy.
+
+**Confidence**: High — storage calculations are straightforward arithmetic. The per-memory estimate is conservative (includes overhead).
