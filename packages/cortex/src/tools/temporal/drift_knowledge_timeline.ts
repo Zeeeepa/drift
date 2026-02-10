@@ -78,8 +78,32 @@ export function driftKnowledgeTimeline(client: CortexClient): McpToolDefinition 
 
       const snapshots: DriftSnapshot[] = [];
       for (let t = fromTime; t <= toTime; t += intervalMs) {
-        const snapshot = await client.getDriftMetrics(windowHours);
-        snapshots.push(snapshot);
+        // Use the actual timestamp for each snapshot point so we get
+        // historical data, not the same current snapshot repeated.
+        const pointTime = new Date(t).toISOString();
+        const nextTime = new Date(Math.min(t + intervalMs, toTime)).toISOString();
+        // Query memories that existed in each window to derive metrics
+        const memories = await client.queryRange(pointTime, nextTime, "overlaps");
+        const active = memories.filter((m: { archived?: boolean }) => !m.archived);
+        const archived = memories.filter((m: { archived?: boolean }) => m.archived);
+        const avgConfidence = active.length > 0
+          ? active.reduce((sum: number, m: { confidence?: number }) => sum + (m.confidence ?? 0), 0) / active.length
+          : 0;
+        snapshots.push({
+          timestamp: pointTime,
+          window_hours: windowHours,
+          type_metrics: {},
+          module_metrics: {},
+          global: {
+            total_memories: memories.length,
+            active_memories: active.length,
+            archived_memories: archived.length,
+            avg_confidence: avgConfidence,
+            overall_ksi: 0,
+            overall_contradiction_density: 0,
+            overall_evidence_freshness: 0,
+          },
+        } as DriftSnapshot);
       }
 
       return {

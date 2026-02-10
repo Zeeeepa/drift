@@ -28,57 +28,148 @@ impl SuppressionChecker {
             None => return false,
         };
 
-        // Check the line above the violation for drift-ignore
         if line == 0 {
             return false;
         }
-        let check_line = (line - 1) as usize;
-        if check_line == 0 || check_line > lines.len() {
-            return false;
+        let idx = (line - 1) as usize; // 0-indexed
+
+        // Check the current line for inline suppressions (e.g. `# noqa`)
+        if idx < lines.len() && self.line_suppresses(&lines[idx], rule_id) {
+            return true;
         }
 
-        // Check the line immediately above
-        let prev_line = &lines[check_line.saturating_sub(1)];
-        self.line_suppresses(prev_line, rule_id)
+        // Check the line immediately above for next-line directives
+        // (e.g. `drift-ignore`, `eslint-disable-next-line`, `@SuppressWarnings`)
+        if idx > 0 && (idx - 1) < lines.len() && self.line_suppresses(&lines[idx - 1], rule_id) {
+            return true;
+        }
+
+        false
     }
 
-    /// Parse a line for drift-ignore directives.
+    /// Parse a line for any suppression directive.
+    ///
+    /// Supports:
+    /// - `// drift-ignore` / `// drift-ignore rule1, rule2`
+    /// - `# noqa` / `# noqa: rule1, rule2` (Python/flake8)
+    /// - `// eslint-disable-next-line` / `// eslint-disable-next-line rule1, rule2` (JS/TS)
+    /// - `@SuppressWarnings("rule")` (Java/Kotlin)
     fn line_suppresses(&self, line: &str, rule_id: Option<&str>) -> bool {
         let trimmed = line.trim();
 
-        // Find drift-ignore in the line (could be after code)
-        let ignore_marker = "drift-ignore";
-        let pos = match trimmed.find(ignore_marker) {
-            Some(p) => p,
-            None => return false,
-        };
+        // Check drift-ignore
+        if let Some(result) = self.check_drift_ignore(trimmed, rule_id) {
+            return result;
+        }
 
-        // Verify it's in a comment context
+        // Check # noqa (Python/flake8)
+        if let Some(result) = self.check_noqa(trimmed, rule_id) {
+            return result;
+        }
+
+        // Check eslint-disable-next-line (JS/TS)
+        if let Some(result) = self.check_eslint_disable(trimmed, rule_id) {
+            return result;
+        }
+
+        // Check @SuppressWarnings (Java/Kotlin)
+        if let Some(result) = self.check_suppress_warnings(trimmed, rule_id) {
+            return result;
+        }
+
+        false
+    }
+
+    /// Check for `drift-ignore` directive.
+    fn check_drift_ignore(&self, trimmed: &str, rule_id: Option<&str>) -> Option<bool> {
+        let marker = "drift-ignore";
+        let pos = trimmed.find(marker)?;
+
         let before = &trimmed[..pos];
         let is_comment = before.contains("//")
             || before.contains('#')
             || before.contains("--")
             || before.contains("/*");
         if !is_comment {
-            return false;
+            return None;
         }
 
-        // Extract the rest after "drift-ignore"
-        let after = trimmed[pos + ignore_marker.len()..].trim();
-
-        // If no specific rules listed, suppress everything
+        let after = trimmed[pos + marker.len()..].trim();
         if after.is_empty() || after.starts_with("--") {
-            return true;
+            return Some(true);
         }
 
-        // If a specific rule_id is provided, check if it's in the list
-        match rule_id {
+        Some(match rule_id {
             None => true,
-            Some(rid) => {
-                let rules: Vec<&str> = after.split(',').map(|s| s.trim()).collect();
-                rules.contains(&rid)
-            }
+            Some(rid) => after.split(',').map(|s| s.trim()).any(|r| r == rid),
+        })
+    }
+
+    /// Check for `# noqa` directive (Python/flake8).
+    fn check_noqa(&self, trimmed: &str, rule_id: Option<&str>) -> Option<bool> {
+        let pos = trimmed.find("# noqa")?;
+        let after = trimmed[pos + 6..].trim();
+
+        // `# noqa` alone suppresses everything
+        if after.is_empty() {
+            return Some(true);
         }
+
+        // `# noqa: E501, W503` — check specific rules
+        if let Some(rules_str) = after.strip_prefix(':') {
+            return Some(match rule_id {
+                None => true,
+                Some(rid) => rules_str.split(',').map(|s| s.trim()).any(|r| r == rid),
+            });
+        }
+
+        Some(true)
+    }
+
+    /// Check for `// eslint-disable-next-line` directive (JS/TS).
+    fn check_eslint_disable(&self, trimmed: &str, rule_id: Option<&str>) -> Option<bool> {
+        let marker = "eslint-disable-next-line";
+        let pos = trimmed.find(marker)?;
+
+        let before = &trimmed[..pos];
+        if !before.contains("//") && !before.contains("/*") {
+            return None;
+        }
+
+        let after = trimmed[pos + marker.len()..].trim();
+        if after.is_empty() {
+            return Some(true);
+        }
+
+        Some(match rule_id {
+            None => true,
+            Some(rid) => after.split(',').map(|s| s.trim()).any(|r| r == rid),
+        })
+    }
+
+    /// Check for `@SuppressWarnings` annotation (Java/Kotlin).
+    fn check_suppress_warnings(&self, trimmed: &str, rule_id: Option<&str>) -> Option<bool> {
+        let marker = "@SuppressWarnings";
+        let pos = trimmed.find(marker)?;
+
+        let after = trimmed[pos + marker.len()..].trim();
+
+        // @SuppressWarnings("all") or @SuppressWarnings("unchecked")
+        if let Some(inner) = after.strip_prefix('(') {
+            let inner = inner.trim_end_matches(')');
+            let inner = inner.trim_matches('"').trim_matches('{').trim_matches('}');
+
+            if inner == "all" {
+                return Some(true);
+            }
+
+            return Some(match rule_id {
+                None => true,
+                Some(rid) => inner.split(',').map(|s| s.trim().trim_matches('"')).any(|r| r == rid),
+            });
+        }
+
+        Some(true)
     }
 
     /// Extract all suppression directives from source lines.

@@ -18,9 +18,16 @@ export function driftCortexGc(client: CortexClient): McpToolDefinition {
     handler: async () => {
       const sessionsRemoved = await client.sessionCleanup();
 
-      // Archive memories below archival threshold (confidence < 0.15)
+      // E-03: Run decay engine first to update confidence scores.
+      const decayResult = await client.decayRun() as {
+        processed: number;
+        archived: number;
+        updated: number;
+      };
+
+      // Archive any remaining memories below archival threshold (confidence < 0.15)
       const archivalCandidates = await client.getValidationCandidates(0.0, 0.15);
-      let archived = 0;
+      let archived = decayResult.archived;
       for (const memory of archivalCandidates) {
         if (!memory.archived) {
           await client.memoryArchive(memory.id);
@@ -30,6 +37,8 @@ export function driftCortexGc(client: CortexClient): McpToolDefinition {
 
       return {
         sessions_removed: sessionsRemoved,
+        decay_processed: decayResult.processed,
+        decay_updated: decayResult.updated,
         memories_archived: archived,
         status: "compaction_complete",
       };

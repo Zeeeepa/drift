@@ -16,10 +16,10 @@ export function registerScanCommand(program: Command): void {
     .action(async (path: string | undefined, opts: { format: OutputFormat; incremental?: boolean; quiet?: boolean }) => {
       const napi = loadNapi();
       const scanPath = path ?? process.cwd();
-      const options = opts.incremental ? { incremental: true } : undefined;
+      const options = opts.incremental ? { forceFull: false } : undefined;
 
       try {
-        const result = napi.drift_scan(scanPath, options);
+        const result = await napi.driftScan(scanPath, options);
         if (!opts.quiet) {
           process.stdout.write(formatOutput(result, opts.format));
         }

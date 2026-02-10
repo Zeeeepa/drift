@@ -15,7 +15,7 @@ export function registerAuditCommand(program: Command): void {
     .action(async (path: string | undefined, opts: { format: OutputFormat; quiet?: boolean }) => {
       const napi = loadNapi();
       try {
-        const result = napi.drift_audit(path ?? process.cwd());
+        const result = napi.driftAudit(path ?? process.cwd());
         if (!opts.quiet) {
           process.stdout.write(formatOutput(result, opts.format));
         }

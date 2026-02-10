@@ -8,7 +8,27 @@ use cortex_core::memory::{BaseMemory, Confidence, Importance, MemoryType, TypedC
 use crate::to_storage_err;
 
 /// Insert a single memory into the database.
+/// Wrapped in a transaction for atomicity: memory row + links + event are all-or-nothing.
 pub fn insert_memory(conn: &Connection, memory: &BaseMemory) -> CortexResult<()> {
+    let tx = conn
+        .unchecked_transaction()
+        .map_err(|e| to_storage_err(format!("insert_memory begin: {e}")))?;
+
+    match insert_memory_inner(&tx, memory) {
+        Ok(()) => {
+            tx.commit()
+                .map_err(|e| to_storage_err(format!("insert_memory commit: {e}")))?;
+            Ok(())
+        }
+        Err(e) => {
+            let _ = tx.rollback();
+            Err(e)
+        }
+    }
+}
+
+/// Inner insert logic, operating on the provided connection (or transaction via Deref).
+fn insert_memory_inner(conn: &Connection, memory: &BaseMemory) -> CortexResult<()> {
     let content_json =
         serde_json::to_string(&memory.content).map_err(|e| to_storage_err(e.to_string()))?;
     let tags_json =
@@ -55,14 +75,16 @@ pub fn insert_memory(conn: &Connection, memory: &BaseMemory) -> CortexResult<()>
 
     // Emit Created event (CR3: same transaction).
     let delta = serde_json::to_value(memory).unwrap_or_default();
-    let _ = crate::temporal_events::emit_event(
+    if let Err(e) = crate::temporal_events::emit_event(
         conn,
         &memory.id,
         "created",
         &delta,
         "system",
         "memory_crud",
-    );
+    ) {
+        tracing::warn!(memory_id = %memory.id, error = %e, "failed to emit created event");
+    }
 
     Ok(())
 }
@@ -128,7 +150,27 @@ pub fn get_memory(conn: &Connection, id: &str) -> CortexResult<Option<BaseMemory
 }
 
 /// Update an existing memory.
+/// Wrapped in a transaction for atomicity: read + update + links + events are all-or-nothing.
 pub fn update_memory(conn: &Connection, memory: &BaseMemory) -> CortexResult<()> {
+    let tx = conn
+        .unchecked_transaction()
+        .map_err(|e| to_storage_err(format!("update_memory begin: {e}")))?;
+
+    match update_memory_inner(&tx, memory) {
+        Ok(()) => {
+            tx.commit()
+                .map_err(|e| to_storage_err(format!("update_memory commit: {e}")))?;
+            Ok(())
+        }
+        Err(e) => {
+            let _ = tx.rollback();
+            Err(e)
+        }
+    }
+}
+
+/// Inner update logic, operating on the provided connection (or transaction via Deref).
+fn update_memory_inner(conn: &Connection, memory: &BaseMemory) -> CortexResult<()> {
     // Fetch old state for diff-based event emission.
     let old = get_memory(conn, &memory.id)?;
 
@@ -183,108 +225,119 @@ pub fn update_memory(conn: &Connection, memory: &BaseMemory) -> CortexResult<()>
     insert_links(conn, memory)?;
 
     // Emit events based on changed fields (CR3: same transaction).
-    if let Some(ref old_mem) = old {
-        if old_mem.content_hash != memory.content_hash {
-            let delta = serde_json::json!({
-                "old_summary": old_mem.summary,
-                "new_summary": memory.summary,
-                "old_content_hash": old_mem.content_hash,
-                "new_content_hash": memory.content_hash,
-            });
-            let _ = crate::temporal_events::emit_event(
-                conn,
-                &memory.id,
-                "content_updated",
-                &delta,
-                "system",
-                "memory_crud",
-            );
-        }
-        if old_mem.tags != memory.tags {
-            let added: Vec<_> = memory
-                .tags
-                .iter()
-                .filter(|t| !old_mem.tags.contains(t))
-                .collect();
-            let removed: Vec<_> = old_mem
-                .tags
-                .iter()
-                .filter(|t| !memory.tags.contains(t))
-                .collect();
-            let delta = serde_json::json!({ "added": added, "removed": removed });
-            let _ = crate::temporal_events::emit_event(
-                conn,
-                &memory.id,
-                "tags_modified",
-                &delta,
-                "system",
-                "memory_crud",
-            );
-        }
-        if (old_mem.confidence.value() - memory.confidence.value()).abs() > f64::EPSILON {
-            let delta = serde_json::json!({
-                "old": old_mem.confidence.value(),
-                "new": memory.confidence.value(),
-                "reason": "update",
-            });
-            let _ = crate::temporal_events::emit_event(
-                conn,
-                &memory.id,
-                "confidence_changed",
-                &delta,
-                "system",
-                "memory_crud",
-            );
-        }
-        if old_mem.importance != memory.importance {
-            let delta = serde_json::json!({
-                "old": serde_json::to_string(&old_mem.importance).unwrap_or_default().trim_matches('"'),
-                "new": serde_json::to_string(&memory.importance).unwrap_or_default().trim_matches('"'),
-                "reason": "update",
-            });
-            let _ = crate::temporal_events::emit_event(
-                conn,
-                &memory.id,
-                "importance_changed",
-                &delta,
-                "system",
-                "memory_crud",
-            );
-        }
-        if old_mem.archived != memory.archived {
-            if memory.archived {
-                let delta = serde_json::json!({ "reason": "update" });
-                let _ = crate::temporal_events::emit_event(
-                    conn,
-                    &memory.id,
-                    "archived",
-                    &delta,
-                    "system",
-                    "memory_crud",
-                );
-            } else {
-                let delta = serde_json::json!({});
-                let _ = crate::temporal_events::emit_event(
-                    conn,
-                    &memory.id,
-                    "restored",
-                    &delta,
-                    "system",
-                    "memory_crud",
-                );
-            }
-        }
-    }
+    emit_update_events(conn, &memory.id, old.as_ref(), memory);
 
     Ok(())
 }
 
+/// Emit temporal events for changed fields during an update.
+fn emit_update_events(
+    conn: &Connection,
+    memory_id: &str,
+    old: Option<&BaseMemory>,
+    new: &BaseMemory,
+) {
+    let Some(old_mem) = old else { return };
+
+    let warn_event = |event_type: &str, e: cortex_core::CortexError| {
+        tracing::warn!(
+            memory_id = %memory_id,
+            event_type = %event_type,
+            error = %e,
+            "failed to emit update event"
+        );
+    };
+
+    if old_mem.content_hash != new.content_hash {
+        let delta = serde_json::json!({
+            "old_summary": old_mem.summary,
+            "new_summary": new.summary,
+            "old_content_hash": old_mem.content_hash,
+            "new_content_hash": new.content_hash,
+        });
+        if let Err(e) = crate::temporal_events::emit_event(
+            conn, memory_id, "content_updated", &delta, "system", "memory_crud",
+        ) {
+            warn_event("content_updated", e);
+        }
+    }
+    if old_mem.tags != new.tags {
+        let added: Vec<_> = new.tags.iter().filter(|t| !old_mem.tags.contains(t)).collect();
+        let removed: Vec<_> = old_mem.tags.iter().filter(|t| !new.tags.contains(t)).collect();
+        let delta = serde_json::json!({ "added": added, "removed": removed });
+        if let Err(e) = crate::temporal_events::emit_event(
+            conn, memory_id, "tags_modified", &delta, "system", "memory_crud",
+        ) {
+            warn_event("tags_modified", e);
+        }
+    }
+    if (old_mem.confidence.value() - new.confidence.value()).abs() > f64::EPSILON {
+        let delta = serde_json::json!({
+            "old": old_mem.confidence.value(),
+            "new": new.confidence.value(),
+            "reason": "update",
+        });
+        if let Err(e) = crate::temporal_events::emit_event(
+            conn, memory_id, "confidence_changed", &delta, "system", "memory_crud",
+        ) {
+            warn_event("confidence_changed", e);
+        }
+    }
+    if old_mem.importance != new.importance {
+        let delta = serde_json::json!({
+            "old": serde_json::to_string(&old_mem.importance).unwrap_or_default().trim_matches('"'),
+            "new": serde_json::to_string(&new.importance).unwrap_or_default().trim_matches('"'),
+            "reason": "update",
+        });
+        if let Err(e) = crate::temporal_events::emit_event(
+            conn, memory_id, "importance_changed", &delta, "system", "memory_crud",
+        ) {
+            warn_event("importance_changed", e);
+        }
+    }
+    if old_mem.archived != new.archived {
+        let (event_type, delta) = if new.archived {
+            ("archived", serde_json::json!({ "reason": "update" }))
+        } else {
+            ("restored", serde_json::json!({}))
+        };
+        if let Err(e) = crate::temporal_events::emit_event(
+            conn, memory_id, event_type, &delta, "system", "memory_crud",
+        ) {
+            warn_event(event_type, e);
+        }
+    }
+}
+
 /// Delete a memory by ID.
+/// Wrapped in a transaction for atomicity: event + links + row are all-or-nothing.
 pub fn delete_memory(conn: &Connection, id: &str) -> CortexResult<()> {
+    let tx = conn
+        .unchecked_transaction()
+        .map_err(|e| to_storage_err(format!("delete_memory begin: {e}")))?;
+
+    match delete_memory_inner(&tx, id) {
+        Ok(()) => {
+            tx.commit()
+                .map_err(|e| to_storage_err(format!("delete_memory commit: {e}")))?;
+            Ok(())
+        }
+        Err(e) => {
+            let _ = tx.rollback();
+            Err(e)
+        }
+    }
+}
+
+/// Inner delete logic, operating on the provided connection (or transaction via Deref).
+fn delete_memory_inner(conn: &Connection, id: &str) -> CortexResult<()> {
     // Emit Archived event BEFORE the row is deleted (hard DELETE).
     let delta = serde_json::json!({ "reason": "hard_delete" });
-    let _ =
-        crate::temporal_events::emit_event(conn, id, "archived", &delta, "system", "memory_crud");
+    if let Err(e) =
+        crate::temporal_events::emit_event(conn, id, "archived", &delta, "system", "memory_crud")
+    {
+        tracing::warn!(memory_id = %id, error = %e, "failed to emit delete event");
+    }
 
     delete_links(conn, id)?;
     conn.execute("DELETE FROM memories WHERE id = ?1", params![id])
@@ -293,12 +346,25 @@ pub fn delete_memory(conn: &Connection, id: &str) -> CortexResult<()> {
 }
 
 /// Bulk insert memories. Returns the number successfully inserted.
+/// D-04: Wrapped in a single transaction for atomicity and ~10x performance.
 pub fn bulk_insert(conn: &Connection, memories: &[BaseMemory]) -> CortexResult<usize> {
+    if memories.is_empty() {
+        return Ok(0);
+    }
+    conn.execute_batch("BEGIN IMMEDIATE")
+        .map_err(|e| to_storage_err(e.to_string()))?;
+
     let mut count = 0;
     for memory in memories {
-        insert_memory(conn, memory)?;
+        if let Err(e) = insert_memory_inner(conn, memory) {
+            let _ = conn.execute_batch("ROLLBACK");
+            return Err(e);
+        }
         count += 1;
     }
+
+    conn.execute_batch("COMMIT")
+        .map_err(|e| to_storage_err(e.to_string()))?;
     Ok(count)
 }
 

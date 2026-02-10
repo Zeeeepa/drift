@@ -216,18 +216,39 @@ impl DeltaSyncEngine {
         })
     }
 
-    /// Acknowledge a sync: update peer clock state.
-    #[instrument(skip(_conn))]
+    /// Acknowledge a sync: persist the peer's vector clock for future delta computation.
+    #[instrument(skip(conn))]
     pub fn acknowledge_sync(
-        _conn: &Connection,
+        conn: &Connection,
         ack: &SyncAck,
     ) -> CortexResult<()> {
         debug!(
             agent = %ack.agent_id,
-            "sync acknowledged"
+            "sync acknowledged — persisting peer clock"
         );
-        // In a full implementation, this would persist the peer's clock
-        // for future delta computation. For now, the ack is logged.
+
+        // A-02: Persist the peer's clock so future syncs can compute
+        // which deltas the peer has already seen.
+        let clock_json = serde_json::to_string(&ack.clock).map_err(|e| {
+            cortex_core::CortexError::ValidationError(format!(
+                "failed to serialize peer clock: {e}"
+            ))
+        })?;
+        let now = Utc::now().to_rfc3339();
+
+        multiagent_ops::upsert_peer_clock(
+            conn,
+            &ack.agent_id.0,
+            &ack.agent_id.0, // peer's own clock state
+            &clock_json,
+            &now,
+        )?;
+
+        info!(
+            agent = %ack.agent_id,
+            "peer clock persisted"
+        );
+
         Ok(())
     }
 }

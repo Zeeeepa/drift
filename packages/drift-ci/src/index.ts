@@ -9,9 +9,9 @@
  *   drift-ci analyze --path . --policy standard --fail-on error
  */
 
-import { runAnalysis, type CiAgentConfig, DEFAULT_CI_CONFIG } from './agent.js';
+import { runAnalysis, type CiAgentConfig } from './agent.js';
 import { generatePrComment } from './pr_comment.js';
-import { uploadSarif, writeSarifFile } from './sarif_upload.js';
+import { writeSarifFile } from './sarif_upload.js';
 import { loadNapi } from './napi.js';
 import * as fs from 'node:fs';
 
@@ -92,7 +92,7 @@ async function main(): Promise<void> {
   // Initialize NAPI
   const napi = loadNapi();
   try {
-    napi.drift_init();
+    napi.driftInitialize();
   } catch {
     // Non-fatal
   }
@@ -119,7 +119,7 @@ async function main(): Promise<void> {
     if (dir && !fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-    const violations = napi.drift_violations(config.path ?? '.');
+    const violations = napi.driftViolations(config.path ?? '.');
     writeSarifFile(violations, outputSarif);
   }
 

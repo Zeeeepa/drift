@@ -498,8 +498,33 @@ fn apply_scope_filter(
                 reclassifications,
             )
         }
-        DiffScope::Namespace(_ns) => {
-            // Namespace filtering is for multi-agent support (Phase D+)
+        DiffScope::Namespace(ns) => {
+            // A-03: Filter by namespace — only include memories belonging to this namespace.
+            // DiffScope::Namespace holds a string; compare against namespace name or URI.
+            let in_namespace = |m: &BaseMemory| m.namespace.name == *ns || m.namespace.to_uri() == *ns;
+            let created: Vec<BaseMemory> = created.into_iter().filter(|m| in_namespace(m)).collect();
+            let archived: Vec<BaseMemory> = archived.into_iter().filter(|m| in_namespace(m)).collect();
+            // Build a set of memory IDs that belong to this namespace for filtering
+            // modifications, confidence shifts, and reclassifications.
+            let mut ns_memory_ids: HashSet<String> = HashSet::new();
+            for m in &created {
+                ns_memory_ids.insert(m.id.clone());
+            }
+            for m in &archived {
+                ns_memory_ids.insert(m.id.clone());
+            }
+            let modified = modified
+                .into_iter()
+                .filter(|m| ns_memory_ids.contains(&m.memory_id))
+                .collect();
+            let confidence_shifts = confidence_shifts
+                .into_iter()
+                .filter(|s| ns_memory_ids.contains(&s.memory_id))
+                .collect();
+            let reclassifications = reclassifications
+                .into_iter()
+                .filter(|r| ns_memory_ids.contains(&r.memory_id))
+                .collect();
             (created, archived, modified, confidence_shifts, reclassifications)
         }
     }

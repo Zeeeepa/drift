@@ -28,6 +28,8 @@ fn make_realistic_patterns() -> Vec<PatternInfo> {
                 file: "src/utils/helpers.ts".to_string(),
                 line: 25,
                 column: Some(5),
+                end_line: None,
+                end_column: None,
                 deviation_score: 2.5,
                 message: "Uses snake_case instead of camelCase".to_string(),
             }],
@@ -47,6 +49,8 @@ fn make_realistic_patterns() -> Vec<PatternInfo> {
                 file: "src/api/search.ts".to_string(),
                 line: 42,
                 column: Some(10),
+                end_line: None,
+                end_column: None,
                 deviation_score: 4.0,
                 message: "String concatenation in SQL query".to_string(),
             }],
@@ -66,6 +70,8 @@ fn make_realistic_patterns() -> Vec<PatternInfo> {
                 file: "src/api/webhook.ts".to_string(),
                 line: 55,
                 column: None,
+                end_line: None,
+                end_column: None,
                 deviation_score: 3.0,
                 message: "Missing error handling in async function".to_string(),
             }],
@@ -87,7 +93,7 @@ fn make_audit_patterns() -> Vec<PatternAuditData> {
             outlier_count: 5,
             in_call_graph: true,
             constraint_issues: 0,
-            has_error_issues: false,
+            has_error_issues: false, locations: vec![],
         },
         PatternAuditData {
             id: "sql-parameterized".to_string(),
@@ -99,7 +105,7 @@ fn make_audit_patterns() -> Vec<PatternAuditData> {
             outlier_count: 2,
             in_call_graph: true,
             constraint_issues: 0,
-            has_error_issues: false,
+            has_error_issues: false, locations: vec![],
         },
         PatternAuditData {
             id: "error-handling".to_string(),
@@ -111,7 +117,7 @@ fn make_audit_patterns() -> Vec<PatternAuditData> {
             outlier_count: 3,
             in_call_graph: false,
             constraint_issues: 1,
-            has_error_issues: false,
+            has_error_issues: false, locations: vec![],
         },
     ]
 }
@@ -123,7 +129,7 @@ fn test_full_enforcement_round_trip() {
     let evaluator = RulesEvaluator::new();
     let input = RulesInput {
         patterns: make_realistic_patterns(),
-        source_lines: HashMap::new(),
+        source_lines: HashMap::new(), baseline_violation_ids: std::collections::HashSet::new(),
     };
     let violations = evaluator.evaluate(&input);
     assert!(!violations.is_empty(), "Step 1: Should detect violations");
@@ -217,13 +223,18 @@ fn test_enforcement_data_persistence() {
         file: "src/app.ts".to_string(),
         line: 10,
         column: Some(5),
+        end_line: None,
+        end_column: None,
         severity: "error".to_string(),
         pattern_id: "sql-check".to_string(),
         rule_id: "security/sql-injection".to_string(),
         message: "SQL injection vulnerability".to_string(),
+        quick_fix_strategy: None,
+        quick_fix_description: None,
         cwe_id: Some(89),
         owasp_category: Some("A03:2021-Injection".to_string()),
         suppressed: false,
+        is_new: false,
     };
     insert_violation(&conn, &v).unwrap();
 
@@ -235,8 +246,10 @@ fn test_enforcement_data_persistence() {
         score: 85.0,
         summary: "Pattern compliance: 85%".to_string(),
         violation_count: 3,
+        warning_count: 0,
         execution_time_ms: 15,
         details: None,
+        error: None,
         run_at: 0,
     };
     insert_gate_result(&conn, &g).unwrap();
@@ -371,13 +384,18 @@ fn test_materialized_views_refresh() {
             file: "src/app.ts".to_string(),
             line: 10,
             column: None,
+            end_line: None,
+            end_column: None,
             severity: "error".to_string(),
             pattern_id: "sql".to_string(),
             rule_id: "security/sql".to_string(),
             message: "SQL injection".to_string(),
+            quick_fix_strategy: None,
+            quick_fix_description: None,
             cwe_id: Some(89),
             owasp_category: Some("A03:2021".to_string()),
             suppressed: false,
+            is_new: false,
         },
     )
     .unwrap();
@@ -389,13 +407,18 @@ fn test_materialized_views_refresh() {
             file: "src/utils.ts".to_string(),
             line: 20,
             column: None,
+            end_line: None,
+            end_column: None,
             severity: "warning".to_string(),
             pattern_id: "naming".to_string(),
             rule_id: "naming/camelCase".to_string(),
             message: "Use camelCase".to_string(),
+            quick_fix_strategy: None,
+            quick_fix_description: None,
             cwe_id: None,
             owasp_category: None,
             suppressed: false,
+            is_new: false,
         },
     )
     .unwrap();
@@ -490,6 +513,8 @@ fn test_gate_evaluation_performance() {
             file: format!("src/file{}.ts", i / 100),
             line: (i % 1000) as u32,
             column: None,
+            end_line: None,
+            end_column: None,
             deviation_score: 2.0,
             message: format!("Violation {i}"),
         })
@@ -532,7 +557,7 @@ fn test_enforcement_idempotent() {
     let evaluator = RulesEvaluator::new();
     let input = RulesInput {
         patterns: make_realistic_patterns(),
-        source_lines: HashMap::new(),
+        source_lines: HashMap::new(), baseline_violation_ids: std::collections::HashSet::new(),
     };
 
     // Run twice

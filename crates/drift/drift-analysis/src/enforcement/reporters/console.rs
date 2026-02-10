@@ -87,8 +87,10 @@ impl Reporter for ConsoleReporter {
                 let prefix = self.severity_prefix(&violation.severity);
                 let cs = self.color_start(&violation.severity);
                 let ce = self.color_end();
+                let new_tag = if violation.is_new { " [NEW]" } else { "" };
+                let suppressed_tag = if violation.suppressed { " [suppressed]" } else { "" };
                 output.push_str(&format!(
-                    "  {}{}:{}: {}:{}:{}: {}{}\n",
+                    "  {}{}:{}: {}:{}:{}: {}{}{}\n",
                     cs,
                     prefix,
                     ce,
@@ -96,12 +98,12 @@ impl Reporter for ConsoleReporter {
                     violation.line,
                     violation.column.unwrap_or(0),
                     violation.message,
-                    if violation.suppressed {
-                        " [suppressed]"
-                    } else {
-                        ""
-                    }
+                    new_tag,
+                    suppressed_tag,
                 ));
+                if let Some(ref fix) = violation.quick_fix {
+                    output.push_str(&format!("    💡 Fix: {}\n", fix.description));
+                }
             }
 
             // Show warnings

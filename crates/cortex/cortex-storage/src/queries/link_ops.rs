@@ -20,14 +20,16 @@ pub fn add_pattern_link(
     .map_err(|e| to_storage_err(e.to_string()))?;
 
     let delta = serde_json::json!({ "link_type": "pattern", "target": link.pattern_id });
-    let _ = crate::temporal_events::emit_event(
+    if let Err(e) = crate::temporal_events::emit_event(
         conn,
         memory_id,
         "link_added",
         &delta,
         "system",
         "link_ops",
-    );
+    ) {
+        tracing::warn!(memory_id = %memory_id, error = %e, "failed to emit link_added event");
+    }
     Ok(())
 }
 
@@ -44,14 +46,16 @@ pub fn add_constraint_link(
     .map_err(|e| to_storage_err(e.to_string()))?;
 
     let delta = serde_json::json!({ "link_type": "constraint", "target": link.constraint_id });
-    let _ = crate::temporal_events::emit_event(
+    if let Err(e) = crate::temporal_events::emit_event(
         conn,
         memory_id,
         "link_added",
         &delta,
         "system",
         "link_ops",
-    );
+    ) {
+        tracing::warn!(memory_id = %memory_id, error = %e, "failed to emit link_added event");
+    }
     Ok(())
 }
 
@@ -70,14 +74,16 @@ pub fn add_file_link(conn: &Connection, memory_id: &str, link: &FileLink) -> Cor
     .map_err(|e| to_storage_err(e.to_string()))?;
 
     let delta = serde_json::json!({ "link_type": "file", "target": link.file_path });
-    let _ = crate::temporal_events::emit_event(
+    if let Err(e) = crate::temporal_events::emit_event(
         conn,
         memory_id,
         "link_added",
         &delta,
         "system",
         "link_ops",
-    );
+    ) {
+        tracing::warn!(memory_id = %memory_id, error = %e, "failed to emit link_added event");
+    }
     Ok(())
 }
 
@@ -99,13 +105,97 @@ pub fn add_function_link(
     .map_err(|e| to_storage_err(e.to_string()))?;
 
     let delta = serde_json::json!({ "link_type": "function", "target": link.function_name });
-    let _ = crate::temporal_events::emit_event(
+    if let Err(e) = crate::temporal_events::emit_event(
         conn,
         memory_id,
         "link_added",
         &delta,
         "system",
         "link_ops",
-    );
+    ) {
+        tracing::warn!(memory_id = %memory_id, error = %e, "failed to emit link_added event");
+    }
+    Ok(())
+}
+
+// ─── E-04: Atomic remove operations (avoids read-modify-write race) ─────────
+
+pub fn remove_pattern_link(
+    conn: &Connection,
+    memory_id: &str,
+    pattern_id: &str,
+) -> CortexResult<()> {
+    conn.execute(
+        "DELETE FROM memory_patterns WHERE memory_id = ?1 AND pattern_id = ?2",
+        params![memory_id, pattern_id],
+    )
+    .map_err(|e| to_storage_err(e.to_string()))?;
+
+    let delta = serde_json::json!({ "link_type": "pattern", "target": pattern_id });
+    if let Err(e) = crate::temporal_events::emit_event(
+        conn, memory_id, "link_removed", &delta, "system", "link_ops",
+    ) {
+        tracing::warn!(memory_id = %memory_id, error = %e, "failed to emit link_removed event");
+    }
+    Ok(())
+}
+
+pub fn remove_constraint_link(
+    conn: &Connection,
+    memory_id: &str,
+    constraint_id: &str,
+) -> CortexResult<()> {
+    conn.execute(
+        "DELETE FROM memory_constraints WHERE memory_id = ?1 AND constraint_id = ?2",
+        params![memory_id, constraint_id],
+    )
+    .map_err(|e| to_storage_err(e.to_string()))?;
+
+    let delta = serde_json::json!({ "link_type": "constraint", "target": constraint_id });
+    if let Err(e) = crate::temporal_events::emit_event(
+        conn, memory_id, "link_removed", &delta, "system", "link_ops",
+    ) {
+        tracing::warn!(memory_id = %memory_id, error = %e, "failed to emit link_removed event");
+    }
+    Ok(())
+}
+
+pub fn remove_file_link(
+    conn: &Connection,
+    memory_id: &str,
+    file_path: &str,
+) -> CortexResult<()> {
+    conn.execute(
+        "DELETE FROM memory_files WHERE memory_id = ?1 AND file_path = ?2",
+        params![memory_id, file_path],
+    )
+    .map_err(|e| to_storage_err(e.to_string()))?;
+
+    let delta = serde_json::json!({ "link_type": "file", "target": file_path });
+    if let Err(e) = crate::temporal_events::emit_event(
+        conn, memory_id, "link_removed", &delta, "system", "link_ops",
+    ) {
+        tracing::warn!(memory_id = %memory_id, error = %e, "failed to emit link_removed event");
+    }
+    Ok(())
+}
+
+pub fn remove_function_link(
+    conn: &Connection,
+    memory_id: &str,
+    function_name: &str,
+) -> CortexResult<()> {
+    conn.execute(
+        "DELETE FROM memory_functions WHERE memory_id = ?1 AND function_name = ?2",
+        params![memory_id, function_name],
+    )
+    .map_err(|e| to_storage_err(e.to_string()))?;
+
+    let delta = serde_json::json!({ "link_type": "function", "target": function_name });
+    if let Err(e) = crate::temporal_events::emit_event(
+        conn, memory_id, "link_removed", &delta, "system", "link_ops",
+    ) {
+        tracing::warn!(memory_id = %memory_id, error = %e, "failed to emit link_removed event");
+    }
     Ok(())
 }

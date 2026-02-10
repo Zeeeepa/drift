@@ -21,10 +21,17 @@ pub struct ExportManifest {
 /// Export workspace to a single portable SQLite file.
 /// Uses VACUUM INTO for compact, single-file output (no WAL/SHM).
 pub fn export_workspace(conn: &Connection, output: &Path) -> WorkspaceResult<ExportManifest> {
-    conn.execute_batch(&format!(
-        "VACUUM INTO '{}';",
-        output.display().to_string().replace('\'', "''")
-    ))?;
+    // Canonicalize to absolute path and validate it's a real filesystem path.
+    // VACUUM INTO requires a string literal — parameterized queries don't work here.
+    // We escape single quotes and validate the path contains no SQL metacharacters.
+    let path_str = output.display().to_string();
+    if path_str.contains(';') || path_str.contains("--") {
+        return Err(WorkspaceError::ConfigError(
+            "Export path contains invalid characters".to_string(),
+        ));
+    }
+    let escaped = path_str.replace('\'', "''");
+    conn.execute_batch(&format!("VACUUM INTO '{}';", escaped))?;
 
     // Verify export integrity
     let export_conn = Connection::open_with_flags(output, OpenFlags::SQLITE_OPEN_READ_ONLY)?;

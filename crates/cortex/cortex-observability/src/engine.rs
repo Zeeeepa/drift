@@ -59,6 +59,21 @@ impl ObservabilityEngine {
     pub fn reset_metrics(&mut self) {
         self.metrics.reset();
     }
+
+    /// F-01/F-02/F-03: Serialize current metrics and query log state to JSON.
+    /// Used during shutdown to persist metrics to storage via temporal events.
+    pub fn metrics_snapshot(&self) -> CortexResult<serde_json::Value> {
+        let metrics_json = serde_json::to_value(&self.metrics)
+            .map_err(cortex_core::errors::CortexError::SerializationError)?;
+        let query_count = self.query_log.count();
+        let avg_latency_ms = self.query_log.avg_latency().as_millis() as u64;
+
+        Ok(serde_json::json!({
+            "metrics": metrics_json,
+            "query_log_count": query_count,
+            "query_avg_latency_ms": avg_latency_ms,
+        }))
+    }
 }
 
 impl Default for ObservabilityEngine {

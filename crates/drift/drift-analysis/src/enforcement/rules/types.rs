@@ -45,7 +45,7 @@ pub struct QuickFix {
     pub replacement: Option<String>,
 }
 
-/// The 7 quick-fix strategies.
+/// The 8 quick-fix strategies.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum QuickFixStrategy {
@@ -56,6 +56,7 @@ pub enum QuickFixStrategy {
     AddTypeAnnotation,
     AddTest,
     AddDocumentation,
+    UseParameterizedQuery,
 }
 
 impl fmt::Display for QuickFixStrategy {
@@ -68,6 +69,7 @@ impl fmt::Display for QuickFixStrategy {
             Self::AddTypeAnnotation => write!(f, "add_type_annotation"),
             Self::AddTest => write!(f, "add_test"),
             Self::AddDocumentation => write!(f, "add_documentation"),
+            Self::UseParameterizedQuery => write!(f, "use_parameterized_query"),
         }
     }
 }
@@ -104,6 +106,8 @@ pub struct RulesInput {
     pub patterns: Vec<PatternInfo>,
     /// Source file contents for suppression checking.
     pub source_lines: std::collections::HashMap<String, Vec<String>>,
+    /// Baseline violation keys (format: "file:line:rule_id") for is_new detection.
+    pub baseline_violation_ids: std::collections::HashSet<String>,
 }
 
 /// Information about a detected pattern for rule evaluation.
@@ -129,11 +133,15 @@ pub struct PatternLocation {
 }
 
 /// A location where an outlier (deviation from pattern) was detected.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct OutlierLocation {
     pub file: String,
     pub line: u32,
     pub column: Option<u32>,
+    /// End line of the outlier span (if known).
+    pub end_line: Option<u32>,
+    /// End column of the outlier span (if known).
+    pub end_column: Option<u32>,
     pub deviation_score: f64,
     pub message: String,
 }

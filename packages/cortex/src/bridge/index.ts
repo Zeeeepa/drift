@@ -6,6 +6,7 @@
  */
 
 let nativeModule: NativeBindings | null = null;
+let nativeIsStub = false;
 
 /** Raw NAPI function signatures exported by cortex-napi. */
 export interface NativeBindings {
@@ -16,7 +17,7 @@ export interface NativeBindings {
     cloudEnabled: boolean | null,
   ): void;
   cortexShutdown(): void;
-  cortexConfigure(configToml: string | null): unknown;
+  cortexConfigure(configToml: string | null): Record<string, unknown>;
 
   // Memory CRUD
   cortexMemoryCreate(memoryJson: unknown): void;
@@ -64,6 +65,12 @@ export interface NativeBindings {
   cortexConsolidationGetMetrics(): unknown;
   cortexConsolidationGetStatus(): unknown;
 
+  // Embeddings (E-01)
+  cortexReembed(memoryType: string | null): unknown;
+
+  // Decay (C-07)
+  cortexDecayRun(): unknown;
+
   // Health
   cortexHealthGetHealth(): unknown;
   cortexHealthGetMetrics(): unknown;
@@ -98,13 +105,16 @@ export interface NativeBindings {
   // Cloud
   cortexCloudSync(): unknown;
   cortexCloudGetStatus(): unknown;
-  cortexCloudResolveConflict(memoryId: string, resolution: string): unknown;
+  cortexCloudResolveConflict(memoryId: string, resolution: string): Record<string, unknown>;
 
   // Session
   cortexSessionCreate(sessionId: string | null): string;
   cortexSessionGet(sessionId: string): unknown;
   cortexSessionCleanup(): number;
   cortexSessionAnalytics(sessionId: string): unknown;
+
+  // Validation (E-02)
+  cortexValidationRun(minConfidence: number | null, maxConfidence: number | null): Record<string, unknown>;
 
   // Temporal
   cortexTemporalQueryAsOf(
@@ -145,6 +155,7 @@ export interface NativeBindings {
 /**
  * Load the native NAPI module.
  * Tries require('drift-cortex-napi') which resolves to the platform-specific binary.
+ * Falls back to a structurally valid stub when the native binary is unavailable.
  */
 export function loadNativeModule(): NativeBindings {
   if (nativeModule) return nativeModule;
@@ -154,13 +165,19 @@ export function loadNativeModule(): NativeBindings {
     // published as drift-cortex-napi with optional dependencies per platform.
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     nativeModule = require("drift-cortex-napi") as NativeBindings;
+    nativeIsStub = false;
     return nativeModule;
-  } catch (err) {
-    throw new Error(
-      `Failed to load drift-cortex-napi native module. ` +
-        `Ensure the package is installed and built for your platform. ` +
-        `Original error: ${err instanceof Error ? err.message : String(err)}`,
+  } catch {
+    // Fall back to stub when native binary is unavailable.
+    // This enables development, testing, and graceful degradation.
+    console.warn(
+      '[cortex] \u26a0 Native binary unavailable \u2014 using stub fallback. ' +
+      'All Cortex operations will return empty/no-op results. Build drift-cortex-napi to enable real functionality.',
     );
+    const { createStubNativeModule } = require("./stub.js") as { createStubNativeModule: () => NativeBindings };
+    nativeModule = createStubNativeModule();
+    nativeIsStub = true;
+    return nativeModule;
   }
 }
 
@@ -186,4 +203,12 @@ export function isNativeModuleLoaded(): boolean {
 /** Reset the module reference (for testing). */
 export function resetNativeModule(): void {
   nativeModule = null;
+  nativeIsStub = false;
+}
+
+/**
+ * Check if the native module is a stub (native binary unavailable).
+ */
+export function isNativeStub(): boolean {
+  return nativeIsStub;
 }

@@ -43,13 +43,15 @@ fn stress_unicode_everywhere() {
                 file: "src/コンポーネント/ヘルパー.ts".to_string(),
                 line: 10,
                 column: None,
-                deviation_score: 2.5,
+                end_line: None,
+                end_column: None,
+                                deviation_score: 2.5,
                 message: "変数名がキャメルケースではありません 🐍→🐫".to_string(),
             }],
             cwe_ids: vec![],
             owasp_categories: vec![],
         }],
-        source_lines: HashMap::new(),
+        source_lines: HashMap::new(), baseline_violation_ids: std::collections::HashSet::new(),
     };
 
     let violations = evaluator.evaluate(&input);
@@ -106,28 +108,34 @@ fn stress_path_traversal_filenames() {
                     file: "../../../etc/passwd".to_string(),
                     line: 1,
                     column: None,
-                    deviation_score: 5.0,
+                    end_line: None,
+                    end_column: None,
+                                        deviation_score: 5.0,
                     message: "Path traversal attempt".to_string(),
                 },
                 OutlierLocation {
                     file: "src/app.ts\0hidden".to_string(), // null byte
                     line: 1,
                     column: None,
-                    deviation_score: 5.0,
+                    end_line: None,
+                    end_column: None,
+                                        deviation_score: 5.0,
                     message: "Null byte injection".to_string(),
                 },
                 OutlierLocation {
                     file: "".to_string(), // empty filename
                     line: 0,
                     column: None,
-                    deviation_score: 1.0,
+                    end_line: None,
+                    end_column: None,
+                                        deviation_score: 1.0,
                     message: "Empty file".to_string(),
                 },
             ],
             cwe_ids: vec![22], // CWE-22 Path Traversal
             owasp_categories: vec![],
         }],
-        source_lines: HashMap::new(),
+        source_lines: HashMap::new(), baseline_violation_ids: std::collections::HashSet::new(),
     };
 
     let violations = evaluator.evaluate(&input);
@@ -156,13 +164,15 @@ fn stress_huge_strings() {
                 file: huge_file.clone(),
                 line: 1,
                 column: None,
-                deviation_score: 2.0,
+                end_line: None,
+                end_column: None,
+                                deviation_score: 2.0,
                 message: huge_msg.clone(),
             }],
             cwe_ids: vec![],
             owasp_categories: vec![],
         }],
-        source_lines: HashMap::new(),
+        source_lines: HashMap::new(), baseline_violation_ids: std::collections::HashSet::new(),
     };
 
     let violations = evaluator.evaluate(&input);
@@ -190,7 +200,7 @@ fn stress_health_scorer_nan_infinity_guard() {
         outlier_count: 0,
         in_call_graph: false,
         constraint_issues: 0,
-        has_error_issues: false,
+        has_error_issues: false, locations: vec![],
     }];
 
     let (score, breakdown) = scorer.compute(&patterns, &[]);
@@ -217,7 +227,7 @@ fn stress_confidence_exact_boundaries() {
             outlier_count: 0,
             in_call_graph: true,
             constraint_issues: 0,
-            has_error_issues: false,
+            has_error_issues: false, locations: vec![],
         }];
 
         let (score, _) = scorer.compute(&patterns, &[]);
@@ -386,13 +396,15 @@ fn stress_rules_to_gates_to_reporters_data_flow() {
                 file: "src/api.ts".to_string(),
                 line: 42,
                 column: Some(10),
-                deviation_score: 4.5,
+                end_line: None,
+                end_column: None,
+                                deviation_score: 4.5,
                 message: "String concat in SQL".to_string(),
             }],
             cwe_ids: vec![89],
             owasp_categories: vec!["A03:2021-Injection".to_string()],
         }],
-        source_lines: HashMap::new(),
+        source_lines: HashMap::new(), baseline_violation_ids: std::collections::HashSet::new(),
     };
     let violations = evaluator.evaluate(&input);
     assert_eq!(violations.len(), 1);
@@ -430,11 +442,14 @@ fn stress_rules_to_gates_to_reporters_data_flow() {
     assert_eq!(results.len(), 1);
     assert_eq!(results[0]["ruleId"], "security/sql-param");
     assert_eq!(results[0]["level"], "error");
-    // CWE reference must be present
-    let taxa = results[0]["taxa"].as_array().unwrap();
-    assert!(taxa.iter().any(|t| t["id"] == "CWE-89"), "CWE-89 must be in taxa");
-    // OWASP reference must be present
-    assert!(taxa.iter().any(|t| t["id"] == "A03:2021-Injection"), "OWASP must be in taxa");
+    // CWE/OWASP references now in result.properties (SARIF 2.1.0 compliant)
+    assert_eq!(results[0]["properties"]["cweId"], "CWE-89", "CWE-89 must be in properties");
+    assert_eq!(results[0]["properties"]["owaspCategory"], "A03:2021-Injection", "OWASP must be in properties");
+    // And on rules via relationships
+    let rules = sarif["runs"][0]["tool"]["driver"]["rules"].as_array().unwrap();
+    let rule = rules.iter().find(|r| r["id"] == "security/sql-param").unwrap();
+    let rels = rule["relationships"].as_array().unwrap();
+    assert!(rels.iter().any(|r| r["target"]["toolComponent"]["name"] == "CWE"), "Rule must have CWE relationship");
 
     // Step 4: JSON reporter must preserve all fields
     let json_out = JsonReporter.generate(&[gate_result.clone()]).unwrap();
@@ -869,6 +884,8 @@ fn stress_cascading_dependency_skip() {
                     file: format!("src/f{i}.ts"),
                     line: i as u32,
                     column: None,
+                    end_line: None,
+                    end_column: None,
                     deviation_score: 5.0,
                     message: "Critical".to_string(),
                 })
@@ -885,6 +902,12 @@ fn stress_cascading_dependency_skip() {
                 line: Some(1),
                 message: "Circular dep".to_string(),
             }],
+        }],
+        error_gaps: vec![ErrorGapInput {
+            file: "src/handler.ts".to_string(),
+            line: 10,
+            gap_type: "empty_catch".to_string(),
+            message: "Empty catch block".to_string(),
         }],
         ..Default::default()
     };
@@ -903,9 +926,10 @@ fn stress_cascading_dependency_skip() {
     let sb = results.iter().find(|r| r.gate_id == GateId::SecurityBoundaries).unwrap();
     assert_eq!(sb.status, GateStatus::Skipped, "Security boundaries should be skipped");
 
-    // Non-dependent gates should still execute
-    let tc = results.iter().find(|r| r.gate_id == GateId::TestCoverage).unwrap();
-    assert_ne!(tc.status, GateStatus::Skipped, "Test coverage has no deps, should execute");
+    // Non-dependent gates should still execute (provide error_gaps so ErrorHandling
+    // has data and doesn't skip for missing input)
+    let eh = results.iter().find(|r| r.gate_id == GateId::ErrorHandling).unwrap();
+    assert_ne!(eh.status, GateStatus::Skipped, "Error handling has no deps, should execute");
 }
 
 /// Auto-approve must never approve patterns with error issues.
@@ -923,6 +947,7 @@ fn stress_auto_approve_rejects_error_patterns() {
         in_call_graph: true,
         constraint_issues: 0,
         has_error_issues: true, // But has error issues!
+        locations: vec![],
     }];
 
     let (auto_approved, needs_review, _) = approver.classify(&patterns);
@@ -948,7 +973,7 @@ fn stress_dedup_cross_category_isolation() {
             outlier_count: 5,
             in_call_graph: true,
             constraint_issues: 0,
-            has_error_issues: false,
+            has_error_issues: false, locations: vec![],
         },
         PatternAuditData {
             id: "security-1".to_string(),
@@ -960,7 +985,7 @@ fn stress_dedup_cross_category_isolation() {
             outlier_count: 5,
             in_call_graph: true,
             constraint_issues: 0,
-            has_error_issues: false,
+            has_error_issues: false, locations: vec![],
         },
     ];
 
@@ -1004,10 +1029,14 @@ fn stress_storage_full_round_trip() {
                 file: format!("src/file{}.ts", i / 10),
                 line: i,
                 column: Some(i % 80 + 1),
+                end_line: None,
+                end_column: None,
                 severity: severity.to_string(),
                 pattern_id: format!("pat-{}", i % 5),
                 rule_id: format!("rule/{}", i % 10),
                 message: format!("Violation {i}"),
+                quick_fix_strategy: None,
+                quick_fix_description: None,
                 cwe_id,
                 owasp_category: if cwe_id.is_some() {
                     Some("A03:2021".to_string())
@@ -1015,6 +1044,7 @@ fn stress_storage_full_round_trip() {
                     None
                 },
                 suppressed: i % 20 == 0, // 5% suppressed
+                is_new: false,
             },
         )
         .unwrap();
@@ -1032,8 +1062,10 @@ fn stress_storage_full_round_trip() {
                 score: 85.0,
                 summary: format!("{gate_id}: 85%"),
                 violation_count: 10,
+                warning_count: 0,
                 execution_time_ms: 15,
                 details: None,
+                error: None,
                 run_at: 0,
             },
         )
@@ -1133,13 +1165,18 @@ fn stress_storage_upsert_no_duplicates() {
         file: "src/app.ts".to_string(),
         line: 10,
         column: None,
+        end_line: None,
+        end_column: None,
         severity: "error".to_string(),
         pattern_id: "test".to_string(),
         rule_id: "test/rule".to_string(),
         message: "Original message".to_string(),
+        quick_fix_strategy: None,
+        quick_fix_description: None,
         cwe_id: Some(89),
         owasp_category: None,
         suppressed: false,
+        is_new: false,
     };
 
     // Insert twice with same ID
@@ -1295,6 +1332,8 @@ fn stress_50k_violations_full_pipeline() {
             file: format!("src/file{}.ts", i / 100),
             line: (i % 1000) as u32,
             column: Some((i % 80 + 1) as u32),
+            end_line: None,
+            end_column: None,
             deviation_score: 2.0 + (i % 5) as f64,
             message: format!("Violation {i}"),
         })
@@ -1310,7 +1349,7 @@ fn stress_50k_violations_full_pipeline() {
             cwe_ids: vec![],
             owasp_categories: vec![],
         }],
-        source_lines: HashMap::new(),
+        source_lines: HashMap::new(), baseline_violation_ids: std::collections::HashSet::new(),
     };
 
     let start = std::time::Instant::now();
@@ -1385,7 +1424,7 @@ fn stress_health_scorer_10k_patterns() {
             outlier_count: i % 20,
             in_call_graph: i % 2 == 0,
             constraint_issues: 0,
-            has_error_issues: false,
+            has_error_issues: false, locations: vec![],
         })
         .collect();
 

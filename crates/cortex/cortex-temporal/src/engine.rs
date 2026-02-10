@@ -26,7 +26,6 @@ use crate::snapshot;
 pub struct TemporalEngine {
     pub writer: Arc<WriteConnection>,
     pub readers: Arc<ReadPool>,
-    #[allow(dead_code)]
     pub config: TemporalConfig,
 }
 
@@ -136,7 +135,8 @@ impl ITemporalEngine for TemporalEngine {
         let readers = self.readers.clone();
         let config = self.config.clone();
         let now = Utc::now();
-        let window_start = now - chrono::Duration::hours(168); // 1 week default
+        // F-06: Use configurable drift detection window instead of hardcoded 168h.
+        let window_start = now - chrono::Duration::hours(config.drift_detection_window_hours as i64);
 
         let snapshot =
             crate::drift::metrics::compute_all_metrics(&readers, window_start, now)?;

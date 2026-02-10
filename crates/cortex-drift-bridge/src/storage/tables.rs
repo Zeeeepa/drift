@@ -1,76 +1,21 @@
-//! 4 bridge-specific SQLite tables with retention policies.
+//! Bridge-specific SQLite tables and CRUD operations.
 //!
-//! Tables:
+//! Tables (5 total, defined in schema.rs):
 //! - bridge_grounding_results (90 days Community, unlimited Enterprise)
 //! - bridge_grounding_snapshots (365 days)
 //! - bridge_event_log (30 days)
 //! - bridge_metrics (7 days)
+//! - bridge_memories
 
-use chrono::Utc;
 use rusqlite::{params, Connection};
 
 use crate::errors::{BridgeError, BridgeResult};
 use crate::grounding::{GroundingResult, GroundingSnapshot};
+use super::schema::BRIDGE_TABLES_V1;
 
-/// Create all 4 bridge-specific tables.
+/// Create all 5 bridge-specific tables using the single source of truth in schema.rs.
 pub fn create_bridge_tables(conn: &Connection) -> BridgeResult<()> {
-    conn.execute_batch(
-        "
-        CREATE TABLE IF NOT EXISTS bridge_grounding_results (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            memory_id TEXT NOT NULL,
-            grounding_score REAL NOT NULL,
-            classification TEXT NOT NULL,
-            evidence TEXT NOT NULL,
-            created_at INTEGER NOT NULL DEFAULT (unixepoch())
-        ) STRICT;
-
-        CREATE TABLE IF NOT EXISTS bridge_grounding_snapshots (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            total_memories INTEGER NOT NULL,
-            grounded_count INTEGER NOT NULL,
-            validated_count INTEGER NOT NULL,
-            partial_count INTEGER NOT NULL,
-            weak_count INTEGER NOT NULL,
-            invalidated_count INTEGER NOT NULL,
-            avg_score REAL NOT NULL DEFAULT 0.0,
-            created_at INTEGER NOT NULL DEFAULT (unixepoch())
-        ) STRICT;
-
-        CREATE TABLE IF NOT EXISTS bridge_event_log (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            event_type TEXT NOT NULL,
-            memory_type TEXT,
-            memory_id TEXT,
-            confidence REAL,
-            created_at INTEGER NOT NULL DEFAULT (unixepoch())
-        ) STRICT;
-
-        CREATE TABLE IF NOT EXISTS bridge_metrics (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            metric_name TEXT NOT NULL,
-            metric_value REAL NOT NULL,
-            recorded_at INTEGER NOT NULL DEFAULT (unixepoch())
-        ) STRICT;
-
-        CREATE TABLE IF NOT EXISTS bridge_memories (
-            id TEXT PRIMARY KEY NOT NULL,
-            memory_type TEXT NOT NULL,
-            content TEXT NOT NULL,
-            summary TEXT NOT NULL,
-            confidence REAL NOT NULL,
-            importance TEXT NOT NULL,
-            tags TEXT NOT NULL DEFAULT '[]',
-            linked_patterns TEXT NOT NULL DEFAULT '[]',
-            created_at INTEGER NOT NULL DEFAULT (unixepoch())
-        ) STRICT;
-
-        CREATE INDEX IF NOT EXISTS idx_grounding_results_memory ON bridge_grounding_results(memory_id);
-        CREATE INDEX IF NOT EXISTS idx_event_log_type ON bridge_event_log(event_type);
-        CREATE INDEX IF NOT EXISTS idx_metrics_name ON bridge_metrics(metric_name);
-        CREATE INDEX IF NOT EXISTS idx_memories_type ON bridge_memories(memory_type);
-        ",
-    )?;
+    conn.execute_batch(BRIDGE_TABLES_V1)?;
     Ok(())
 }
 
@@ -215,35 +160,3 @@ pub fn get_grounding_history(
     Ok(results)
 }
 
-/// Apply retention policy: delete old records.
-pub fn apply_retention(conn: &Connection, community_tier: bool) -> BridgeResult<()> {
-    let now = Utc::now().timestamp();
-
-    // bridge_event_log: 30 days
-    conn.execute(
-        "DELETE FROM bridge_event_log WHERE created_at < ?1",
-        params![now - 30 * 86400],
-    )?;
-
-    // bridge_metrics: 7 days
-    conn.execute(
-        "DELETE FROM bridge_metrics WHERE recorded_at < ?1",
-        params![now - 7 * 86400],
-    )?;
-
-    // bridge_grounding_snapshots: 365 days
-    conn.execute(
-        "DELETE FROM bridge_grounding_snapshots WHERE created_at < ?1",
-        params![now - 365 * 86400],
-    )?;
-
-    // bridge_grounding_results: 90 days for Community, unlimited for Enterprise
-    if community_tier {
-        conn.execute(
-            "DELETE FROM bridge_grounding_results WHERE created_at < ?1",
-            params![now - 90 * 86400],
-        )?;
-    }
-
-    Ok(())
-}

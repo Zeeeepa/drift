@@ -16,13 +16,62 @@ impl Detector for TestingDetector {
     fn detect(&self, ctx: &DetectionContext) -> Vec<PatternMatch> {
         let mut matches = Vec::new();
 
-        let test_frameworks = ["describe", "it", "test", "expect", "assert",
+        let test_frameworks = [
+            // JS/TS
+            "describe", "it", "test", "expect", "assert",
             "beforeEach", "afterEach", "beforeAll", "afterAll",
-            "jest", "mocha", "pytest", "unittest"];
-        let mock_patterns = ["mock", "stub", "spy", "jest.fn", "sinon",
-            "Mock", "patch", "MagicMock"];
-        let assertion_patterns = ["assertEqual", "assertEquals", "assertThat",
-            "toBe", "toEqual", "toHaveBeenCalled", "assert_eq"];
+            "jest", "mocha",
+            // Python
+            "pytest", "unittest",
+            // Java/Kotlin
+            "@Test", "@BeforeEach", "@AfterEach", "@ParameterizedTest",
+            // Go
+            "testing.T", "testing.B",
+            // Rust
+            "#[test]", "#[cfg(test)]",
+            // Ruby
+            "RSpec", "Minitest",
+            // PHP
+            "PHPUnit", "TestCase",
+            // C#
+            "[Test]", "[Fact]", "[Theory]", "TestMethod",
+        ];
+        let mock_patterns = [
+            // JS/TS
+            "mock", "stub", "spy", "jest.fn", "sinon",
+            // Python
+            "Mock", "patch", "MagicMock", "mocker",
+            // Java/Kotlin
+            "Mockito", "when", "verify", "MockBean",
+            // Go
+            "gomock", "testify",
+            // Rust
+            "mockall",
+            // Ruby
+            "double", "allow", "receive",
+            // PHP
+            "createMock", "getMockBuilder", "Prophecy",
+            // C#
+            "Moq", "Substitute", "FakeItEasy",
+        ];
+        let assertion_patterns = [
+            // JS/TS
+            "toBe", "toEqual", "toHaveBeenCalled", "toMatchSnapshot", "toThrow",
+            // Python
+            "assertEqual", "assertTrue", "assertFalse", "assertRaises", "assert_called",
+            // Java/Kotlin
+            "assertEquals", "assertThat", "assertThrows", "assertNotNull",
+            // Go (testing.T methods)
+            "Equal", "NoError", "Nil", "True", "False",
+            // Rust
+            "assert_eq", "assert_ne", "assert!",
+            // Ruby
+            "assert_equal", "refute", "expect_to",
+            // PHP
+            "assertSame", "assertInstanceOf", "assertCount",
+            // C#
+            "Assert.Equal", "Assert.True", "Assert.Throws",
+        ];
 
         for call in ctx.call_sites {
             // Detect test framework usage

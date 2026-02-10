@@ -163,6 +163,7 @@ fn determinism_confidence_scores_identical() {
     let scorer = ConfidenceScorer::new(ScorerConfig {
         total_files: 100,
         default_age_days: 14,
+    default_data_quality: None,
     });
 
     let patterns: Vec<AggregatedPattern> = (0..50)
@@ -171,7 +172,7 @@ fn determinism_confidence_scores_identical() {
 
     let mut all_scores: Vec<Vec<(String, f64)>> = Vec::new();
     for _ in 0..10 {
-        let scores = scorer.score_batch(&patterns);
+        let scores = scorer.score_batch(&patterns, None);
         let mut sorted: Vec<(String, f64)> = scores
             .into_iter()
             .map(|(id, s)| (id, s.posterior_mean))
@@ -198,6 +199,7 @@ fn determinism_confidence_tier_assignment() {
     let scorer = ConfidenceScorer::new(ScorerConfig {
         total_files: 200,
         default_age_days: 30,
+    default_data_quality: None,
     });
 
     let patterns: Vec<AggregatedPattern> = (0..100)
@@ -206,7 +208,7 @@ fn determinism_confidence_tier_assignment() {
 
     let mut all_tiers: Vec<Vec<(String, String)>> = Vec::new();
     for _ in 0..10 {
-        let scores = scorer.score_batch(&patterns);
+        let scores = scorer.score_batch(&patterns, None);
         let mut tiers: Vec<(String, String)> = scores
             .into_iter()
             .map(|(id, s)| (id, s.tier.name().to_string()))
@@ -295,13 +297,14 @@ fn determinism_convention_discovery() {
     let scorer = ConfidenceScorer::new(ScorerConfig {
         total_files: 100,
         default_age_days: 14,
+    default_data_quality: None,
     });
 
     let patterns: Vec<AggregatedPattern> = (0..30)
         .map(|i| make_pattern(&format!("pat_{}", i), (i * 3 + 10) as u32, (i % 15 + 3) as u32))
         .collect();
 
-    let scores = scorer.score_batch(&patterns);
+    let scores = scorer.score_batch(&patterns, None);
 
     let mut all_conventions: Vec<Vec<(String, String)>> = Vec::new();
     for _ in 0..10 {
@@ -334,6 +337,7 @@ fn determinism_full_pipeline_end_to_end() {
     let scorer = ConfidenceScorer::new(ScorerConfig {
         total_files: 100,
         default_age_days: 14,
+    default_data_quality: None,
     });
     let detector = OutlierDetector::new();
     let discoverer = ConventionDiscoverer::new();
@@ -347,7 +351,7 @@ fn determinism_full_pipeline_end_to_end() {
         let mut pattern_ids: Vec<String> = agg.patterns.iter().map(|p| p.pattern_id.clone()).collect();
         pattern_ids.sort();
 
-        let scores = scorer.score_batch(&agg.patterns);
+        let scores = scorer.score_batch(&agg.patterns, None);
         let mut score_vals: Vec<(String, f64)> = scores
             .iter()
             .map(|(id, s)| (id.clone(), s.posterior_mean))

@@ -46,21 +46,18 @@ pub trait GeneExtractor: Send + Sync {
                 0.0
             };
 
-            // Collect unique files
-            let mut files: Vec<&str> = detections.iter()
-                .map(|d| d.code.as_str()) // placeholder
-                .collect();
-            files.dedup();
+            // Collect unique files from context (which carries the file path)
             let file_count = detections.iter()
-                .map(|d| d.allele_id.as_str())
+                .filter(|d| !d.context.is_empty())
+                .map(|d| d.context.as_str())
                 .collect::<std::collections::HashSet<_>>()
                 .len() as u32;
 
-            // Up to 5 examples
+            // Up to 5 examples — use context as file path (set by extract_from_file callers)
             let examples: Vec<AlleleExample> = detections.iter()
                 .take(5)
                 .map(|d| AlleleExample {
-                    file: d.allele_id.clone(), // Will be set properly by caller
+                    file: d.context.clone(),
                     line: d.line,
                     code: d.code.clone(),
                     context: d.context.clone(),

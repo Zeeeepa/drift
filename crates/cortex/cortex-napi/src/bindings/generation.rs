@@ -4,7 +4,7 @@ use napi_derive::napi;
 use serde_json::json;
 
 use cortex_core::models::RetrievalContext;
-use cortex_core::traits::IRetriever;
+use cortex_core::traits::{ILearner, IRetriever};
 use cortex_retrieval::RetrievalEngine;
 
 use crate::conversions::{error_types, search_types};
@@ -66,7 +66,22 @@ pub fn cortex_generation_track_outcome(
         }
     }
 
-    // If not useful, this could feed into the learning engine.
-    // For now, we just record the signal.
+    // Wire feedback to the learning engine (A-08: was_useful was previously discarded).
+    if !_was_useful {
+        let learning = rt
+            .learning
+            .lock()
+            .map_err(|e| napi::Error::from_reason(format!("Learning lock poisoned: {e}")))?;
+        for mid in &memory_ids {
+            let correction = cortex_core::traits::Correction {
+                original_memory_id: Some(mid.clone()),
+                correction_text: "Memory was not useful in generation context".to_string(),
+                context: "negative_generation_feedback".to_string(),
+                source: "generation_feedback".to_string(),
+            };
+            // Best-effort: don't fail the whole call if learning fails.
+            let _ = learning.analyze(&correction);
+        }
+    }
     Ok(())
 }

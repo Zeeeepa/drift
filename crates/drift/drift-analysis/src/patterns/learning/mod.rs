@@ -10,5 +10,8 @@ pub mod relearning;
 pub mod dirichlet;
 pub mod expiry;
 
-pub use types::{Convention, ConventionCategory, ConventionScope, PromotionStatus, LearningConfig};
+pub use types::{
+    Convention, ConventionCategory, ConventionScope, PromotionStatus, LearningConfig,
+    ConventionStore, InMemoryConventionStore, LearningDiagnostics,
+};
 pub use discovery::ConventionDiscoverer;

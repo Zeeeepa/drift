@@ -15,7 +15,12 @@ export function registerStatusCommand(program: Command): void {
     .action(async (opts: { format: OutputFormat; quiet?: boolean }) => {
       const napi = loadNapi();
       try {
-        const result = napi.drift_status();
+        const audit = napi.driftAudit('.');
+        const violations = napi.driftViolations('.');
+        const result = {
+          ...audit,
+          violationCount: violations.length,
+        };
         if (!opts.quiet) {
           process.stdout.write(formatOutput(result, opts.format));
         }

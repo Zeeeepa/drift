@@ -18,7 +18,20 @@ impl Detector for LoggingDetector {
 
         // Detect console/logger call sites (console.log, logger.info, log.warn, etc.)
         let log_receivers = ["console", "logger", "log", "logging", "winston", "bunyan",
-                             "pino", "log4j", "slf4j", "spdlog"];
+                             "pino", "log4j", "slf4j", "spdlog",
+                             // Go
+                             "slog", "zap", "logrus",
+                             // Rust
+                             "tracing", "env_logger",
+                             // Ruby
+                             "Logger", "Rails.logger",
+                             // C#
+                             "_logger", "Logger", "Log",
+                             // PHP
+                             "Log",
+                             // Kotlin
+                             "Timber",
+        ];
         let log_methods = ["log", "info", "warn", "error", "debug", "trace", "fatal",
                            "verbose"];
         for call in ctx.call_sites {
@@ -43,8 +56,26 @@ impl Detector for LoggingDetector {
         }
 
         // Detect logging framework imports (winston, bunyan, pino, log4j, etc.)
-        let logging_imports = ["winston", "bunyan", "pino", "morgan", "log4js", "loglevel",
-                               "debug", "signale", "tslog", "roarr"];
+        let logging_imports = [
+            // JS/TS
+            "winston", "bunyan", "pino", "morgan", "log4js",
+            "loglevel", "debug", "signale", "tslog", "roarr",
+            // Python
+            "loguru", "structlog",
+            // Java/Kotlin
+            "org.slf4j", "org.apache.logging.log4j", "java.util.logging", "ch.qos.logback",
+            "timber",
+            // Go
+            "go.uber.org/zap", "github.com/sirupsen/logrus", "log/slog",
+            // Rust
+            "tracing", "env_logger", "log", "slog", "flexi_logger",
+            // Ruby
+            "logger", "semantic_logger",
+            // PHP
+            "monolog/monolog", "psr/log",
+            // C#
+            "Serilog", "NLog", "Microsoft.Extensions.Logging",
+        ];
         for import in ctx.imports {
             let source_lower = import.source.to_lowercase();
             if logging_imports.iter().any(|li| source_lower == *li) {
@@ -65,7 +96,18 @@ impl Detector for LoggingDetector {
 
         // Detect bare print/println calls (often debug leftovers)
         let bare_print_calls = ["print", "println", "printf", "puts", "console_log",
-                                "print_r", "var_dump", "pp"];
+                                "print_r", "var_dump", "pp",
+                                // Go
+                                "fmt.Println", "fmt.Printf", "fmt.Print",
+                                // Rust
+                                "println!", "eprintln!", "dbg!",
+                                // Python
+                                "pprint",
+                                // Kotlin
+                                "println",
+                                // PHP
+                                "echo", "var_export", "error_log",
+        ];
         for call in ctx.call_sites {
             let callee_lower = call.callee_name.to_lowercase();
             if bare_print_calls.contains(&callee_lower.as_str()) && call.receiver.is_none() {

@@ -44,6 +44,11 @@ pub trait ICausalStorage: Send + Sync {
     // --- Validation ---
     fn has_cycle(&self, source_id: &str, target_id: &str) -> CortexResult<bool>;
 
+    // --- Enumeration ---
+    /// List all distinct node IDs that appear in any causal edge.
+    /// Required for `rebuild_from_storage` to hydrate the in-memory graph.
+    fn list_all_node_ids(&self) -> CortexResult<Vec<String>>;
+
     // --- Statistics ---
     fn edge_count(&self) -> CortexResult<usize>;
     fn node_count(&self) -> CortexResult<usize>;

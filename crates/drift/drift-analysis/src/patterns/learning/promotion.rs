@@ -25,7 +25,13 @@ impl Default for PromotionConfig {
 }
 
 /// Check if a convention qualifies for auto-promotion.
-pub fn check_promotion(convention: &Convention, config: &PromotionConfig) -> bool {
+///
+/// PI-LEARN-07: Uses actual file_spread instead of posterior_mean proxy.
+pub fn check_promotion(
+    convention: &Convention,
+    config: &PromotionConfig,
+    file_spread: Option<u64>,
+) -> bool {
     if convention.promotion_status != PromotionStatus::Discovered {
         return false; // Only promote from Discovered state
     }
@@ -48,16 +54,37 @@ pub fn check_promotion(convention: &Convention, config: &PromotionConfig) -> boo
         return false;
     }
 
-    // Check file spread (from confidence score's alpha as proxy)
-    // In practice, the caller should provide the actual file count
-    convention.confidence_score.posterior_mean >= 0.85
+    // PI-LEARN-07: Check actual file_spread if provided, else fall back to posterior_mean
+    match file_spread {
+        Some(spread) => spread >= config.min_files,
+        None => convention.confidence_score.posterior_mean >= 0.85,
+    }
 }
 
 /// Promote all eligible conventions in a batch.
 pub fn promote_batch(conventions: &mut [Convention], config: &PromotionConfig) -> usize {
     let mut promoted = 0;
     for convention in conventions.iter_mut() {
-        if check_promotion(convention, config) {
+        if check_promotion(convention, config, None) {
+            convention.promotion_status = PromotionStatus::Approved;
+            promoted += 1;
+        }
+    }
+    promoted
+}
+
+/// PI-LEARN-08: Promote with actual file spread data.
+///
+/// `spread_map`: pattern_id -> file_spread count.
+pub fn promote_batch_with_spread(
+    conventions: &mut [Convention],
+    config: &PromotionConfig,
+    spread_map: &std::collections::HashMap<String, u64>,
+) -> usize {
+    let mut promoted = 0;
+    for convention in conventions.iter_mut() {
+        let spread = spread_map.get(&convention.pattern_id).copied();
+        if check_promotion(convention, config, spread) {
             convention.promotion_status = PromotionStatus::Approved;
             promoted += 1;
         }

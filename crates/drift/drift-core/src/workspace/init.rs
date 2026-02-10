@@ -150,12 +150,15 @@ pub fn workspace_init(opts: InitOptions) -> WorkspaceResult<WorkspaceInfo> {
     }
 
     // Log initialization event
+    let event_details = serde_json::json!({
+        "project_name": project_name,
+        "languages": languages,
+        "frameworks": frameworks,
+    })
+    .to_string();
     conn.execute(
         "INSERT INTO workspace_events (event_type, details) VALUES ('workspace_init', ?1)",
-        [format!(
-            r#"{{"project_name":"{}","languages":{:?},"frameworks":{:?}}}"#,
-            project_name, languages, frameworks
-        )],
+        [&event_details],
     )?;
 
     info!(

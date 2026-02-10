@@ -196,12 +196,13 @@ fn property_confidence_monotonic_in_spread() {
     let scorer = ConfidenceScorer::new(ScorerConfig {
         total_files: 100,
         default_age_days: 14,
+    default_data_quality: None,
     });
 
     let mut prev_mean = 0.0;
     for spread in [1, 5, 10, 25, 50, 75, 95] {
         let pattern = make_pattern("test", spread as u32, spread as u32);
-        let score = scorer.score(&pattern, MomentumDirection::Stable, 14);
+        let score = scorer.score(&pattern, MomentumDirection::Stable, 14, None, None);
         assert!(
             score.posterior_mean >= prev_mean - 0.01, // small tolerance for factor interactions
             "Confidence should increase with spread: spread={}, mean={}, prev={}",
@@ -215,9 +216,9 @@ fn property_confidence_monotonic_in_spread() {
 #[test]
 fn property_confidence_always_bounded() {
     let configs = [
-        ScorerConfig { total_files: 1, default_age_days: 0 },
-        ScorerConfig { total_files: 100, default_age_days: 365 },
-        ScorerConfig { total_files: 1_000_000, default_age_days: 1 },
+        ScorerConfig { total_files: 1, default_age_days: 0, default_data_quality: None },
+        ScorerConfig { total_files: 100, default_age_days: 365, default_data_quality: None },
+        ScorerConfig { total_files: 1_000_000, default_age_days: 1, default_data_quality: None },
     ];
 
     let momentums = [MomentumDirection::Rising, MomentumDirection::Falling, MomentumDirection::Stable];
@@ -228,7 +229,7 @@ fn property_confidence_always_bounded() {
             for locs in [1, 10, 100, 1000] {
                 for files in [1, 5, 50] {
                     let pattern = make_pattern("test", locs, files.min(locs));
-                    let score = scorer.score(&pattern, momentum, config.default_age_days);
+                    let score = scorer.score(&pattern, momentum, config.default_age_days, None, None);
                     assert!(
                         score.posterior_mean >= 0.0 && score.posterior_mean <= 1.0,
                         "Score out of [0,1]: {} for locs={}, files={}, total={}, momentum={:?}",

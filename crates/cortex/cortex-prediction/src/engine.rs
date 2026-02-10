@@ -38,9 +38,12 @@ impl<S: IMemoryStorage> PredictionEngine<S> {
         &self,
         signals: &AggregatedSignals,
     ) -> CortexResult<Vec<PredictionCandidate>> {
-        // Check cache first using active file as key
-        let cache_key = signals.file.active_file.as_deref().unwrap_or("__no_file__");
-        if let Some(cached) = self.cache.get(cache_key) {
+        // F-07: Build a cache key that includes both the active file AND query context
+        // to avoid collisions when the same file (or no file) is used with different queries.
+        let file_part = signals.file.active_file.as_deref().unwrap_or("__no_active_file__");
+        let imports_hash = signals.file.imports.len();
+        let cache_key = format!("{file_part}:{imports_hash}");
+        if let Some(cached) = self.cache.get(&cache_key) {
             return Ok(cached);
         }
 

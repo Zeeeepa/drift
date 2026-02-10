@@ -29,6 +29,8 @@
     "node": ">=18"
   },
   "dependencies": {
+    "@drift/napi-contracts": "*",
+    "@drift/cortex": "*",
     "@modelcontextprotocol/sdk": "^1.12.1"
   },
   "devDependencies": {

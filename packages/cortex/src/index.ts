@@ -1,7 +1,7 @@
 /**
  * @drift/cortex — Public API
  *
- * Cortex persistent memory system: 33 MCP tools + CLI over Rust NAPI bindings.
+ * Cortex persistent memory system: 61 MCP tools + CLI over Rust NAPI bindings.
  */
 
 // Bridge
@@ -90,6 +90,26 @@ export type {
   WhyEntry,
   WhyContext,
   McpToolDefinition,
+  // Temporal types (CX-FIX-11)
+  MaterializedTemporalView,
+  TemporalDiff,
+  DriftSnapshot,
+  DriftAlert,
+  DecisionReplay,
+  // Multi-agent types (CX-FIX-12)
+  AgentRegistration,
+  AgentTrust,
+  ProvenanceRecord,
+  ProvenanceHop,
+  CrossAgentTrace,
+  ProjectionConfig,
+  ProjectionFilter,
+  MultiAgentSyncResult,
+  NamespaceScope,
+  NamespaceId,
+  NamespaceACL,
+  NamespacePermission,
+  AgentId,
 } from "./bridge/types.js";
 
 export { CortexErrorCode } from "./bridge/types.js";

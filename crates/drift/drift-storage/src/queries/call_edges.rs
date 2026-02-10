@@ -121,3 +121,13 @@ pub fn count_call_edges(conn: &Connection) -> Result<i64, StorageError> {
     conn.query_row("SELECT COUNT(*) FROM call_edges", [], |row| row.get(0))
         .map_err(|e| StorageError::SqliteError { message: e.to_string() })
 }
+
+/// Count edges with non-fuzzy resolution (resolved by import, export, DI, method, or same-file).
+pub fn count_resolved_edges(conn: &Connection) -> Result<i64, StorageError> {
+    conn.query_row(
+        "SELECT COUNT(*) FROM call_edges WHERE resolution != 'fuzzy' AND resolution != 'unresolved'",
+        [],
+        |row| row.get(0),
+    )
+    .map_err(|e| StorageError::SqliteError { message: e.to_string() })
+}

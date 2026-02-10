@@ -173,6 +173,9 @@ pub struct PatternAuditData {
     pub in_call_graph: bool,
     pub constraint_issues: usize,
     pub has_error_issues: bool,
+    /// Location strings (e.g. "file.ts:10") for Jaccard deduplication.
+    /// When empty, falls back to count-ratio proxy.
+    pub locations: Vec<String>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

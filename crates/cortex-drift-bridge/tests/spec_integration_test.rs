@@ -3,7 +3,6 @@
 
 use cortex_causal::CausalEngine;
 use cortex_drift_bridge::grounding::loop_runner::MemoryForGrounding;
-use cortex_drift_bridge::grounding::scorer::GroundingVerdict;
 use cortex_drift_bridge::grounding::{GroundingConfig, GroundingLoopRunner, TriggerType};
 use cortex_drift_bridge::license::{FeatureGate, LicenseTier};
 use cortex_drift_bridge::specification::attribution::DataSourceAttribution;
@@ -81,7 +80,7 @@ fn tint_loop_03_verification_weight_spec_loop() {
     // Step 3: Verify data_model is boosted
     let dm_weight = table.weights.get("data_model");
     assert!(dm_weight.is_some());
-    let defaults = AdaptiveWeightTable::static_defaults();
+    let _defaults = AdaptiveWeightTable::static_defaults();
     // data_model should be boosted compared to its default (if it has one)
     // or at least present with a non-default value
     assert!(table.failure_distribution.get("data_model").unwrap_or(&0.0) > &0.0);
@@ -113,8 +112,10 @@ fn tint_loop_05_empty_cortex_works() {
 
 #[test]
 fn tint_loop_07_bridge_disabled_graceful() {
-    let mut config = cortex_drift_bridge::BridgeConfig::default();
-    config.enabled = false;
+    let config = cortex_drift_bridge::BridgeConfig {
+        enabled: false,
+        ..cortex_drift_bridge::BridgeConfig::default()
+    };
 
     let runtime = cortex_drift_bridge::BridgeRuntime::new(config);
     assert!(!runtime.is_available());
@@ -197,8 +198,10 @@ fn t9_db_01_bridge_tables_created() {
 
 #[test]
 fn t9_db_02_graceful_degradation_no_cortex() {
-    let mut config = cortex_drift_bridge::BridgeConfig::default();
-    config.cortex_db_path = Some("/nonexistent/path/cortex.db".to_string());
+    let config = cortex_drift_bridge::BridgeConfig {
+        cortex_db_path: Some("/nonexistent/path/cortex.db".to_string()),
+        ..cortex_drift_bridge::BridgeConfig::default()
+    };
 
     let mut runtime = cortex_drift_bridge::BridgeRuntime::new(config);
     let result = runtime.initialize().unwrap();
@@ -304,9 +307,9 @@ fn t9_mcp_03_drift_grounding_check() {
         error_handling_gaps: None,
         decision_evidence: None,
         boundary_data: None,
-    };
+        evidence_context: None,    };
 
-    let result = tools::handle_drift_grounding_check(&memory, &config, Some(&db)).unwrap();
+    let result = tools::handle_drift_grounding_check(&memory, &config, None, Some(&db)).unwrap();
     assert!(result.get("verdict").is_some());
     assert!(result.get("grounding_score").is_some());
     assert!(result.get("evidence").is_some());
@@ -331,10 +334,10 @@ fn t9_int_01_grounding_single_under_50ms() {
         error_handling_gaps: None,
         decision_evidence: None,
         boundary_data: None,
-    };
+        evidence_context: None,    };
 
     let start = std::time::Instant::now();
-    let result = runner.ground_single(&memory, None, None).unwrap();
+    let _result = runner.ground_single(&memory, None, None).unwrap();
     let elapsed = start.elapsed();
 
     assert!(
@@ -363,7 +366,7 @@ fn t9_int_01_grounding_loop_500_under_10s() {
             error_handling_gaps: None,
             decision_evidence: None,
             boundary_data: None,
-        })
+        evidence_context: None,        })
         .collect();
 
     let start = std::time::Instant::now();
@@ -392,7 +395,7 @@ fn t9_int_02_bridge_compiles_with_both() {
             duration_ms: 0,
         };
     let _cortex_type = cortex_core::MemoryType::PatternRationale;
-    assert!(true, "Bridge compiles with both drift-core and cortex-core");
+    // Bridge compiles with both drift-core and cortex-core — compilation is the test
 }
 
 // ---- T9-INT-03: Retention policies ----
@@ -406,7 +409,7 @@ fn t9_int_03_retention_policies() {
     cortex_drift_bridge::storage::record_metric(&db, "test_metric", 1.0).unwrap();
 
     // Apply retention (community tier)
-    cortex_drift_bridge::storage::tables::apply_retention(&db, true).unwrap();
+    cortex_drift_bridge::storage::apply_retention(&db, true).unwrap();
 
     // Data should still be there (it's fresh)
     let count: i64 = db

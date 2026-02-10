@@ -128,6 +128,15 @@ fn string_node_kinds(language: Language) -> Vec<&'static str> {
             "line_string_literal", "multi_line_string_literal",
             "string_literal",
         ],
+        Language::Cpp | Language::C => vec![
+            "string_literal", "char_literal", "raw_string_literal",
+        ],
+        Language::Swift => vec![
+            "line_str_text", "multi_line_str_text", "string_literal",
+        ],
+        Language::Scala => vec![
+            "string", "interpolated_string", "string_literal",
+        ],
     }
 }
 

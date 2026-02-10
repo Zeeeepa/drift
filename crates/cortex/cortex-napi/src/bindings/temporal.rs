@@ -15,6 +15,22 @@ use cortex_core::traits::ITemporalEngine;
 use crate::conversions::{error_types, memory_types, temporal_types};
 use crate::runtime;
 
+/// B-06: Run an async future on the current tokio runtime instead of creating
+/// a new Runtime per call. Falls back to creating one if no runtime is available.
+fn temporal_block_on<F, T>(future: F) -> napi::Result<T>
+where
+    F: std::future::Future<Output = cortex_core::errors::CortexResult<T>>,
+{
+    match tokio::runtime::Handle::try_current() {
+        Ok(handle) => handle.block_on(future).map_err(error_types::to_napi_error),
+        Err(_) => {
+            let rt = tokio::runtime::Runtime::new()
+                .map_err(|e| napi::Error::from_reason(format!("Tokio runtime error: {e}")))?;
+            rt.block_on(future).map_err(error_types::to_napi_error)
+        }
+    }
+}
+
 /// Parse an ISO 8601 string to DateTime<Utc>.
 fn parse_time(s: &str) -> napi::Result<DateTime<Utc>> {
     DateTime::parse_from_rfc3339(s)
@@ -87,11 +103,7 @@ pub fn cortex_temporal_query_as_of(
         valid_time: parse_time(&valid_time)?,
         filter: parse_filter(filter)?,
     };
-    let tokio_rt = tokio::runtime::Runtime::new()
-        .map_err(|e| napi::Error::from_reason(format!("Tokio runtime error: {e}")))?;
-    let memories = tokio_rt
-        .block_on(rt.temporal.query_as_of(&query))
-        .map_err(error_types::to_napi_error)?;
+    let memories = temporal_block_on(rt.temporal.query_as_of(&query))?;
     memory_types::memories_to_json(&memories)
 }
 
@@ -108,11 +120,7 @@ pub fn cortex_temporal_query_range(
         to: parse_time(&to)?,
         mode: parse_range_mode(&mode)?,
     };
-    let tokio_rt = tokio::runtime::Runtime::new()
-        .map_err(|e| napi::Error::from_reason(format!("Tokio runtime error: {e}")))?;
-    let memories = tokio_rt
-        .block_on(rt.temporal.query_range(&query))
-        .map_err(error_types::to_napi_error)?;
+    let memories = temporal_block_on(rt.temporal.query_range(&query))?;
     memory_types::memories_to_json(&memories)
 }
 
@@ -129,11 +137,7 @@ pub fn cortex_temporal_query_diff(
         time_b: parse_time(&time_b)?,
         scope: parse_scope(scope),
     };
-    let tokio_rt = tokio::runtime::Runtime::new()
-        .map_err(|e| napi::Error::from_reason(format!("Tokio runtime error: {e}")))?;
-    let diff = tokio_rt
-        .block_on(rt.temporal.query_diff(&query))
-        .map_err(error_types::to_napi_error)?;
+    let diff = temporal_block_on(rt.temporal.query_diff(&query))?;
     temporal_types::temporal_diff_to_json(&diff)
 }
 
@@ -148,11 +152,7 @@ pub fn cortex_temporal_replay_decision(
         decision_memory_id: decision_id,
         budget_override: budget.map(|b| b as usize),
     };
-    let tokio_rt = tokio::runtime::Runtime::new()
-        .map_err(|e| napi::Error::from_reason(format!("Tokio runtime error: {e}")))?;
-    let replay = tokio_rt
-        .block_on(rt.temporal.replay_decision(&query))
-        .map_err(error_types::to_napi_error)?;
+    let replay = temporal_block_on(rt.temporal.replay_decision(&query))?;
     temporal_types::decision_replay_to_json(&replay)
 }
 
@@ -171,11 +171,7 @@ pub fn cortex_temporal_query_temporal_causal(
         direction: parse_direction(&direction)?,
         max_depth: depth as usize,
     };
-    let tokio_rt = tokio::runtime::Runtime::new()
-        .map_err(|e| napi::Error::from_reason(format!("Tokio runtime error: {e}")))?;
-    let result = tokio_rt
-        .block_on(rt.temporal.query_temporal_causal(&query))
-        .map_err(error_types::to_napi_error)?;
+    let result = temporal_block_on(rt.temporal.query_temporal_causal(&query))?;
     temporal_types::traversal_result_to_json(&result)
 }
 
@@ -188,11 +184,7 @@ pub fn cortex_temporal_get_drift_metrics(
 ) -> napi::Result<serde_json::Value> {
     let rt = runtime::get()?;
     let hours = window_hours.unwrap_or(168) as u64; // default 1 week
-    let tokio_rt = tokio::runtime::Runtime::new()
-        .map_err(|e| napi::Error::from_reason(format!("Tokio runtime error: {e}")))?;
-    let snapshot = tokio_rt
-        .block_on(rt.temporal.compute_drift_metrics(hours))
-        .map_err(error_types::to_napi_error)?;
+    let snapshot = temporal_block_on(rt.temporal.compute_drift_metrics(hours))?;
     temporal_types::drift_snapshot_to_json(&snapshot)
 }
 
@@ -200,11 +192,7 @@ pub fn cortex_temporal_get_drift_metrics(
 #[napi]
 pub fn cortex_temporal_get_drift_alerts() -> napi::Result<serde_json::Value> {
     let rt = runtime::get()?;
-    let tokio_rt = tokio::runtime::Runtime::new()
-        .map_err(|e| napi::Error::from_reason(format!("Tokio runtime error: {e}")))?;
-    let alerts = tokio_rt
-        .block_on(rt.temporal.get_drift_alerts())
-        .map_err(error_types::to_napi_error)?;
+    let alerts = temporal_block_on(rt.temporal.get_drift_alerts())?;
     temporal_types::drift_alerts_to_json(&alerts)
 }
 
@@ -218,11 +206,7 @@ pub fn cortex_temporal_create_materialized_view(
 ) -> napi::Result<serde_json::Value> {
     let rt = runtime::get()?;
     let ts = parse_time(&timestamp)?;
-    let tokio_rt = tokio::runtime::Runtime::new()
-        .map_err(|e| napi::Error::from_reason(format!("Tokio runtime error: {e}")))?;
-    let view = tokio_rt
-        .block_on(rt.temporal.create_view(&label, ts))
-        .map_err(error_types::to_napi_error)?;
+    let view = temporal_block_on(rt.temporal.create_view(&label, ts))?;
     temporal_types::materialized_view_to_json(&view)
 }
 
@@ -232,11 +216,7 @@ pub fn cortex_temporal_get_materialized_view(
     label: String,
 ) -> napi::Result<serde_json::Value> {
     let rt = runtime::get()?;
-    let tokio_rt = tokio::runtime::Runtime::new()
-        .map_err(|e| napi::Error::from_reason(format!("Tokio runtime error: {e}")))?;
-    let view = tokio_rt
-        .block_on(rt.temporal.get_view(&label))
-        .map_err(error_types::to_napi_error)?;
+    let view = temporal_block_on(rt.temporal.get_view(&label))?;
     match view {
         Some(v) => temporal_types::materialized_view_to_json(&v),
         None => Ok(serde_json::Value::Null),

@@ -66,9 +66,22 @@ impl DuplicateDetector {
     }
 
     /// Compute Jaccard similarity between two patterns based on their locations.
+    /// Uses real set intersection when location data is available, otherwise
+    /// falls back to count-ratio proxy.
     fn jaccard_similarity(&self, a: &PatternAuditData, b: &PatternAuditData) -> f64 {
-        // Use location counts as a proxy since we don't have full location sets
-        // In a full implementation, this would compare actual file:line sets
+        // Use real Jaccard when both patterns have location data
+        if !a.locations.is_empty() && !b.locations.is_empty() {
+            let set_a: HashSet<&str> = a.locations.iter().map(|s| s.as_str()).collect();
+            let set_b: HashSet<&str> = b.locations.iter().map(|s| s.as_str()).collect();
+            let intersection = set_a.intersection(&set_b).count();
+            let union = set_a.union(&set_b).count();
+            if union == 0 {
+                return 0.0;
+            }
+            return intersection as f64 / union as f64;
+        }
+
+        // Fallback: count-ratio proxy when locations are not available
         let a_count = a.location_count;
         let b_count = b.location_count;
 
@@ -76,7 +89,6 @@ impl DuplicateDetector {
             return 0.0;
         }
 
-        // Estimate overlap based on category match and similar counts
         let min_count = a_count.min(b_count) as f64;
         let max_count = a_count.max(b_count) as f64;
 
@@ -84,7 +96,6 @@ impl DuplicateDetector {
             return 0.0;
         }
 
-        // Simple ratio-based similarity for patterns in the same category
         min_count / max_count
     }
 

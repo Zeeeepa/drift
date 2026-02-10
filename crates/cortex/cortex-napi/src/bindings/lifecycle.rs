@@ -26,12 +26,43 @@ pub fn cortex_initialize(
 
 /// Graceful shutdown of the Cortex runtime.
 ///
-/// Currently a no-op since engines are cleaned up on drop,
-/// but provides a hook for future background task cancellation.
+/// C-13: Flushes WAL to the main database file (TRUNCATE checkpoint),
+/// ensuring all data is durable before process exit.
 #[napi]
 pub fn cortex_shutdown() -> napi::Result<()> {
-    // Engines are cleaned up when the Arc<CortexRuntime> is dropped.
-    // Future: cancel background tasks, flush caches, etc.
+    let rt = runtime::get()?;
+
+    // F-01/F-02/F-03: Persist observability metrics snapshot before shutdown.
+    if let Ok(mut obs) = rt.observability.lock() {
+        if let Ok(snapshot) = obs.metrics_snapshot() {
+            let _ = rt.storage.pool().writer.with_conn_sync(|conn| {
+                cortex_storage::temporal_events::emit_event(
+                    conn,
+                    "system",
+                    "metrics_snapshot",
+                    &snapshot,
+                    "system",
+                    "shutdown",
+                )
+            });
+        }
+        obs.reset_metrics();
+    }
+
+    // Checkpoint WAL if file-backed (no-op for in-memory).
+    if rt.storage.pool().db_path.is_some() {
+        rt.storage.pool().writer.with_conn_sync(|conn| {
+            conn.execute_batch("PRAGMA wal_checkpoint(TRUNCATE);")
+                .map_err(|e| {
+                    cortex_core::errors::CortexError::StorageError(
+                        cortex_core::errors::StorageError::SqliteError {
+                            message: format!("WAL checkpoint failed: {e}"),
+                        },
+                    )
+                })
+        }).map_err(|e| napi::Error::from_reason(format!("Shutdown checkpoint failed: {e}")))?;
+    }
+
     Ok(())
 }
 

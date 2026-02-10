@@ -33,7 +33,7 @@ fn make_memory(id: &str, pat_conf: f64) -> MemoryForGrounding {
         error_handling_gaps: None,
         decision_evidence: None,
         boundary_data: None,
-    }
+        evidence_context: None,    }
 }
 
 // =============================================================================
@@ -478,7 +478,7 @@ fn hardening_retention_preserves_recent_data() {
     )
     .unwrap();
 
-    cortex_drift_bridge::storage::tables::apply_retention(&db, true).unwrap();
+    cortex_drift_bridge::storage::apply_retention(&db, true).unwrap();
 
     let count: i64 = db
         .query_row("SELECT COUNT(*) FROM bridge_event_log", [], |row| {
@@ -511,7 +511,7 @@ fn hardening_retention_enterprise_keeps_grounding_results() {
     .unwrap();
 
     // Enterprise tier — should NOT delete old grounding results
-    cortex_drift_bridge::storage::tables::apply_retention(&db, false).unwrap();
+    cortex_drift_bridge::storage::apply_retention(&db, false).unwrap();
 
     let count: i64 = db
         .query_row(
@@ -526,7 +526,7 @@ fn hardening_retention_enterprise_keeps_grounding_results() {
     );
 
     // Community tier — SHOULD delete old grounding results
-    cortex_drift_bridge::storage::tables::apply_retention(&db, true).unwrap();
+    cortex_drift_bridge::storage::apply_retention(&db, true).unwrap();
 
     let count: i64 = db
         .query_row(

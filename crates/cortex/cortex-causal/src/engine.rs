@@ -46,6 +46,16 @@ impl CausalEngine {
         &self.graph
     }
 
+    /// C-04: Hydrate the in-memory causal graph from storage.
+    /// Should be called once during runtime initialization after storage is available.
+    pub fn hydrate(&self, storage: &dyn ICausalStorage) -> CortexResult<()> {
+        let shared = self.graph.shared();
+        let mut guard = shared.write().map_err(|e| {
+            cortex_core::errors::CortexError::ConcurrencyError(e.to_string())
+        })?;
+        sync::rebuild_from_storage(storage, &mut guard)
+    }
+
     // --- Graph Operations ---
 
     /// Add a causal edge with DAG enforcement and optional storage persistence.

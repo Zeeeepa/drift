@@ -4,6 +4,8 @@ use drift_core::errors::StorageError;
 use rusqlite::{params, Connection};
 use serde::{Deserialize, Serialize};
 
+use super::util::OptionalExt;
+
 // ─── Coupling Metrics ────────────────────────────────────────────────
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -827,19 +829,193 @@ pub fn get_decomposition_decisions(conn: &Connection, dna_profile_hash: &str) ->
         .map_err(|e| StorageError::SqliteError { message: e.to_string() })
 }
 
-// ─── Helper ──────────────────────────────────────────────────────────
+// ─── Coupling Cycles ────────────────────────────────────────────────
 
-/// Helper trait for optional query results.
-trait OptionalExt<T> {
-    fn optional(self) -> Result<Option<T>, rusqlite::Error>;
+#[derive(Debug, Clone)]
+pub struct CouplingCycleRow {
+    pub id: i64,
+    pub members: String,
+    pub break_suggestions: String,
+    pub created_at: i64,
 }
 
-impl<T> OptionalExt<T> for Result<T, rusqlite::Error> {
-    fn optional(self) -> Result<Option<T>, rusqlite::Error> {
-        match self {
-            Ok(val) => Ok(Some(val)),
-            Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
-            Err(e) => Err(e),
-        }
-    }
+/// Insert a coupling cycle record.
+pub fn insert_coupling_cycle(
+    conn: &Connection,
+    members: &str,
+    break_suggestions: &str,
+) -> Result<(), StorageError> {
+    conn.execute(
+        "INSERT INTO coupling_cycles (members, break_suggestions) VALUES (?1, ?2)",
+        params![members, break_suggestions],
+    )
+    .map_err(|e| StorageError::SqliteError { message: e.to_string() })?;
+    Ok(())
+}
+
+/// Query all coupling cycles.
+pub fn query_coupling_cycles(conn: &Connection) -> Result<Vec<CouplingCycleRow>, StorageError> {
+    let mut stmt = conn
+        .prepare_cached(
+            "SELECT id, members, break_suggestions, created_at FROM coupling_cycles ORDER BY created_at DESC",
+        )
+        .map_err(|e| StorageError::SqliteError { message: e.to_string() })?;
+
+    let rows = stmt
+        .query_map([], |row| {
+            Ok(CouplingCycleRow {
+                id: row.get(0)?,
+                members: row.get(1)?,
+                break_suggestions: row.get(2)?,
+                created_at: row.get(3)?,
+            })
+        })
+        .map_err(|e| StorageError::SqliteError { message: e.to_string() })?;
+
+    rows.collect::<Result<Vec<_>, _>>()
+        .map_err(|e| StorageError::SqliteError { message: e.to_string() })
+}
+
+// ─── Constraint Verifications ───────────────────────────────────────
+
+#[derive(Debug, Clone)]
+pub struct ConstraintVerificationRow {
+    pub id: i64,
+    pub constraint_id: String,
+    pub passed: bool,
+    pub violations: String,
+    pub verified_at: i64,
+}
+
+/// Insert a constraint verification result.
+pub fn insert_constraint_verification(
+    conn: &Connection,
+    constraint_id: &str,
+    passed: bool,
+    violations: &str,
+) -> Result<(), StorageError> {
+    conn.execute(
+        "INSERT INTO constraint_verifications (constraint_id, passed, violations) VALUES (?1, ?2, ?3)",
+        params![constraint_id, passed as i32, violations],
+    )
+    .map_err(|e| StorageError::SqliteError { message: e.to_string() })?;
+    Ok(())
+}
+
+/// Query constraint verifications by constraint_id.
+pub fn query_constraint_verifications(
+    conn: &Connection,
+    constraint_id: &str,
+) -> Result<Vec<ConstraintVerificationRow>, StorageError> {
+    let mut stmt = conn
+        .prepare_cached(
+            "SELECT id, constraint_id, passed, violations, verified_at
+             FROM constraint_verifications WHERE constraint_id = ?1 ORDER BY verified_at DESC",
+        )
+        .map_err(|e| StorageError::SqliteError { message: e.to_string() })?;
+
+    let rows = stmt
+        .query_map(params![constraint_id], |row| {
+            Ok(ConstraintVerificationRow {
+                id: row.get(0)?,
+                constraint_id: row.get(1)?,
+                passed: row.get::<_, i32>(2)? != 0,
+                violations: row.get(3)?,
+                verified_at: row.get(4)?,
+            })
+        })
+        .map_err(|e| StorageError::SqliteError { message: e.to_string() })?;
+
+    rows.collect::<Result<Vec<_>, _>>()
+        .map_err(|e| StorageError::SqliteError { message: e.to_string() })
+}
+
+// ─── Contract Mismatches ────────────────────────────────────────────
+
+#[derive(Debug, Clone)]
+pub struct ContractMismatchRow {
+    pub id: i64,
+    pub backend_endpoint: String,
+    pub frontend_call: String,
+    pub mismatch_type: String,
+    pub severity: String,
+    pub message: String,
+    pub created_at: i64,
+}
+
+/// Insert a contract mismatch.
+pub fn insert_contract_mismatch(
+    conn: &Connection,
+    row: &ContractMismatchRow,
+) -> Result<(), StorageError> {
+    conn.execute(
+        "INSERT INTO contract_mismatches (backend_endpoint, frontend_call, mismatch_type, severity, message)
+         VALUES (?1, ?2, ?3, ?4, ?5)",
+        params![
+            row.backend_endpoint,
+            row.frontend_call,
+            row.mismatch_type,
+            row.severity,
+            row.message,
+        ],
+    )
+    .map_err(|e| StorageError::SqliteError { message: e.to_string() })?;
+    Ok(())
+}
+
+/// Query all contract mismatches.
+pub fn query_contract_mismatches(conn: &Connection) -> Result<Vec<ContractMismatchRow>, StorageError> {
+    let mut stmt = conn
+        .prepare_cached(
+            "SELECT id, backend_endpoint, frontend_call, mismatch_type, severity, message, created_at
+             FROM contract_mismatches ORDER BY created_at DESC",
+        )
+        .map_err(|e| StorageError::SqliteError { message: e.to_string() })?;
+
+    let rows = stmt
+        .query_map([], |row| {
+            Ok(ContractMismatchRow {
+                id: row.get(0)?,
+                backend_endpoint: row.get(1)?,
+                frontend_call: row.get(2)?,
+                mismatch_type: row.get(3)?,
+                severity: row.get(4)?,
+                message: row.get(5)?,
+                created_at: row.get(6)?,
+            })
+        })
+        .map_err(|e| StorageError::SqliteError { message: e.to_string() })?;
+
+    rows.collect::<Result<Vec<_>, _>>()
+        .map_err(|e| StorageError::SqliteError { message: e.to_string() })
+}
+
+/// Query contract mismatches by type.
+pub fn query_contract_mismatches_by_type(
+    conn: &Connection,
+    mismatch_type: &str,
+) -> Result<Vec<ContractMismatchRow>, StorageError> {
+    let mut stmt = conn
+        .prepare_cached(
+            "SELECT id, backend_endpoint, frontend_call, mismatch_type, severity, message, created_at
+             FROM contract_mismatches WHERE mismatch_type = ?1 ORDER BY created_at DESC",
+        )
+        .map_err(|e| StorageError::SqliteError { message: e.to_string() })?;
+
+    let rows = stmt
+        .query_map(params![mismatch_type], |row| {
+            Ok(ContractMismatchRow {
+                id: row.get(0)?,
+                backend_endpoint: row.get(1)?,
+                frontend_call: row.get(2)?,
+                mismatch_type: row.get(3)?,
+                severity: row.get(4)?,
+                message: row.get(5)?,
+                created_at: row.get(6)?,
+            })
+        })
+        .map_err(|e| StorageError::SqliteError { message: e.to_string() })?;
+
+    rows.collect::<Result<Vec<_>, _>>()
+        .map_err(|e| StorageError::SqliteError { message: e.to_string() })
 }

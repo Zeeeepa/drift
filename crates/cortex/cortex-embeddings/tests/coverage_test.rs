@@ -337,7 +337,7 @@ fn engine_trait_impl_embed() {
     let engine = cortex_embeddings::EmbeddingEngine::new(tfidf_config());
     let provider: &dyn IEmbeddingProvider = &engine;
     assert!(provider.is_available());
-    assert_eq!(provider.name(), "cortex-embedding-engine");
+    assert_eq!(provider.name(), engine.active_provider());
     let vec = provider.embed("hello world").unwrap();
     assert_eq!(vec.len(), 128);
 }

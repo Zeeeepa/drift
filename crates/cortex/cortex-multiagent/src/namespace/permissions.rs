@@ -22,8 +22,8 @@ impl NamespacePermissionManager {
         permissions: &[NamespacePermission],
         granted_by: &AgentId,
     ) -> CortexResult<()> {
-        // Authorization guard: granter must have Admin permission.
-        if !Self::check(conn, namespace_id, granted_by, NamespacePermission::Admin)? {
+        // Authorization guard: granter must have Admin permission OR be the namespace owner.
+        if !Self::is_owner_or_admin(conn, namespace_id, granted_by)? {
             return Err(cortex_core::errors::MultiAgentError::PermissionDenied {
                 agent: granted_by.0.clone(),
                 namespace: namespace_id.to_uri(),
@@ -71,8 +71,8 @@ impl NamespacePermissionManager {
         permissions: &[NamespacePermission],
         revoked_by: &AgentId,
     ) -> CortexResult<()> {
-        // Authorization guard: revoker must have Admin permission.
-        if !Self::check(conn, namespace_id, revoked_by, NamespacePermission::Admin)? {
+        // Authorization guard: revoker must have Admin permission OR be the namespace owner.
+        if !Self::is_owner_or_admin(conn, namespace_id, revoked_by)? {
             return Err(cortex_core::errors::MultiAgentError::PermissionDenied {
                 agent: revoked_by.0.clone(),
                 namespace: namespace_id.to_uri(),
@@ -113,6 +113,7 @@ impl NamespacePermissionManager {
     }
 
     /// Check if an agent has a specific permission on a namespace.
+    /// Namespace owners always have implicit Admin (and therefore all) permissions.
     pub fn check(
         conn: &Connection,
         namespace_id: &NamespaceId,
@@ -121,16 +122,27 @@ impl NamespacePermissionManager {
     ) -> CortexResult<bool> {
         let uri = namespace_id.to_uri();
         let perm_str = permission_to_str(&permission);
+
+        // Check explicit ACL first.
         let result = multiagent_ops::check_permission(conn, &uri, &agent_id.0, perm_str)?;
-        if !result {
-            warn!(
-                namespace = %uri,
-                agent = %agent_id,
-                permission = perm_str,
-                "permission check failed"
-            );
+        if result {
+            return Ok(true);
         }
-        Ok(result)
+
+        // Namespace owners have implicit admin (and therefore all permissions).
+        if let Some(row) = multiagent_ops::get_namespace(conn, &uri)? {
+            if row.owner_agent.as_deref() == Some(&agent_id.0) {
+                return Ok(true);
+            }
+        }
+
+        warn!(
+            namespace = %uri,
+            agent = %agent_id,
+            permission = perm_str,
+            "permission check failed"
+        );
+        Ok(false)
     }
 
     /// Get the full ACL for a namespace.
@@ -150,6 +162,16 @@ impl NamespacePermissionManager {
             result.push((AgentId::from(agent_str.as_str()), permissions));
         }
         Ok(result)
+    }
+
+    /// Check if an agent is the namespace owner or has Admin permission.
+    /// Delegates to `check(Admin)` which already handles implicit owner admin.
+    fn is_owner_or_admin(
+        conn: &Connection,
+        namespace_id: &NamespaceId,
+        agent_id: &AgentId,
+    ) -> CortexResult<bool> {
+        Self::check(conn, namespace_id, agent_id, NamespacePermission::Admin)
     }
 
     /// Internal: get the current permission strings for an agent on a namespace.

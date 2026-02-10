@@ -148,6 +148,31 @@ impl FeedbackTracker {
     }
 }
 
+impl super::stats_provider::FeedbackStatsProvider for FeedbackTracker {
+    fn fp_rate_for_detector(&self, detector_id: &str) -> f64 {
+        self.metrics
+            .get(detector_id)
+            .map_or(0.0, |m| m.fp_rate)
+    }
+
+    fn fp_rate_for_pattern(&self, pattern_id: &str) -> f64 {
+        // Pattern IDs may map to detector IDs; check both
+        self.metrics
+            .get(pattern_id)
+            .map_or(0.0, |m| m.fp_rate)
+    }
+
+    fn is_detector_disabled(&self, detector_id: &str) -> bool {
+        self.check_auto_disable().contains(&detector_id.to_string())
+    }
+
+    fn total_actions_for_detector(&self, detector_id: &str) -> u64 {
+        self.metrics
+            .get(detector_id)
+            .map_or(0, |m| m.total_findings)
+    }
+}
+
 impl Default for FeedbackTracker {
     fn default() -> Self {
         Self::new()

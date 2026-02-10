@@ -23,10 +23,9 @@ impl QualityGate for TestCoverageGate {
         let coverage_input = match &input.test_coverage {
             Some(c) => c,
             None => {
-                return GateResult::pass(
+                return GateResult::skipped(
                     GateId::TestCoverage,
-                    100.0,
-                    "No test coverage data available (skipped)".to_string(),
+                    "No test coverage data available".to_string(),
                 );
             }
         };

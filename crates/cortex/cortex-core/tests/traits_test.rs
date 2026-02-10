@@ -138,6 +138,9 @@ impl ICausalStorage for MockCausalStorage {
     fn has_cycle(&self, _: &str, _: &str) -> CortexResult<bool> {
         Ok(false)
     }
+    fn list_all_node_ids(&self) -> CortexResult<Vec<String>> {
+        Ok(vec![])
+    }
     fn edge_count(&self) -> CortexResult<usize> {
         Ok(0)
     }

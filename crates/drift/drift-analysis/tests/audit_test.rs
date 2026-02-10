@@ -15,7 +15,7 @@ fn make_patterns() -> Vec<PatternAuditData> {
             outlier_count: 5,
             in_call_graph: true,
             constraint_issues: 0,
-            has_error_issues: false,
+            has_error_issues: false, locations: vec![],
         },
         PatternAuditData {
             id: "p2".to_string(),
@@ -27,7 +27,7 @@ fn make_patterns() -> Vec<PatternAuditData> {
             outlier_count: 10,
             in_call_graph: true,
             constraint_issues: 0,
-            has_error_issues: false,
+            has_error_issues: false, locations: vec![],
         },
         PatternAuditData {
             id: "p3".to_string(),
@@ -39,7 +39,7 @@ fn make_patterns() -> Vec<PatternAuditData> {
             outlier_count: 3,
             in_call_graph: false,
             constraint_issues: 1,
-            has_error_issues: false,
+            has_error_issues: false, locations: vec![],
         },
     ]
 }
@@ -153,7 +153,7 @@ fn test_auto_approve() {
             outlier_count: 2,
             in_call_graph: true,
             constraint_issues: 0,
-            has_error_issues: false,
+            has_error_issues: false, locations: vec![],
         },
         // Should need review: conf 0.75
         PatternAuditData {
@@ -166,7 +166,7 @@ fn test_auto_approve() {
             outlier_count: 1,
             in_call_graph: false,
             constraint_issues: 0,
-            has_error_issues: false,
+            has_error_issues: false, locations: vec![],
         },
         // Should be likely-FP: conf 0.40
         PatternAuditData {
@@ -179,7 +179,7 @@ fn test_auto_approve() {
             outlier_count: 5,
             in_call_graph: false,
             constraint_issues: 0,
-            has_error_issues: false,
+            has_error_issues: false, locations: vec![],
         },
     ];
 

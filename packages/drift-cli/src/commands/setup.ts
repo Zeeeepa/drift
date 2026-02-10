@@ -63,10 +63,20 @@ export function registerSetupCommand(program: Command): void {
 
         // Initialize NAPI (creates drift.db)
         const napi = loadNapi();
-        napi.drift_init({ projectRoot });
+        napi.driftInitialize(undefined, projectRoot);
         process.stdout.write(`Initialized drift.db in ${driftDir}\n`);
 
-        process.stdout.write('\nDrift is ready! Run `drift scan` to analyze your project.\n');
+        // Run initial scan + analyze so the DB is populated immediately
+        process.stdout.write('\nRunning initial scan...\n');
+        const scanResult = await napi.driftScan(projectRoot);
+        process.stdout.write(`Scanned ${scanResult.filesTotal} files (${scanResult.filesAdded} added)\n`);
+
+        process.stdout.write('Running analysis pipeline...\n');
+        const analyzeResults = await napi.driftAnalyze();
+        const totalMatches = analyzeResults.reduce((sum, r) => sum + r.matches.length, 0);
+        process.stdout.write(`Analysis complete: ${analyzeResults.length} files, ${totalMatches} patterns detected\n`);
+
+        process.stdout.write('\nDrift is ready! Try `drift check` or `drift status` to see results.\n');
         process.exitCode = 0;
       } catch (err) {
         process.stderr.write(`Error: ${err instanceof Error ? err.message : err}\n`);

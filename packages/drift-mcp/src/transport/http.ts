@@ -19,7 +19,7 @@ export interface HttpTransportOptions {
  * Create a Streamable HTTP transport for the MCP server.
  */
 export function createHttpTransport(
-  options?: HttpTransportOptions,
+  _options?: HttpTransportOptions,
 ): StreamableHTTPServerTransport {
   return new StreamableHTTPServerTransport({
     sessionIdGenerator: () => crypto.randomUUID(),

@@ -12,4 +12,4 @@ pub mod progressive;
 
 pub use types::*;
 pub use orchestrator::GateOrchestrator;
-pub use progressive::ProgressiveEnforcement;
+pub use progressive::{ProgressiveEnforcement, ProgressiveConfig};

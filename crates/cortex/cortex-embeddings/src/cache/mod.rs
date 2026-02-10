@@ -33,11 +33,20 @@ pub enum CacheHitTier {
 }
 
 impl CacheCoordinator {
-    /// Create a new coordinator with the given L1 capacity.
+    /// Create a new coordinator with the given L1 capacity (in-memory L2 only).
     pub fn new(l1_capacity: u64) -> Self {
         Self {
             l1: L1MemoryCache::new(l1_capacity),
             l2: L2SqliteCache::new(),
+            l3: L3PrecomputedCache::new(),
+        }
+    }
+
+    /// D-01: Create a coordinator with a file-backed L2 cache.
+    pub fn new_with_db_path(l1_capacity: u64, db_path: &std::path::Path) -> Self {
+        Self {
+            l1: L1MemoryCache::new(l1_capacity),
+            l2: L2SqliteCache::open(db_path),
             l3: L3PrecomputedCache::new(),
         }
     }

@@ -24,6 +24,13 @@ impl QualityGate for ConstraintVerificationGate {
     }
 
     fn evaluate(&self, input: &GateInput) -> GateResult {
+        if input.constraints.is_empty() {
+            return GateResult::skipped(
+                GateId::ConstraintVerification,
+                "No architectural constraints defined".to_string(),
+            );
+        }
+
         let mut violations = Vec::new();
         let total_constraints = input.constraints.len();
         let mut passing = 0usize;

@@ -12,6 +12,7 @@ mod v009_embedding_migration;
 mod v010_cloud_sync;
 mod v011_reclassification;
 mod v012_observability;
+mod v013_placeholder;
 mod v014_temporal_tables;
 mod v015_multiagent_tables;
 
@@ -28,7 +29,7 @@ pub const LATEST_VERSION: u32 = 15;
 /// All migrations in order. Index 0 = v001, etc.
 type MigrationFn = fn(&Connection) -> CortexResult<()>;
 
-const MIGRATIONS: [(u32, &str, MigrationFn); 14] = [
+const MIGRATIONS: [(u32, &str, MigrationFn); 15] = [
     (1, "initial_schema", v001_initial_schema::migrate),
     (2, "vector_tables", v002_vector_tables::migrate),
     (3, "fts5_index", v003_fts5_index::migrate),
@@ -41,6 +42,7 @@ const MIGRATIONS: [(u32, &str, MigrationFn); 14] = [
     (10, "cloud_sync", v010_cloud_sync::migrate),
     (11, "reclassification", v011_reclassification::migrate),
     (12, "observability", v012_observability::migrate),
+    (13, "placeholder", v013_placeholder::migrate),
     (14, "temporal_tables", v014_temporal_tables::migrate),
     (15, "multiagent_tables", v015_multiagent_tables::migrate),
 ];

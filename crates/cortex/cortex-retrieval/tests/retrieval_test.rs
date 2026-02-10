@@ -313,8 +313,11 @@ fn t5_ret_05_token_budget_never_exceeded() {
 // ---------------------------------------------------------------------------
 #[test]
 fn t5_ret_06_higher_importance_ranks_above() {
-    let storage = test_storage();
+    use cortex_retrieval::ranking::scorer::{score, ScorerWeights};
+    use cortex_retrieval::search::rrf_fusion::RrfCandidate;
 
+    // Test the scorer directly with controlled inputs to avoid FTS5
+    // non-determinism for identically-ranked documents.
     let low = make_memory(
         "mem-low",
         "database query optimization",
@@ -328,32 +331,38 @@ fn t5_ret_06_higher_importance_ranks_above() {
         Importance::Critical,
     );
 
-    storage.create(&low).unwrap();
-    storage.create(&critical).unwrap();
+    // Both candidates have identical RRF scores and FTS5 ranks —
+    // only importance should differentiate them.
+    let candidates = vec![
+        RrfCandidate {
+            memory: low,
+            rrf_score: 0.5,
+            fts5_rank: Some(0),
+            vector_rank: None,
+            entity_rank: None,
+        },
+        RrfCandidate {
+            memory: critical,
+            rrf_score: 0.5,
+            fts5_rank: Some(0),
+            vector_rank: None,
+            entity_rank: None,
+        },
+    ];
 
-    let config = RetrievalConfig::default();
-    let compressor = test_compressor();
-    let engine = RetrievalEngine::new(&storage, &compressor, config);
+    let weights = ScorerWeights::default();
+    let intent_engine = IntentEngine::new();
+    let scored = score(&candidates, Intent::Investigate, &[], &intent_engine, &weights);
 
-    let context = RetrievalContext {
-        focus: "database query optimization".to_string(),
-        intent: None,
-        active_files: Vec::new(),
-        budget: 2000,
-        sent_ids: Vec::new(),
-    };
+    let crit = scored.iter().find(|s| s.memory.id == "mem-crit").unwrap();
+    let low = scored.iter().find(|s| s.memory.id == "mem-low").unwrap();
 
-    let results = engine.retrieve(&context, 2000).unwrap();
-    if results.len() >= 2 {
-        let crit_pos = results.iter().position(|r| r.memory_id == "mem-crit");
-        let low_pos = results.iter().position(|r| r.memory_id == "mem-low");
-        if let (Some(cp), Some(lp)) = (crit_pos, low_pos) {
-            assert!(
-                cp < lp,
-                "critical importance should rank above low importance"
-            );
-        }
-    }
+    assert!(
+        crit.score > low.score,
+        "critical importance ({:.4}) should score above low importance ({:.4})",
+        crit.score,
+        low.score,
+    );
 }
 
 // ---------------------------------------------------------------------------

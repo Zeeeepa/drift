@@ -15,22 +15,36 @@ use drift_analysis::patterns::outliers::conversion::{
 fn t3_out_01_auto_select_method() {
     let detector = OutlierDetector::new();
 
-    // n ≥ 30 → ZScore
-    assert_eq!(detector.select_primary_method(30), OutlierMethod::ZScore);
-    assert_eq!(detector.select_primary_method(100), OutlierMethod::ZScore);
-    assert_eq!(detector.select_primary_method(1000), OutlierMethod::ZScore);
+    // Helper: generate approximately normal data of given size
+    fn normal_data(n: usize) -> Vec<f64> {
+        (0..n).map(|i| 50.0 + (i as f64 * 0.1)).collect()
+    }
 
-    // 25 ≤ n < 30 → GeneralizedEsd
-    assert_eq!(detector.select_primary_method(25), OutlierMethod::GeneralizedEsd);
-    assert_eq!(detector.select_primary_method(29), OutlierMethod::GeneralizedEsd);
+    // n ≥ 30 + normal → ZScore
+    let d30 = normal_data(30);
+    let d100 = normal_data(100);
+    let d1000 = normal_data(1000);
+    assert_eq!(detector.select_primary_method(&d30), OutlierMethod::ZScore);
+    assert_eq!(detector.select_primary_method(&d100), OutlierMethod::ZScore);
+    assert_eq!(detector.select_primary_method(&d1000), OutlierMethod::ZScore);
 
-    // 10 ≤ n < 25 → Grubbs
-    assert_eq!(detector.select_primary_method(10), OutlierMethod::Grubbs);
-    assert_eq!(detector.select_primary_method(24), OutlierMethod::Grubbs);
+    // 25 ≤ n < 30 + normal → GeneralizedEsd
+    let d25 = normal_data(25);
+    let d29 = normal_data(29);
+    assert_eq!(detector.select_primary_method(&d25), OutlierMethod::GeneralizedEsd);
+    assert_eq!(detector.select_primary_method(&d29), OutlierMethod::GeneralizedEsd);
+
+    // 10 ≤ n < 25 + normal → Grubbs
+    let d10 = normal_data(10);
+    let d24 = normal_data(24);
+    assert_eq!(detector.select_primary_method(&d10), OutlierMethod::Grubbs);
+    assert_eq!(detector.select_primary_method(&d24), OutlierMethod::Grubbs);
 
     // n < 10 → RuleBased
-    assert_eq!(detector.select_primary_method(1), OutlierMethod::RuleBased);
-    assert_eq!(detector.select_primary_method(9), OutlierMethod::RuleBased);
+    let d1 = normal_data(1);
+    let d9 = normal_data(9);
+    assert_eq!(detector.select_primary_method(&d1), OutlierMethod::RuleBased);
+    assert_eq!(detector.select_primary_method(&d9), OutlierMethod::RuleBased);
 }
 
 // ---- T3-OUT-02: Statistical methods produce correct classifications ----

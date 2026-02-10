@@ -7,7 +7,8 @@ use tracing::{info, warn};
 
 use super::classification::{classify_groundability, Groundability};
 use super::evidence::{EvidenceType, GroundingEvidence};
-use super::scorer::{GroundingScorer, GroundingVerdict};
+use super::scorer::GroundingScorer;
+use super::GroundingVerdict;
 use super::{
     AdjustmentMode, ConfidenceAdjustment, GroundingConfig, GroundingResult, GroundingSnapshot,
     TriggerType,
@@ -180,14 +181,19 @@ impl GroundingLoopRunner {
     }
 
     /// Collect evidence for a single memory from Drift data sources.
+    ///
+    /// Strategy: pre-populated fields on MemoryForGrounding are the fast path.
+    /// When a field is None AND drift_db + evidence_context are available,
+    /// fall back to querying drift.db directly via the evidence collector.
     fn collect_evidence(
         &self,
         memory: &MemoryForGrounding,
-        _drift_db: Option<&rusqlite::Connection>,
+        drift_db: Option<&rusqlite::Connection>,
     ) -> Vec<GroundingEvidence> {
         let mut evidence = Vec::new();
+        let mut covered_types = std::collections::HashSet::new();
 
-        // If we have pattern data, use it
+        // Fast path: use pre-populated fields from MemoryForGrounding
         if let Some(pattern_confidence) = memory.pattern_confidence {
             if pattern_confidence.is_finite() {
                 evidence.push(GroundingEvidence::new(
@@ -197,6 +203,7 @@ impl GroundingLoopRunner {
                     Some(memory.current_confidence),
                     pattern_confidence.clamp(0.0, 1.0),
                 ));
+                covered_types.insert(EvidenceType::PatternConfidence);
             }
         }
 
@@ -209,12 +216,12 @@ impl GroundingLoopRunner {
                     None,
                     occurrence_rate.clamp(0.0, 1.0),
                 ));
+                covered_types.insert(EvidenceType::PatternOccurrence);
             }
         }
 
         if let Some(fp_rate) = memory.false_positive_rate {
             if fp_rate.is_finite() {
-                // Low FP rate = high support
                 let support = (1.0 - fp_rate).clamp(0.0, 1.0);
                 evidence.push(GroundingEvidence::new(
                     EvidenceType::FalsePositiveRate,
@@ -223,6 +230,7 @@ impl GroundingLoopRunner {
                     None,
                     support,
                 ));
+                covered_types.insert(EvidenceType::FalsePositiveRate);
             }
         }
 
@@ -234,6 +242,7 @@ impl GroundingLoopRunner {
                 None,
                 if constraint_pass { 1.0 } else { 0.0 },
             ));
+            covered_types.insert(EvidenceType::ConstraintVerification);
         }
 
         if let Some(coupling) = memory.coupling_metric {
@@ -245,6 +254,7 @@ impl GroundingLoopRunner {
                     None,
                     coupling.clamp(0.0, 1.0),
                 ));
+                covered_types.insert(EvidenceType::CouplingMetric);
             }
         }
 
@@ -257,6 +267,7 @@ impl GroundingLoopRunner {
                     None,
                     dna_health.clamp(0.0, 1.0),
                 ));
+                covered_types.insert(EvidenceType::DnaHealth);
             }
         }
 
@@ -269,11 +280,11 @@ impl GroundingLoopRunner {
                     None,
                     test_coverage.clamp(0.0, 1.0),
                 ));
+                covered_types.insert(EvidenceType::TestCoverage);
             }
         }
 
         if let Some(error_gaps) = memory.error_handling_gaps {
-            // Fewer gaps = higher support
             let support = 1.0 - (error_gaps as f64 / 100.0).clamp(0.0, 1.0);
             evidence.push(GroundingEvidence::new(
                 EvidenceType::ErrorHandlingGaps,
@@ -282,6 +293,7 @@ impl GroundingLoopRunner {
                 None,
                 support,
             ));
+            covered_types.insert(EvidenceType::ErrorHandlingGaps);
         }
 
         if let Some(decision_score) = memory.decision_evidence {
@@ -293,6 +305,7 @@ impl GroundingLoopRunner {
                     None,
                     decision_score.clamp(0.0, 1.0),
                 ));
+                covered_types.insert(EvidenceType::DecisionEvidence);
             }
         }
 
@@ -305,6 +318,27 @@ impl GroundingLoopRunner {
                     None,
                     boundary_score.clamp(0.0, 1.0),
                 ));
+                covered_types.insert(EvidenceType::BoundaryData);
+            }
+        }
+
+        // Slow path: fill gaps from drift.db when evidence_context is available
+        if let (Some(drift_conn), Some(ctx)) = (drift_db, &memory.evidence_context) {
+            for evidence_type in EvidenceType::ALL {
+                if covered_types.contains(&evidence_type) {
+                    continue; // Already have this from pre-populated fields
+                }
+                match super::evidence::collector::collect_one(evidence_type, ctx, drift_conn) {
+                    Ok(Some(e)) => evidence.push(e),
+                    Ok(None) => {} // No data in drift.db for this type
+                    Err(e) => {
+                        tracing::debug!(
+                            evidence_type = ?evidence_type,
+                            error = %e,
+                            "drift.db evidence fallback failed — skipping"
+                        );
+                    }
+                }
             }
         }
 
@@ -340,7 +374,7 @@ impl GroundingLoopRunner {
             });
         }
 
-        let evidence = self.collect_evidence(memory, None);
+        let evidence = self.collect_evidence(memory, _drift_db);
 
         if evidence.is_empty() {
             return Ok(GroundingResult {
@@ -423,6 +457,9 @@ pub struct MemoryForGrounding {
     pub error_handling_gaps: Option<u32>,
     pub decision_evidence: Option<f64>,
     pub boundary_data: Option<f64>,
+    /// Optional context for querying drift.db directly when pre-populated fields are None.
+    /// Built from memory tags via `context_from_tags()`.
+    pub evidence_context: Option<super::evidence::collector::EvidenceContext>,
 }
 
 impl Default for GroundingLoopRunner {

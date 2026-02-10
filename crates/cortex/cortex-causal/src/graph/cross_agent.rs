@@ -72,6 +72,7 @@ pub fn trace_cross_agent(
 }
 
 /// Recursive DFS traversal of the causal graph.
+#[allow(clippy::too_many_arguments)]
 fn trace_recursive(
     graph: &IndexedGraph,
     memory_id: &str,

@@ -154,10 +154,16 @@ impl Reporter for HtmlReporter {
                         "<tr class=\"{}\">\n",
                         sev_cls
                     ));
+                    let new_badge = if violation.is_new {
+                        " <span class=\"badge badge-new\">NEW</span>"
+                    } else {
+                        ""
+                    };
                     html.push_str(&format!(
-                        "<td><span class=\"badge {}\">{}</span></td>\n",
+                        "<td><span class=\"badge {}\">{}</span>{}</td>\n",
                         sev_cls,
-                        violation.severity
+                        violation.severity,
+                        new_badge
                     ));
                     html.push_str(&format!(
                         "<td class=\"location\">{}:{}:{}</td>\n",
@@ -252,6 +258,7 @@ h2 { font-size: 18px; margin-bottom: 8px; }
 .severity-warning .badge { background: #fff3cd; color: #856404; }
 .severity-info .badge { background: #d1ecf1; color: #0c5460; }
 .severity-hint .badge { background: #e2e3e5; color: #383d41; }
+.badge-new { background: #007bff; color: #fff; margin-left: 4px; }
 .location { font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 12px; white-space: nowrap; }
 .rule { font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 12px; color: #6f42c1; }
 .quick-fix { color: #28a745; font-size: 12px; }

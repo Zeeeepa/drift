@@ -22,16 +22,46 @@ impl QualityGate for RegressionGate {
         let previous = match input.previous_health_score {
             Some(p) => p,
             None => {
-                return GateResult::pass(
+                return GateResult::skipped(
                     GateId::Regression,
-                    100.0,
-                    "No previous health score (first run)".to_string(),
+                    "No previous health score available (first run)".to_string(),
                 );
             }
         };
 
         let current = input.current_health_score.unwrap_or(previous);
         let delta = current - previous;
+
+        // Check for new Error-severity violations from predecessor gates
+        let new_error_count: usize = input
+            .predecessor_results
+            .values()
+            .flat_map(|r| r.violations.iter())
+            .filter(|v| {
+                v.is_new && v.severity == crate::enforcement::rules::Severity::Error
+            })
+            .count();
+
+        if new_error_count > 0 {
+            let details = serde_json::json!({
+                "previous_score": previous,
+                "current_score": current,
+                "delta": delta,
+                "new_error_violations": new_error_count,
+                "severity": "critical",
+            });
+            let mut result = GateResult::fail(
+                GateId::Regression,
+                current,
+                format!(
+                    "Regression: {} new error-severity violation(s) introduced",
+                    new_error_count
+                ),
+                Vec::new(),
+            );
+            result.details = details;
+            return result;
+        }
 
         let score = current;
 

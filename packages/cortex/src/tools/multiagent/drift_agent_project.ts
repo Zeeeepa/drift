@@ -11,7 +11,7 @@
  */
 
 import type { CortexClient } from "../../bridge/client.js";
-import type { McpToolDefinition, ProjectionFilter } from "../../bridge/types.js";
+import type { McpToolDefinition, ProjectionFilter, NamespaceScope } from "../../bridge/types.js";
 
 const NAMESPACE_URI_PATTERN = /^(agent|team|project):\/\/.+\/$/;
 
@@ -103,16 +103,36 @@ export function driftAgentProject(client: CortexClient): McpToolDefinition {
       const now = new Date().toISOString();
       const projectionId = crypto.randomUUID();
 
+      // Parse namespace URIs into scope + name: "agent://alpha/" → { type: "agent", name: "alpha" }
+      const parseNs = (uri: string): { scope: NamespaceScope; name: string } => {
+        const match = uri.match(/^(agent|team|project):\/\/(.+)\/$/);
+        if (!match) throw new Error(`Cannot parse namespace URI: ${uri}`);
+        const scopeType = match[1];
+        const scopeValue = match[2];
+        let scope: NamespaceScope;
+        if (scopeType === "agent") {
+          scope = { type: "agent", value: { 0: scopeValue } };
+        } else if (scopeType === "team") {
+          scope = { type: "team", value: scopeValue };
+        } else {
+          scope = { type: "project", value: scopeValue };
+        }
+        return { scope, name: uri };
+      };
+
+      const sourceNs = parseNs(sourceNamespace);
+      const targetNs = parseNs(targetNamespace);
+
       try {
         await client.createProjection({
           id: projectionId,
-          source: { scope: { type: "agent", value: { 0: "" } }, name: sourceNamespace },
-          target: { scope: { type: "agent", value: { 0: "" } }, name: targetNamespace },
+          source: sourceNs,
+          target: targetNs,
           filter,
           compression_level: compressionLevel,
           live,
           created_at: now,
-          created_by: { 0: "" },
+          created_by: sourceNs.scope.type === "agent" ? sourceNs.scope.value : { 0: "" },
         });
         return { projection_id: projectionId };
       } catch (err) {

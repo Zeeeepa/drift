@@ -2,8 +2,12 @@
 /**
  * Drift CLI — entry point.
  *
- * 13 commands: scan, check, status, patterns, violations, impact,
- * simulate, audit, setup, doctor, export, explain, fix.
+ * 26 commands organized by category:
+ * Core: scan, analyze, check, status, report
+ * Exploration: patterns, violations, security, contracts, coupling, dna, taint, errors, test-quality, impact
+ * Feedback: fix, dismiss, suppress, explain
+ * Advanced: simulate, context, audit, export
+ * Operational: gc, setup, doctor
  *
  * Exit codes: 0 = clean, 1 = violations found, 2 = error.
  */
@@ -11,6 +15,7 @@
 import { Command } from 'commander';
 import { registerAllCommands } from './commands/index.js';
 import { loadNapi } from './napi.js';
+import { isNapiStub } from '@drift/napi-contracts';
 
 // Re-export public API
 export { registerAllCommands } from './commands/index.js';
@@ -30,7 +35,8 @@ export function createProgram(): Command {
     .description('Drift — AI-native code analysis and quality enforcement')
     .version('2.0.0')
     .option('-q, --quiet', 'Suppress all output except errors')
-    .option('-f, --format <format>', 'Output format: table, json, sarif', 'table');
+    .option('-f, --format <format>', 'Output format: table, json, sarif', 'table')
+    .option('--require-native', 'Error if native binary is unavailable (instead of using stubs)');
 
   registerAllCommands(program);
 
@@ -44,12 +50,23 @@ async function main(): Promise<void> {
   // Initialize NAPI
   const napi = loadNapi();
   try {
-    napi.drift_init();
+    napi.driftInitialize();
   } catch {
     // Non-fatal — may not be initialized yet (drift setup handles this)
   }
 
   const program = createProgram();
+
+  // Check --require-native before executing any command
+  const opts = program.opts();
+  if (opts.requireNative && isNapiStub()) {
+    process.stderr.write(
+      'Error: --require-native specified but native binary is unavailable. ' +
+      'Install platform-specific binary or run `napi build`.\n',
+    );
+    process.exitCode = 2;
+    return;
+  }
 
   try {
     await program.parseAsync(process.argv);

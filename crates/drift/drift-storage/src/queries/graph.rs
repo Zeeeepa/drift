@@ -4,6 +4,8 @@ use drift_core::errors::StorageError;
 use rusqlite::{params, Connection};
 use serde::{Deserialize, Serialize};
 
+use super::util::OptionalExt;
+
 // --- Reachability ---
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -372,17 +374,3 @@ pub fn get_test_quality(
     Ok(result)
 }
 
-/// Helper trait for optional query results.
-trait OptionalExt<T> {
-    fn optional(self) -> Result<Option<T>, rusqlite::Error>;
-}
-
-impl<T> OptionalExt<T> for Result<T, rusqlite::Error> {
-    fn optional(self) -> Result<Option<T>, rusqlite::Error> {
-        match self {
-            Ok(val) => Ok(Some(val)),
-            Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
-            Err(e) => Err(e),
-        }
-    }
-}

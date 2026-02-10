@@ -7,6 +7,7 @@
 import type { Command } from 'commander';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { loadNapi } from '../napi.js';
 
 interface HealthCheck {
   name: string;
@@ -76,10 +77,15 @@ export function registerDoctorCommand(program: Command): void {
         checks.push({ name: 'Node.js', status: 'error', message: `${nodeVersion} — Node.js >= 18 required` });
       }
 
-      // Check 5: NAPI bindings
+      // Check 5: NAPI bindings + driftIsInitialized
       try {
-        require('drift-napi');
-        checks.push({ name: 'NAPI bindings', status: 'ok', message: 'Native module loaded' });
+        const napi = loadNapi();
+        const initialized = napi.driftIsInitialized();
+        if (initialized) {
+          checks.push({ name: 'NAPI bindings', status: 'ok', message: 'Native module loaded, database initialized' });
+        } else {
+          checks.push({ name: 'NAPI bindings', status: 'warn', message: 'Native module loaded but not initialized — run `drift setup`' });
+        }
       } catch {
         checks.push({ name: 'NAPI bindings', status: 'warn', message: 'Native module not available — using stub' });
       }

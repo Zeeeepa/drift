@@ -1,8 +1,10 @@
 //! DAG-based gate orchestrator — topological sort execution.
 
 use std::collections::{HashMap, HashSet, VecDeque};
+use std::time::Duration;
 
 use super::types::*;
+use super::progressive::{ProgressiveConfig, ProgressiveEnforcement};
 use super::constraint_verification::ConstraintVerificationGate;
 use super::error_handling::ErrorHandlingGate;
 use super::pattern_compliance::PatternComplianceGate;
@@ -13,6 +15,9 @@ use super::test_coverage::TestCoverageGate;
 /// DAG-based gate orchestrator that respects gate dependencies.
 pub struct GateOrchestrator {
     gates: Vec<Box<dyn QualityGate>>,
+    progressive: Option<ProgressiveEnforcement>,
+    /// Per-gate timeout. Default: 30 seconds.
+    gate_timeout: Duration,
 }
 
 impl GateOrchestrator {
@@ -26,12 +31,34 @@ impl GateOrchestrator {
             Box::new(ErrorHandlingGate),
             Box::new(RegressionGate),
         ];
-        Self { gates }
+        Self {
+            gates,
+            progressive: None,
+            gate_timeout: Duration::from_secs(30),
+        }
     }
 
     /// Create an orchestrator with custom gates.
     pub fn with_gates(gates: Vec<Box<dyn QualityGate>>) -> Self {
-        Self { gates }
+        Self {
+            gates,
+            progressive: None,
+            gate_timeout: Duration::from_secs(30),
+        }
+    }
+
+    /// Enable progressive enforcement with the given configuration.
+    pub fn with_progressive(mut self, config: ProgressiveConfig) -> Self {
+        if config.enabled {
+            self.progressive = Some(ProgressiveEnforcement::new(config));
+        }
+        self
+    }
+
+    /// Set the per-gate execution timeout.
+    pub fn with_timeout(mut self, timeout: Duration) -> Self {
+        self.gate_timeout = timeout;
+        self
     }
 
     /// Execute all gates in dependency order, returning results.
@@ -73,7 +100,49 @@ impl GateOrchestrator {
                 gate_input.predecessor_results = results.clone();
                 let start = std::time::Instant::now();
                 let mut result = gate.evaluate(&gate_input);
-                result.execution_time_ms = start.elapsed().as_millis() as u64;
+                let elapsed = start.elapsed();
+                result.execution_time_ms = elapsed.as_millis() as u64;
+
+                // Check timeout
+                if elapsed > self.gate_timeout {
+                    result = GateResult::errored(
+                        *gate_id,
+                        format!(
+                            "Gate execution timed out after {:.1}s (limit: {:.1}s)",
+                            elapsed.as_secs_f64(),
+                            self.gate_timeout.as_secs_f64(),
+                        ),
+                    );
+                    result.execution_time_ms = elapsed.as_millis() as u64;
+                }
+
+                // Apply progressive enforcement to violations
+                if let Some(ref progressive) = self.progressive {
+                    let new_files: HashSet<&str> = input
+                        .files
+                        .iter()
+                        .filter(|f| !input.all_files.contains(f))
+                        .map(|f| f.as_str())
+                        .collect();
+
+                    for violation in &mut result.violations {
+                        let is_new_file = new_files.contains(violation.file.as_str());
+                        violation.severity =
+                            progressive.effective_severity(violation.severity, is_new_file);
+                    }
+                }
+
+                // Mark is_new based on baseline
+                if !input.baseline_violations.is_empty() {
+                    for violation in &mut result.violations {
+                        let key = format!(
+                            "{}:{}:{}",
+                            violation.file, violation.line, violation.rule_id
+                        );
+                        violation.is_new = !input.baseline_violations.contains(&key);
+                    }
+                }
+
                 result
             };
 

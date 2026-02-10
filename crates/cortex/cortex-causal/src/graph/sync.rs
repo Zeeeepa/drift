@@ -8,25 +8,44 @@ use super::stable_graph::{CausalEdgeWeight, EdgeEvidence, IndexedGraph};
 use crate::relations::CausalRelation;
 
 /// Rebuild the in-memory graph from all edges in storage.
+///
+/// C-03: Real implementation — enumerates all node IDs via `list_all_node_ids()`,
+/// loads their edges, and populates the graph. Previously this was a no-op stub.
 pub fn rebuild_from_storage(
     storage: &dyn ICausalStorage,
-    _graph: &mut IndexedGraph,
+    graph: &mut IndexedGraph,
 ) -> CortexResult<()> {
-    // We need to iterate all nodes. Get edge count to know if there's data.
-    let count = storage.edge_count()?;
-    if count == 0 {
+    let edge_total = storage.edge_count()?;
+    if edge_total == 0 {
         return Ok(());
     }
 
-    // Get all unique node IDs by querying edges for known nodes.
-    // The storage trait gives us edges per node, so we collect from node_count.
-    let node_count = storage.node_count()?;
-    if node_count == 0 {
+    // C-01/C-02: Use the new list_all_node_ids() to enumerate all nodes.
+    let node_ids = storage.list_all_node_ids()?;
+    if node_ids.is_empty() {
         return Ok(());
     }
 
-    // Since ICausalStorage doesn't expose a list-all-nodes method,
-    // we rely on the caller to populate nodes. The sync layer handles edges.
+    // Track which edges we've already added to avoid duplicates
+    // (since get_edges returns edges where node is source OR target).
+    let mut seen_edges = std::collections::HashSet::new();
+
+    for node_id in &node_ids {
+        let edges = storage.get_edges(node_id)?;
+        for edge in &edges {
+            let edge_key = (edge.source_id.clone(), edge.target_id.clone());
+            if seen_edges.contains(&edge_key) {
+                continue;
+            }
+            seen_edges.insert(edge_key);
+
+            let source_idx = graph.ensure_node(&edge.source_id, "unknown", "");
+            let target_idx = graph.ensure_node(&edge.target_id, "unknown", "");
+            let weight = from_storage_edge(edge);
+            graph.graph.add_edge(source_idx, target_idx, weight);
+        }
+    }
+
     Ok(())
 }
 

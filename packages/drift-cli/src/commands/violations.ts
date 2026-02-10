@@ -15,7 +15,7 @@ export function registerViolationsCommand(program: Command): void {
     .action(async (path: string | undefined, opts: { format: OutputFormat; quiet?: boolean }) => {
       const napi = loadNapi();
       try {
-        const result = napi.drift_violations(path ?? process.cwd());
+        const result = napi.driftViolations(path ?? process.cwd());
         if (!opts.quiet) {
           process.stdout.write(formatOutput(result, opts.format));
         }

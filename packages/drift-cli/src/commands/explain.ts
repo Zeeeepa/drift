@@ -15,8 +15,8 @@ export function registerExplainCommand(program: Command): void {
     .action(async (violationId: string, opts: { format: OutputFormat; quiet?: boolean }) => {
       const napi = loadNapi();
       try {
-        // Use context generation with the violation ID as intent
-        const result = napi.drift_context(`explain_violation:${violationId}`, 'deep');
+        // Use context generation with understand_code intent, violation ID in data
+        const result = await napi.driftContext('understand_code', 'deep', JSON.stringify({ violationId }));
         if (!opts.quiet) {
           process.stdout.write(formatOutput(result, opts.format));
         }

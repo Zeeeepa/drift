@@ -15,6 +15,7 @@ use cortex_core::errors::CortexResult;
 use cortex_decay::DecayEngine;
 use cortex_embeddings::EmbeddingEngine;
 use cortex_learning::LearningEngine;
+use cortex_multiagent::MultiAgentEngine;
 use cortex_observability::ObservabilityEngine;
 use cortex_prediction::PredictionEngine;
 use cortex_privacy::PrivacyEngine;
@@ -33,7 +34,7 @@ static RUNTIME: OnceLock<Arc<CortexRuntime>> = OnceLock::new();
 /// Engines that require `&mut self` are wrapped in `Mutex` to allow
 /// safe concurrent access from async NAPI callbacks.
 pub struct CortexRuntime {
-    pub storage: StorageEngine,
+    pub storage: Arc<StorageEngine>,
     pub embeddings: Mutex<EmbeddingEngine>,
     pub compression: CompressionEngine,
     pub causal: CausalEngine,
@@ -41,12 +42,13 @@ pub struct CortexRuntime {
     pub validation: ValidationEngine,
     pub learning: Mutex<LearningEngine>,
     pub consolidation: Mutex<ConsolidationEngine>,
-    pub prediction: PredictionEngine<StorageEngine>,
+    pub prediction: PredictionEngine<Arc<StorageEngine>>,
     pub session: SessionManager,
     pub privacy: PrivacyEngine,
     pub observability: Mutex<ObservabilityEngine>,
     pub cloud: Option<Mutex<CloudEngine>>,
     pub temporal: TemporalEngine,
+    pub multiagent: Mutex<MultiAgentEngine>,
     pub config: CortexConfig,
 }
 
@@ -70,20 +72,26 @@ impl CortexRuntime {
             None => CortexConfig::default(),
         };
 
-        // Storage
-        let storage = match &opts.db_path {
+        // Storage — wrapped in Arc for sharing with learning/consolidation engines
+        let storage = Arc::new(match &opts.db_path {
             Some(path) => StorageEngine::open(path)?,
             None => StorageEngine::open_in_memory()?,
-        };
+        });
+        // Create a trait-object Arc for engines that need IMemoryStorage
+        let storage_trait: Arc<dyn cortex_core::traits::IMemoryStorage> = storage.clone();
 
-        // Embeddings
-        let embeddings = EmbeddingEngine::new(config.embedding.clone());
+        // Embeddings — D-01: use persistent L2 cache when file-backed.
+        let embeddings = match storage.pool().db_path.as_ref() {
+            Some(db_path) => EmbeddingEngine::new_with_db_path(config.embedding.clone(), db_path),
+            None => EmbeddingEngine::new(config.embedding.clone()),
+        };
 
         // Compression
         let compression = CompressionEngine::new();
 
-        // Causal
+        // Causal — hydrate graph from storage (C-04)
         let causal = CausalEngine::new();
+        let _ = causal.hydrate(storage.as_ref());
 
         // Decay
         let decay = DecayEngine::new();
@@ -91,19 +99,20 @@ impl CortexRuntime {
         // Validation
         let validation = ValidationEngine::default();
 
-        // Learning
-        let learning = LearningEngine::new();
+        // Learning — wired to shared storage for persistence
+        let mut learning = LearningEngine::with_storage(storage_trait.clone());
+        // Pre-populate existing memories for dedup.
+        let _ = learning.refresh_existing_memories();
 
-        // Consolidation — needs an embedding provider
-        let consolidation_embedder = EmbeddingEngine::new(config.embedding.clone());
-        let consolidation = ConsolidationEngine::new(Box::new(consolidation_embedder));
+        // Consolidation — B-03: shares the main EmbeddingEngine via clone instead of
+        // creating a duplicate. The main engine's cache and provider chain are reused.
+        let consolidation_embedder = embeddings.clone_provider();
+        let consolidation =
+            ConsolidationEngine::new(consolidation_embedder)
+                .with_storage(storage_trait.clone());
 
-        // Prediction — needs storage (clone not available, so open a second handle)
-        let prediction_storage = match &opts.db_path {
-            Some(path) => StorageEngine::open(path)?,
-            None => StorageEngine::open_in_memory()?,
-        };
-        let prediction = PredictionEngine::new(prediction_storage);
+        // Prediction — shares the same Arc<StorageEngine> (B-01: no duplicate pool)
+        let prediction = PredictionEngine::new(storage.clone());
 
         // Session
         let session = SessionManager::new();
@@ -114,10 +123,14 @@ impl CortexRuntime {
         // Observability
         let observability = ObservabilityEngine::new();
 
-        // Cloud (optional)
+        // Cloud (optional) — C-09: read API key from env, not hardcoded empty string.
         let cloud = if opts.cloud_enabled {
+            let api_key = std::env::var("CORTEX_CLOUD_API_KEY").unwrap_or_default();
+            if api_key.is_empty() {
+                tracing::warn!("Cloud enabled but CORTEX_CLOUD_API_KEY is empty — cloud sync will fail");
+            }
             Some(Mutex::new(CloudEngine::new(
-                cortex_cloud::auth::login_flow::AuthMethod::ApiKey(String::new()),
+                cortex_cloud::auth::login_flow::AuthMethod::ApiKey(api_key),
                 cortex_cloud::HttpClientConfig::default(),
                 cortex_cloud::QuotaLimits::default(),
             )))
@@ -125,26 +138,27 @@ impl CortexRuntime {
             None
         };
 
-        // Temporal — opens its own connections to the same database
-        let temporal = {
-            let (writer, readers) = match &opts.db_path {
-                Some(path) => {
-                    let w = cortex_storage::pool::WriteConnection::open(path)?;
-                    let r = cortex_storage::pool::ReadPool::open(path, 4)?;
-                    (w, r)
-                }
-                None => {
-                    let w = cortex_storage::pool::WriteConnection::open_in_memory()?;
-                    let r = cortex_storage::pool::ReadPool::open_in_memory(4)?;
-                    (w, r)
-                }
-            };
-            TemporalEngine::new(
-                Arc::new(writer),
-                Arc::new(readers),
-                config.temporal.clone(),
-            )
-        };
+        // Temporal — shares writer+readers from storage pool (B-02: no duplicate connections)
+        let temporal = TemporalEngine::new(
+            storage.pool().writer.clone(),
+            storage.pool().readers.clone(),
+            config.temporal.clone(),
+        );
+
+        // Multi-agent — shares writer+readers from storage pool (B-04: no per-call connections)
+        let mut multiagent = MultiAgentEngine::new(
+            storage.pool().writer.clone(),
+            storage.pool().readers.clone(),
+            config.multiagent.clone(),
+        );
+        // In-memory mode: readers are isolated DBs, route reads through writer
+        if storage.pool().db_path.is_none() {
+            multiagent = multiagent.with_read_pool_disabled();
+        }
+        // A-01: Wire embedding provider for consensus detection.
+        multiagent.set_embedding_provider(embeddings.clone_provider());
+        // A-01: Wire storage for querying memories by namespace.
+        multiagent.set_storage(storage_trait.clone());
 
         Ok(Self {
             storage,
@@ -161,6 +175,7 @@ impl CortexRuntime {
             observability: Mutex::new(observability),
             cloud,
             temporal,
+            multiagent: Mutex::new(multiagent),
             config,
         })
     }

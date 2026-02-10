@@ -16,6 +16,8 @@ drift-storage = { workspace = true }
 drift-context = { workspace = true }
 napi = { workspace = true }
 napi-derive = { workspace = true }
+tree-sitter = { workspace = true }
+petgraph = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 

@@ -12,5 +12,6 @@ pub mod di_support;
 
 pub use types::{CallGraph, FunctionNode, CallEdge, Resolution, CallGraphStats};
 pub use builder::CallGraphBuilder;
+pub use resolution::{ResolutionDiagnostics, is_fuzzy_blocked, resolve_call, resolve_constructor};
 pub use traversal::{bfs_forward, bfs_inverse, detect_entry_points};
 pub use incremental::IncrementalCallGraph;

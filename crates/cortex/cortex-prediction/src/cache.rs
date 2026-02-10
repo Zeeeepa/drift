@@ -77,8 +77,29 @@ impl PredictionCache {
     }
 
     /// Invalidate cache entries for a specific file.
+    /// F-07: Cache keys are now "file:imports_len" format, so we must
+    /// invalidate all keys that start with the file path prefix.
     pub fn invalidate_file(&self, file_path: &str) {
+        let prefix = format!("{file_path}:");
+        // Also try exact match (backward compat)
         self.cache.invalidate(file_path);
+        // Invalidate all keys with this file prefix
+        let keys_to_remove: Vec<String> = {
+            self.cache.run_pending_tasks();
+            self.cache
+                .iter()
+                .filter_map(|(k, _)| {
+                    if k.as_ref().starts_with(&prefix) {
+                        Some(k.as_ref().clone())
+                    } else {
+                        None
+                    }
+                })
+                .collect()
+        };
+        for key in keys_to_remove {
+            self.cache.invalidate(&key);
+        }
     }
 
     /// Invalidate all cache entries (e.g., on new session).

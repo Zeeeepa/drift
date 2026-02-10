@@ -9,7 +9,7 @@ use crate::scanner::language_detect::Language;
 pub struct CppNormalizer;
 
 impl GASTNormalizer for CppNormalizer {
-    fn language(&self) -> Language { Language::Rust } // Placeholder — C++ not in Language enum
+    fn language(&self) -> Language { Language::Cpp }
 
     fn normalize_node(&self, node: &Node, source: &[u8]) -> GASTNode {
         match node.kind() {

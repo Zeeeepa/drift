@@ -100,7 +100,32 @@ impl Reporter for SonarQubeReporter {
             }
         }
 
+        // Build rules array (required since SonarQube 10.3)
+        let mut rules: Vec<Value> = Vec::new();
+        let mut seen_rules = std::collections::HashSet::new();
+        for gate_result in results {
+            for violation in &gate_result.violations {
+                if violation.suppressed {
+                    continue;
+                }
+                if seen_rules.insert(violation.rule_id.clone()) {
+                    rules.push(json!({
+                        "id": violation.rule_id,
+                        "name": violation.rule_id,
+                        "description": violation.message,
+                        "engineId": "drift",
+                        "cleanCodeAttribute": "CONVENTIONAL",
+                        "impacts": [{
+                            "softwareQuality": if violation.cwe_id.is_some() { "SECURITY" } else { "MAINTAINABILITY" },
+                            "severity": Self::severity_to_sonarqube(&violation.severity)
+                        }]
+                    }));
+                }
+            }
+        }
+
         let output = json!({
+            "rules": rules,
             "issues": issues
         });
 

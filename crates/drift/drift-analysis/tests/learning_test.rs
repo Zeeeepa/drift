@@ -52,6 +52,8 @@ fn make_convention(pattern_id: &str, last_seen: u64, status: PromotionStatus) ->
         discovery_date: 1000,
         last_seen,
         promotion_status: status,
+        observation_count: 10,
+        scan_count: 1,
     }
 }
 
@@ -148,16 +150,16 @@ fn t3_lrn_03_auto_promotion() {
     // High confidence → should promote
     let mut conv = make_convention("high_conf", 1000, PromotionStatus::Discovered);
     conv.confidence_score = ConfidenceScore::from_params(200.0, 10.0, MomentumDirection::Stable);
-    assert!(promotion::check_promotion(&conv, &config), "High confidence should qualify for promotion");
+    assert!(promotion::check_promotion(&conv, &config, None), "High confidence should qualify for promotion");
 
     // Low confidence → should NOT promote
     let mut conv_low = make_convention("low_conf", 1000, PromotionStatus::Discovered);
     conv_low.confidence_score = ConfidenceScore::from_params(5.0, 95.0, MomentumDirection::Stable);
-    assert!(!promotion::check_promotion(&conv_low, &config), "Low confidence should not qualify");
+    assert!(!promotion::check_promotion(&conv_low, &config, None), "Low confidence should not qualify");
 
     // Already approved → should NOT re-promote
     let conv_approved = make_convention("approved", 1000, PromotionStatus::Approved);
-    assert!(!promotion::check_promotion(&conv_approved, &config), "Already approved should not re-promote");
+    assert!(!promotion::check_promotion(&conv_approved, &config, None), "Already approved should not re-promote");
 
     // Batch promotion
     let mut conventions = vec![
@@ -313,6 +315,8 @@ fn t3_lrn_08_directory_scope() {
         discovery_date: 1000,
         last_seen: 1000,
         promotion_status: PromotionStatus::Discovered,
+        observation_count: 5,
+        scan_count: 1,
     };
 
     // Verify scope is directory-specific

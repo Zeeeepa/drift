@@ -9,6 +9,7 @@ pub mod decomposition_provider;
 pub mod events;
 pub mod narrative;
 pub mod weight_provider;
+pub mod weights;
 
 pub use corrections::{CorrectionRootCause, SpecCorrection};
 pub use attribution::DataSourceAttribution;

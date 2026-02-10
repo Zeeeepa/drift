@@ -109,14 +109,25 @@ impl MinHashIndex {
     }
 
     /// Compute MinHash signature for a set of string elements.
+    ///
+    /// Uses universal hashing: h_i(x) = (a_i * x + b_i) mod p
+    /// where a_i, b_i are deterministic per-permutation coefficients derived
+    /// from a seeded PRNG, and p is a large prime.
     fn compute_signature(&self, elements: &FxHashSet<String>) -> Vec<u64> {
         let mut signature = vec![u64::MAX; self.num_perm];
+
+        // Large Mersenne prime for universal hashing
+        const PRIME: u64 = (1u64 << 61) - 1;
 
         for element in elements {
             let base_hash = xxhash_rust::xxh3::xxh3_64(element.as_bytes());
             for (i, sig_val) in signature.iter_mut().enumerate() {
-                // Simulate permutation with hash(element, seed=i)
-                let perm_hash = base_hash.wrapping_mul(i as u64 + 1).wrapping_add(i as u64);
+                // Deterministic per-permutation coefficients via mixing
+                let seed = i as u64;
+                let a = seed.wrapping_mul(0x517cc1b727220a95).wrapping_add(0x6c62272e07bb0142) | 1;
+                let b = seed.wrapping_mul(0x6c62272e07bb0142).wrapping_add(0x517cc1b727220a95);
+                // Universal hash: (a * x + b) mod p
+                let perm_hash = (a.wrapping_mul(base_hash).wrapping_add(b)) % PRIME;
                 *sig_val = (*sig_val).min(perm_hash);
             }
         }
@@ -248,5 +259,76 @@ mod tests {
         // intersection = 2, union = 4
         let sim = jaccard_similarity(&a, &b);
         assert!((sim - 0.5).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_minhash_accuracy_50_percent_overlap() {
+        // Two sets with 50% Jaccard overlap: 50 shared, 25 unique each
+        // True Jaccard = 50 / 100 = 0.5
+        let mut set_a = FxHashSet::default();
+        let mut set_b = FxHashSet::default();
+
+        // 50 shared elements
+        for i in 0..50 {
+            let key = format!("shared:{}", i);
+            set_a.insert(key.clone());
+            set_b.insert(key);
+        }
+        // 25 unique to A
+        for i in 0..25 {
+            set_a.insert(format!("only_a:{}", i));
+        }
+        // 25 unique to B
+        for i in 0..25 {
+            set_b.insert(format!("only_b:{}", i));
+        }
+
+        let true_jaccard = jaccard_similarity(&set_a, &set_b);
+        assert!((true_jaccard - 0.5).abs() < 1e-10, "True Jaccard should be 0.5");
+
+        let mut index = MinHashIndex::new(128, 32);
+        index.insert("a", &set_a);
+        index.insert("b", &set_b);
+
+        let estimate = index.estimate_similarity("a", "b").unwrap();
+        assert!(
+            (estimate - 0.5).abs() < 0.10,
+            "MinHash estimate ({:.4}) should be within 10% of true Jaccard (0.5)",
+            estimate
+        );
+    }
+
+    #[test]
+    fn test_minhash_accuracy_90_percent_overlap() {
+        // Two sets with ~90% Jaccard overlap: 90 shared, 5 unique each
+        // True Jaccard = 90 / 100 = 0.9
+        let mut set_a = FxHashSet::default();
+        let mut set_b = FxHashSet::default();
+
+        for i in 0..90 {
+            let key = format!("shared:{}", i);
+            set_a.insert(key.clone());
+            set_b.insert(key);
+        }
+        for i in 0..5 {
+            set_a.insert(format!("only_a:{}", i));
+        }
+        for i in 0..5 {
+            set_b.insert(format!("only_b:{}", i));
+        }
+
+        let true_jaccard = jaccard_similarity(&set_a, &set_b);
+        assert!((true_jaccard - 0.9).abs() < 0.01);
+
+        let mut index = MinHashIndex::new(128, 32);
+        index.insert("a", &set_a);
+        index.insert("b", &set_b);
+
+        let estimate = index.estimate_similarity("a", "b").unwrap();
+        assert!(
+            (estimate - 0.9).abs() < 0.05,
+            "MinHash estimate ({:.4}) should be within 5% of true Jaccard (0.9)",
+            estimate
+        );
     }
 }

@@ -1,7 +1,6 @@
 //! T9-BRIDGE-01 through T9-BRIDGE-50: Specification engine bridge tests.
 
 use cortex_causal::CausalEngine;
-use cortex_drift_bridge::errors::BridgeError;
 use cortex_drift_bridge::specification::attribution::{AttributionStats, DataSourceAttribution};
 use cortex_drift_bridge::specification::corrections::*;
 use cortex_drift_bridge::specification::events;
@@ -53,7 +52,7 @@ fn t9_bridge_01_spec_correction_creates_causal_edge() {
     // The engine should have at least the nodes from the edge attempt
     // (may be 0 edges if the graph doesn't have the nodes pre-registered,
     // but the function should not panic)
-    assert!(stats.0 >= 0); // node count
+    let _ = stats.0; // node count — always >= 0 by type
 }
 
 // ---- T9-BRIDGE-02: CorrectionRootCause maps to correct causal relation ----
@@ -107,7 +106,7 @@ fn t9_bridge_02_root_cause_maps_to_causal_relation() {
 #[test]
 fn t9_bridge_02_all_7_variants_covered() {
     // Verify we have exactly 7 variant names
-    let variants = vec![
+    let variants = [
         "MissingCallEdge",
         "MissingBoundary",
         "WrongConvention",
@@ -485,7 +484,7 @@ fn t9_bridge_49_weight_sum_reasonable() {
     let defaults = AdaptiveWeightTable::static_defaults();
     let sum: f64 = defaults.weights.values().sum();
     assert!(
-        sum >= 5.0 && sum <= 30.0,
+        (5.0..=30.0).contains(&sum),
         "Weight sum should be between 5.0 and 30.0, got {}",
         sum,
     );

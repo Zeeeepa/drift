@@ -16,7 +16,7 @@ pub use session_metrics::SessionMetrics;
 pub use storage_metrics::StorageMetrics;
 
 /// Central metrics registry that owns all domain-specific collectors.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, serde::Serialize)]
 pub struct MetricsCollector {
     pub retrieval: RetrievalMetrics,
     pub consolidation: ConsolidationMetricsCollector,

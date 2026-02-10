@@ -386,11 +386,14 @@ impl BackupManager {
 }
 
 /// Generate a timestamp string for backup IDs (compact, sortable).
+/// Uses nanosecond precision + atomic counter to guarantee uniqueness under rapid creation.
 fn now_timestamp() -> String {
-    // Use SQLite-compatible format: YYYYMMDDTHHMMSS
-    // We avoid chrono dependency by using std::time
+    use std::sync::atomic::{AtomicU64, Ordering};
+    static COUNTER: AtomicU64 = AtomicU64::new(0);
+
     let duration = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .unwrap_or_default();
-    format!("{}", duration.as_secs())
+    let seq = COUNTER.fetch_add(1, Ordering::Relaxed);
+    format!("{}.{:09}.{}", duration.as_secs(), duration.subsec_nanos(), seq)
 }

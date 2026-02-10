@@ -2,7 +2,8 @@ use cortex_core::errors::CortexResult;
 use cortex_core::traits::{ISanitizer, SanitizedText};
 
 use crate::context_scoring::{
-    adjust_confidence, has_sensitive_variable_context, looks_like_placeholder, ScoringContext,
+    adjust_confidence, has_sensitive_variable_context, is_in_comment, looks_like_placeholder,
+    ScoringContext,
 };
 use crate::degradation::DegradationTracker;
 use crate::patterns;
@@ -59,7 +60,7 @@ impl PrivacyEngine {
 
             let ctx = ScoringContext {
                 file_path: self.file_path.clone(),
-                in_comment: false, // TODO: integrate with AST-level comment detection
+                in_comment: is_in_comment(text, m.start),
                 is_placeholder: looks_like_placeholder(matched_text),
                 sensitive_variable: has_sensitive_variable_context(text, m.start),
             };
@@ -121,8 +122,13 @@ impl ISanitizer for PrivacyEngine {
 /// Apply placeholder replacements to the text. Matches must be sorted
 /// descending by start position so replacements don't shift earlier offsets.
 fn apply_replacements(text: &str, matches: &[patterns::RawMatch]) -> String {
+    // E-06: Sort descending by start position so earlier replacements
+    // don't shift offsets of later ones.
+    let mut sorted: Vec<&patterns::RawMatch> = matches.iter().collect();
+    sorted.sort_by(|a, b| b.start.cmp(&a.start));
+
     let mut result = text.to_string();
-    for m in matches {
+    for m in sorted {
         // Guard against already-replaced text (idempotency).
         let current_slice = &result[m.start..m.end.min(result.len())];
         if current_slice.starts_with('[') && current_slice.ends_with(']') {

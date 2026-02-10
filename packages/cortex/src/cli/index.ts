@@ -38,6 +38,13 @@ import { replayCommand } from "./replay.js";
 import { agentsCommand } from "./agents.js";
 import { namespacesCommand } from "./namespaces.js";
 import { provenanceCommand } from "./provenance.js";
+import { predictCommand } from "./predict.js";
+import { sanitizeCommand } from "./sanitize.js";
+import { cloudCommand } from "./cloud.js";
+import { sessionCommand } from "./session.js";
+import { restoreCommand } from "./restore.js";
+import { decayCommand } from "./decay.js";
+import { timeTravelCommand } from "./time-travel.js";
 
 interface ParsedArgs {
   command: string;
@@ -90,6 +97,13 @@ function printHelp(): void {
     agents <sub> [opts]             Manage agents (list/register/deregister/info)
     namespaces <sub> [opts]         Manage namespaces (list/create/permissions)
     provenance <memory-id> [opts]   Show provenance chain
+    predict [--files --intent]      Predict needed memories
+    sanitize <text>                 Redact sensitive data
+    cloud <sub>                     Cloud sync (sync/status/resolve)
+    session <sub> [opts]            Session management (create/get/analytics/cleanup)
+    restore <memory-id>             Restore archived memory
+    decay                           Run confidence decay
+    time-travel --system-time --valid-time  Point-in-time query
     help                            Show this help
 `);
 }
@@ -221,6 +235,52 @@ async function main(): Promise<void> {
           process.exit(1);
         }
         await provenanceCommand(client, positional[0], flags);
+        break;
+      case "predict":
+        await predictCommand(
+          client,
+          flags.files?.split(","),
+          flags.queries?.split(","),
+          flags.intent,
+        );
+        break;
+      case "sanitize":
+        if (!positional[0]) {
+          console.error("  Error: sanitize requires a text argument.");
+          process.exit(1);
+        }
+        await sanitizeCommand(client, positional[0]);
+        break;
+      case "cloud":
+        if (!positional[0]) {
+          console.error("  Error: cloud requires a subcommand (sync/status/resolve).");
+          process.exit(1);
+        }
+        await cloudCommand(client, positional[0], flags);
+        break;
+      case "session":
+        if (!positional[0]) {
+          console.error("  Error: session requires a subcommand (create/get/analytics/cleanup).");
+          process.exit(1);
+        }
+        await sessionCommand(client, positional[0], positional.slice(1), flags);
+        break;
+      case "restore":
+        if (!positional[0]) {
+          console.error("  Error: restore requires a memory-id argument.");
+          process.exit(1);
+        }
+        await restoreCommand(client, positional[0]);
+        break;
+      case "decay":
+        await decayCommand(client);
+        break;
+      case "time-travel":
+        if (!flags["system-time"] || !flags["valid-time"]) {
+          console.error("  Error: time-travel requires --system-time <iso> --valid-time <iso>");
+          process.exit(1);
+        }
+        await timeTravelCommand(client, flags["system-time"], flags["valid-time"], flags.filter);
         break;
       default:
         console.error(`  Unknown command: ${command}`);

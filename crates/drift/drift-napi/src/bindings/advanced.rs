@@ -16,8 +16,19 @@ pub async fn drift_simulate(
     use drift_analysis::advanced::simulation::types::*;
     use drift_analysis::advanced::simulation::strategies::StrategyRecommender;
 
-    let context: SimulationContext = serde_json::from_str(&context_json)
+    // PH2-08: Parse affected_files alongside context from JSON input
+    #[derive(serde::Deserialize, Default)]
+    struct SimulationInput {
+        #[serde(flatten)]
+        context: SimulationContext,
+        #[serde(default)]
+        affected_files: Vec<String>,
+    }
+
+    let input: SimulationInput = serde_json::from_str(&context_json)
         .unwrap_or_default();
+    let context = input.context;
+    let affected_files = input.affected_files;
 
     let category = match task_category.as_str() {
         "add_feature" => TaskCategory::AddFeature,
@@ -39,7 +50,7 @@ pub async fn drift_simulate(
     let task = SimulationTask {
         category,
         description: task_description,
-        affected_files: vec![],
+        affected_files,
         context,
     };
 

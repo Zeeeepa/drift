@@ -3,35 +3,18 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { setNapi } from '../src/napi.js';
+import { setNapi, resetNapi } from '../src/napi.js';
 import { runAnalysis, type CiAgentConfig } from '../src/agent.js';
 import { generatePrComment } from '../src/pr_comment.js';
 import { writeSarifFile } from '../src/sarif_upload.js';
+import { createStubNapi } from '@drift/napi-contracts';
 import type { DriftNapi } from '../src/napi.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as os from 'node:os';
 
 function createMockNapi(overrides: Partial<DriftNapi> = {}): DriftNapi {
-  return {
-    drift_init() {},
-    drift_shutdown() {},
-    drift_scan() { return { filesScanned: 10, patternsDetected: 5, violationsFound: 2, durationMs: 50 }; },
-    drift_patterns() { return { patterns: [{ id: 'p1' }] }; },
-    drift_call_graph() { return { nodes: ['fn1'], edges: [['fn1', 'fn2']] }; },
-    drift_boundaries() { return { boundaries: [{ type: 'orm', framework: 'prisma' }] }; },
-    drift_check(_path: string, _policy?: string) { return { passed: true, violations: [] }; },
-    drift_test_topology() { return { coverage: 85, tests: ['test1'] }; },
-    drift_analyze() { return { errorGaps: [] }; },
-    drift_violations() {
-      return [
-        { rule_id: 'test-rule', file: 'src/test.ts', line: 10, severity: 'warning', message: 'Test violation' },
-      ];
-    },
-    drift_audit() { return { healthScore: 90 }; },
-    drift_status() { return { version: '2.0.0', fileCount: 10, violationCount: 2, healthScore: 90 }; },
-    ...overrides,
-  };
+  return { ...createStubNapi(), ...overrides };
 }
 
 describe('CI Agent', () => {
@@ -39,11 +22,11 @@ describe('CI Agent', () => {
     setNapi(createMockNapi());
   });
 
-  // T8-CI-01: Test CI agent runs 9 analysis passes
-  it('T8-CI-01: runs 9 analysis passes in parallel', async () => {
+  // T8-CI-01: Test CI agent runs 10 analysis passes
+  it('T8-CI-01: runs 10 analysis passes in parallel', async () => {
     const result = await runAnalysis({ path: '.' });
 
-    expect(result.passes).toHaveLength(9);
+    expect(result.passes).toHaveLength(10);
     expect(result.passes.map((p) => p.name)).toEqual([
       'scan',
       'patterns',
@@ -54,6 +37,7 @@ describe('CI Agent', () => {
       'errors',
       'contracts',
       'constraints',
+      'enforcement',
     ]);
 
     // All passes should complete
@@ -144,18 +128,18 @@ describe('CI Agent', () => {
 
     expect(result.incremental).toBe(true);
     expect(result.filesAnalyzed).toBe(2);
-    expect(result.passes).toHaveLength(9);
+    expect(result.passes).toHaveLength(10);
   });
 
   // T8-CI-06: Test timeout handling
   it('T8-CI-06: handles timeout gracefully', async () => {
     setNapi(
       createMockNapi({
-        drift_scan() {
+        async driftScan() {
           // Simulate slow scan — but our timeout is very short
           const start = Date.now();
           while (Date.now() - start < 10) { /* busy wait */ }
-          return { filesScanned: 0, patternsDetected: 0, violationsFound: 0, durationMs: 10 };
+          return { filesTotal: 0, filesAdded: 0, filesModified: 0, filesRemoved: 0, filesUnchanged: 0, errorsCount: 0, durationMs: 10, status: 'ok', languages: {} };
         },
       }),
     );
@@ -166,7 +150,7 @@ describe('CI Agent', () => {
     });
 
     // Should complete (mock is fast enough)
-    expect(result.passes).toHaveLength(9);
+    expect(result.passes).toHaveLength(10);
   });
 
   // Test score calculation
@@ -178,10 +162,14 @@ describe('CI Agent', () => {
 
   // Test fail-on configuration
   it('respects fail-on configuration', async () => {
+    // Override owasp to return findings, making security pass fail
     setNapi(
       createMockNapi({
-        drift_check() {
-          return { passed: false, violations: [{ id: 'v1' }] };
+        driftOwaspAnalysis() {
+          return {
+            findings: [{ id: 'f1', detector: 'owasp-xss', file: 'a.ts', line: 1, description: 'XSS vulnerability', severity: 3, cweIds: [79], owaspCategories: ['A01'], confidence: 0.9, remediation: null }],
+            compliance: { postureScore: 50, owaspCoverage: 0.1, cweTop25Coverage: 0.04, criticalCount: 1, highCount: 0, mediumCount: 0, lowCount: 0 },
+          };
         },
       }),
     );

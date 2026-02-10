@@ -39,8 +39,25 @@ impl Detector for AuthDetector {
         }
 
         // Detect JWT/token-related imports
-        let auth_imports = ["jsonwebtoken", "jwt", "passport", "bcrypt", "argon2",
-                            "oauth", "auth0", "firebase-admin", "next-auth", "jose"];
+        let auth_imports = [
+            // JS/TS
+            "jsonwebtoken", "jwt", "passport", "bcrypt", "argon2",
+            "oauth", "auth0", "firebase-admin", "next-auth", "jose",
+            // Python
+            "django.contrib.auth", "flask-login", "flask_login", "authlib", "python-jose", "passlib",
+            // Java/Kotlin
+            "spring-security", "org.springframework.security", "apache.shiro", "io.jsonwebtoken", "com.auth0",
+            // C#
+            "Microsoft.AspNetCore.Identity", "Microsoft.AspNetCore.Authentication", "System.IdentityModel.Tokens.Jwt",
+            // Go
+            "golang.org/x/oauth2", "github.com/dgrijalva/jwt-go", "github.com/golang-jwt/jwt",
+            // Ruby
+            "devise", "omniauth", "warden", "doorkeeper",
+            // PHP
+            "laravel/sanctum", "tymon/jwt-auth", "laravel/passport", "firebase/php-jwt",
+            // Rust
+            "actix-identity", "actix-web-httpauth", "oauth2",
+        ];
         for import in ctx.imports {
             let source_lower = import.source.to_lowercase();
             if auth_imports.iter().any(|ai| source_lower.contains(ai)) {
@@ -61,7 +78,8 @@ impl Detector for AuthDetector {
 
         // Detect auth-related call sites (jwt.sign, jwt.verify, bcrypt.hash, etc.)
         let auth_callees = ["sign", "verify", "hash", "compare", "encode", "decode"];
-        let auth_receivers = ["jwt", "bcrypt", "argon2", "passport", "auth"];
+        let auth_receivers = ["jwt", "bcrypt", "argon2", "passport", "auth",
+            "Auth", "devise", "Devise", "security", "Security"];
         for call in ctx.call_sites {
             let callee_lower = call.callee_name.to_lowercase();
             let receiver_lower = call.receiver.as_deref().unwrap_or("").to_lowercase();

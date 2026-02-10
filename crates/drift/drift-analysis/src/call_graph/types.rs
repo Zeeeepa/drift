@@ -171,7 +171,7 @@ impl std::fmt::Display for Resolution {
 }
 
 /// Statistics from a call graph build.
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default)]
 pub struct CallGraphStats {
     pub total_functions: usize,
     pub total_edges: usize,
@@ -180,4 +180,6 @@ pub struct CallGraphStats {
     pub resolution_rate: f64,
     pub build_duration: Duration,
     pub cycles_detected: usize,
+    /// CG-RES-12: Resolution diagnostics — per-strategy and per-language breakdown.
+    pub diagnostics: super::resolution::ResolutionDiagnostics,
 }

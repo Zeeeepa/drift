@@ -82,6 +82,17 @@ fn analyze_function(
             callee_name.clone()
         };
 
+        // CG-TAINT-03: Track taint through assignments
+        // If a call returns into a variable and its arguments are tainted,
+        // propagate taint to the callee_name as a rough approximation
+        if let Some(ref receiver) = call.receiver {
+            if tainted_vars.contains_key(receiver) && !sanitized_vars.contains(receiver) {
+                // Receiver is tainted, result of receiver.method() is also tainted
+                let label = tainted_vars[receiver].clone();
+                tainted_vars.insert(full_name.clone(), label);
+            }
+        }
+
         // Check if this call is a sanitizer
         if let Some(sanitizer_pattern) = registry.match_sanitizer(&full_name) {
             // Mark receiver/arguments as sanitized
@@ -100,11 +111,12 @@ fn analyze_function(
 
         // Check if this call is a sink
         if let Some(sink_pattern) = registry.match_sink(&full_name) {
-            // Check if any tainted variable flows into this sink
+            // CG-TAINT-01: Check if a tainted variable actually flows into this sink
             let is_tainted = check_taint_reaches_sink(
                 &tainted_vars,
                 &sanitized_vars,
                 call,
+                &func.parameters,
             );
 
             if is_tainted {
@@ -113,16 +125,20 @@ fn analyze_function(
                     &sink_pattern.sink_type,
                 );
 
-                // Find the source that originated this taint
-                let source = func_sources.first().cloned().unwrap_or_else(|| {
-                    TaintSource {
-                        file: parse_result.file.clone(),
-                        line: func.line,
-                        column: 0,
-                        expression: "unknown_source".to_string(),
-                        source_type: SourceType::UserInput,
-                        label: TaintLabel::new(0, SourceType::UserInput),
-                    }
+                // CG-TAINT-02: Find the source that originated the taint reaching this sink
+                let source = find_taint_source_for_sink(
+                    &tainted_vars, &sanitized_vars, call, &func_sources,
+                ).unwrap_or_else(|| {
+                    func_sources.first().cloned().unwrap_or_else(|| {
+                        TaintSource {
+                            file: parse_result.file.clone(),
+                            line: func.line,
+                            column: 0,
+                            expression: "unknown_source".to_string(),
+                            source_type: SourceType::UserInput,
+                            label: TaintLabel::new(0, SourceType::UserInput),
+                        }
+                    })
                 });
 
                 let sink = TaintSink {
@@ -220,22 +236,111 @@ fn find_calls_in_function<'a>(
         .collect()
 }
 
-/// Check if tainted data reaches a sink call.
+/// CG-TAINT-01: Check if tainted data reaches a sink call.
+///
+/// Uses a layered approach:
+/// 1. Direct: receiver or full expression is tainted
+/// 2. Bare calls: no receiver + any tainted var in scope → likely receives tainted arg
+/// 3. Receiver calls: receiver is a known parameter in the same function as a tainted
+///    parameter, or a tainted var's callee component matches the sink's callee
 fn check_taint_reaches_sink(
     tainted_vars: &FxHashMap<String, TaintLabel>,
     sanitized_vars: &FxHashSet<String>,
     call: &CallSite,
+    func_params: &smallvec::SmallVec<[crate::parsers::types::ParameterInfo; 4]>,
 ) -> bool {
-    // Check if receiver is tainted
+    // Layer 1: Direct taint — receiver or full expression is tainted
     if let Some(ref receiver) = call.receiver {
         if tainted_vars.contains_key(receiver) && !sanitized_vars.contains(receiver) {
             return true;
         }
     }
 
-    // If there are any tainted variables in scope, conservatively assume taint reaches
-    // (proper dataflow would track through assignments, but this is a sound approximation)
-    !tainted_vars.is_empty()
+    let full_name = if let Some(ref receiver) = call.receiver {
+        format!("{}.{}", receiver, call.callee_name)
+    } else {
+        call.callee_name.clone()
+    };
+    if tainted_vars.contains_key(&full_name) && !sanitized_vars.contains(&full_name) {
+        return true;
+    }
+
+    if tainted_vars.contains_key(&call.callee_name) && !sanitized_vars.contains(&call.callee_name) {
+        return true;
+    }
+
+    // Layer 2: Bare function calls (no receiver) with tainted vars in scope
+    // e.g., `spawn(userInput)`, `eval(data)` — tainted data likely flows as argument
+    if call.receiver.is_none() {
+        let has_unsanitized_taint = tainted_vars.keys().any(|k| !sanitized_vars.contains(k));
+        if has_unsanitized_taint {
+            return true;
+        }
+    }
+
+    // Layer 3: For receiver calls — check if a tainted var's callee component
+    // matches the sink's callee (e.g., tainted "req.query" → sink "db.query")
+    // OR if the receiver is a sibling parameter of a tainted parameter
+    // (e.g., function(req, res) — "req" is tainted, "res.send" is the sink)
+    if call.receiver.is_some() {
+        let has_unsanitized_taint = tainted_vars.keys().any(|k| !sanitized_vars.contains(k));
+        if has_unsanitized_taint {
+            for var_name in tainted_vars.keys() {
+                if sanitized_vars.contains(var_name) {
+                    continue;
+                }
+                let tainted_callee = var_name.rsplit('.').next().unwrap_or(var_name);
+                if tainted_callee == call.callee_name {
+                    return true;
+                }
+            }
+            // If the receiver is itself a declared function parameter AND a different
+            // parameter is tainted, the tainted data likely flows through the function
+            // body to reach this sink. e.g., function(req, res) { res.send(req.body) }
+            if let Some(ref receiver) = call.receiver {
+                let receiver_is_param = func_params.iter().any(|p| p.name == *receiver);
+                let has_tainted_param = func_params.iter().any(|p| {
+                    tainted_vars.contains_key(&p.name) && !sanitized_vars.contains(&p.name)
+                });
+                if receiver_is_param && has_tainted_param {
+                    return true;
+                }
+            }
+        }
+    }
+
+    false
+}
+
+/// CG-TAINT-02: Find the taint source that flows to this specific sink call.
+fn find_taint_source_for_sink(
+    tainted_vars: &FxHashMap<String, TaintLabel>,
+    sanitized_vars: &FxHashSet<String>,
+    call: &CallSite,
+    sources: &[TaintSource],
+) -> Option<TaintSource> {
+    // Check receiver first
+    if let Some(ref receiver) = call.receiver {
+        if let Some(label) = tainted_vars.get(receiver) {
+            if !sanitized_vars.contains(receiver) {
+                // Find the source with matching label
+                return sources.iter()
+                    .find(|s| s.label.id == label.id)
+                    .cloned();
+            }
+        }
+    }
+
+    // Check callee name
+    if let Some(label) = tainted_vars.get(&call.callee_name) {
+        if !sanitized_vars.contains(&call.callee_name) {
+            return sources.iter()
+                .find(|s| s.label.id == label.id)
+                .cloned();
+        }
+    }
+
+    None
 }
 
 /// Check if the appropriate sanitizer has been applied for a given sink type.

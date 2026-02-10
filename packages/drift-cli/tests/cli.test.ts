@@ -3,60 +3,17 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { setNapi } from '../src/napi.js';
+import { setNapi, resetNapi } from '../src/napi.js';
 import { createProgram } from '../src/index.js';
 import { formatOutput } from '../src/output/index.js';
 import { formatTable } from '../src/output/table.js';
 import { formatJson } from '../src/output/json.js';
 import { formatSarif } from '../src/output/sarif.js';
+import { createStubNapi } from '@drift/napi-contracts';
 import type { DriftNapi } from '../src/napi.js';
 
 function createMockNapi(overrides: Partial<DriftNapi> = {}): DriftNapi {
-  return {
-    drift_init() {},
-    drift_shutdown() {},
-    drift_status() {
-      return {
-        version: '2.0.0',
-        fileCount: 10,
-        patternCount: 5,
-        violationCount: 2,
-        healthScore: 90,
-        gateStatus: 'passed',
-      };
-    },
-    drift_scan() {
-      return { filesScanned: 10, patternsDetected: 5, violationsFound: 2, durationMs: 100 };
-    },
-    drift_context() { return { sections: [], tokenCount: 0 }; },
-    drift_analyze() { return {}; },
-    drift_check(_path: string, _policy?: string) {
-      return {
-        passed: true,
-        violations: [],
-      };
-    },
-    drift_violations() {
-      return [
-        {
-          id: 'v1',
-          file: 'src/auth.ts',
-          line: 42,
-          severity: 'warning',
-          rule_id: 'pattern-consistency',
-          message: 'Inconsistent error handling pattern',
-          quick_fix: { strategy: 'wrap_in_try_catch', description: 'Add try-catch block' },
-        },
-      ];
-    },
-    drift_patterns() { return { patterns: [{ id: 'p1', name: 'error-handling', confidence: 0.85 }] }; },
-    drift_impact() { return { affected: ['module1', 'module2'] }; },
-    drift_audit() { return { healthScore: 88, issues: [] }; },
-    drift_simulate() { return { result: 'ok', p50: 3 }; },
-    drift_gates() { return []; },
-    drift_generate_spec() { return { sections: [] }; },
-    ...overrides,
-  };
+  return { ...createStubNapi(), ...overrides };
 }
 
 describe('CLI', () => {
@@ -70,22 +27,35 @@ describe('CLI', () => {
     expect(program).toBeDefined();
     expect(program.name()).toBe('drift');
 
-    // Verify all 13 commands are registered
+    // Verify all 25 commands are registered
     const commands = program.commands.map((c) => c.name());
     expect(commands).toContain('scan');
+    expect(commands).toContain('analyze');
     expect(commands).toContain('check');
     expect(commands).toContain('status');
+    expect(commands).toContain('report');
     expect(commands).toContain('patterns');
     expect(commands).toContain('violations');
+    expect(commands).toContain('security');
+    expect(commands).toContain('contracts');
+    expect(commands).toContain('coupling');
+    expect(commands).toContain('dna');
+    expect(commands).toContain('taint');
+    expect(commands).toContain('errors');
+    expect(commands).toContain('test-quality');
     expect(commands).toContain('impact');
+    expect(commands).toContain('fix');
+    expect(commands).toContain('dismiss');
+    expect(commands).toContain('suppress');
+    expect(commands).toContain('explain');
     expect(commands).toContain('simulate');
+    expect(commands).toContain('context');
     expect(commands).toContain('audit');
+    expect(commands).toContain('export');
+    expect(commands).toContain('gc');
     expect(commands).toContain('setup');
     expect(commands).toContain('doctor');
-    expect(commands).toContain('export');
-    expect(commands).toContain('explain');
-    expect(commands).toContain('fix');
-    expect(commands).toHaveLength(13);
+    expect(commands).toHaveLength(26);
   });
 
   // T8-CLI-03: Test all output formats produce valid output
@@ -110,41 +80,26 @@ describe('CLI', () => {
   });
 
   // T8-CLI-04: Test drift scan on empty directory
-  it('T8-CLI-04: scan on empty directory returns 0 files', () => {
-    setNapi(
-      createMockNapi({
-        drift_scan() {
-          return { filesScanned: 0, patternsDetected: 0, violationsFound: 0, durationMs: 5 };
-        },
-      }),
-    );
-
+  it('T8-CLI-04: scan on empty directory returns 0 files', async () => {
     const napi = createMockNapi({
-      drift_scan() {
-        return { filesScanned: 0, patternsDetected: 0, violationsFound: 0, durationMs: 5 };
+      async driftScan() {
+        return { filesTotal: 0, filesAdded: 0, filesModified: 0, filesRemoved: 0, filesUnchanged: 0, errorsCount: 0, durationMs: 5, status: 'ok', languages: {} };
       },
     });
-    const result = napi.drift_scan('.');
-    expect(result.filesScanned).toBe(0);
+    setNapi(napi);
+    const result = await napi.driftScan('.');
+    expect(result.filesTotal).toBe(0);
   });
 
   // T8-CLI-05: Test drift check with no drift.db
   it('T8-CLI-05: check with error gives helpful message', () => {
-    setNapi(
-      createMockNapi({
-        drift_check() {
-          throw new Error('drift.db not found. Run `drift setup` first.');
-        },
-      }),
-    );
-
     const napi = createMockNapi({
-      drift_check() {
+      driftCheck() {
         throw new Error('drift.db not found. Run `drift setup` first.');
       },
     });
-
-    expect(() => napi.drift_check('.')).toThrow('drift setup');
+    setNapi(napi);
+    expect(() => napi.driftCheck('.')).toThrow('drift setup');
   });
 
   // T8-CLI-09: Test --quiet flag
@@ -159,7 +114,7 @@ describe('CLI', () => {
   it('T8-CLI-10: program handles unknown commands', () => {
     const program = createProgram();
     // Commander handles unknown commands with help text
-    expect(program.commands.length).toBe(13);
+    expect(program.commands.length).toBe(26);
   });
 });
 

@@ -8,7 +8,27 @@ use cortex_core::traits::{CausalEdge, CausalEvidence};
 use crate::to_storage_err;
 
 /// Add a causal edge.
+/// Wrapped in a SAVEPOINT for atomicity: edge + event + evidence are all-or-nothing.
 pub fn add_edge(conn: &Connection, edge: &CausalEdge) -> CortexResult<()> {
+    conn.execute_batch("SAVEPOINT add_edge_sp")
+        .map_err(|e| to_storage_err(format!("add_edge savepoint: {e}")))?;
+
+    match add_edge_inner(conn, edge) {
+        Ok(()) => {
+            conn.execute_batch("RELEASE add_edge_sp")
+                .map_err(|e| to_storage_err(format!("add_edge release: {e}")))?;
+            Ok(())
+        }
+        Err(e) => {
+            let _ = conn.execute_batch("ROLLBACK TO add_edge_sp");
+            let _ = conn.execute_batch("RELEASE add_edge_sp");
+            Err(e)
+        }
+    }
+}
+
+/// Inner add_edge logic.
+fn add_edge_inner(conn: &Connection, edge: &CausalEdge) -> CortexResult<()> {
     conn.execute(
         "INSERT OR REPLACE INTO causal_edges (source_id, target_id, relation, strength)
          VALUES (?1, ?2, ?3, ?4)",
@@ -23,19 +43,22 @@ pub fn add_edge(conn: &Connection, edge: &CausalEdge) -> CortexResult<()> {
         "relation": edge.relation,
         "strength": edge.strength,
     });
-    let _ = crate::temporal_events::emit_event(
+    if let Err(e) = crate::temporal_events::emit_event(
         conn,
         &edge.source_id,
         "relationship_added",
         &delta,
         "system",
         "causal_ops",
-    );
+    ) {
+        tracing::warn!(source_id = %edge.source_id, error = %e, "failed to emit relationship_added event");
+    }
 
     // Insert evidence.
     for ev in &edge.evidence {
         add_evidence_row(conn, &edge.source_id, &edge.target_id, ev)?;
     }
+
     Ok(())
 }
 
@@ -84,14 +107,16 @@ pub fn remove_edge(conn: &Connection, source_id: &str, target_id: &str) -> Corte
         "source_id": source_id,
         "target_id": target_id,
     });
-    let _ = crate::temporal_events::emit_event(
+    if let Err(e) = crate::temporal_events::emit_event(
         conn,
         source_id,
         "relationship_removed",
         &delta,
         "system",
         "causal_ops",
-    );
+    ) {
+        tracing::warn!(source_id = %source_id, error = %e, "failed to emit relationship_removed event");
+    }
 
     // Evidence is cascade-deleted.
     conn.execute(
@@ -122,14 +147,16 @@ pub fn update_strength(
         "target_id": target_id,
         "new_strength": strength,
     });
-    let _ = crate::temporal_events::emit_event(
+    if let Err(e) = crate::temporal_events::emit_event(
         conn,
         source_id,
         "strength_updated",
         &delta,
         "system",
         "causal_ops",
-    );
+    ) {
+        tracing::warn!(source_id = %source_id, error = %e, "failed to emit strength_updated event");
+    }
 
     Ok(())
 }
@@ -252,6 +279,29 @@ pub fn node_count(conn: &Connection) -> CortexResult<usize> {
         )
         .map_err(|e| to_storage_err(e.to_string()))?;
     Ok(count as usize)
+}
+
+/// List all distinct node IDs appearing in any causal edge.
+pub fn list_all_node_ids(conn: &Connection) -> CortexResult<Vec<String>> {
+    let mut stmt = conn
+        .prepare(
+            "SELECT DISTINCT id FROM (
+                SELECT source_id AS id FROM causal_edges
+                UNION
+                SELECT target_id AS id FROM causal_edges
+            ) ORDER BY id",
+        )
+        .map_err(|e| to_storage_err(e.to_string()))?;
+
+    let rows = stmt
+        .query_map([], |row| row.get::<_, String>(0))
+        .map_err(|e| to_storage_err(e.to_string()))?;
+
+    let mut ids = Vec::new();
+    for row in rows {
+        ids.push(row.map_err(|e| to_storage_err(e.to_string()))?);
+    }
+    Ok(ids)
 }
 
 /// Remove edges where neither source nor target exists in the memories table.

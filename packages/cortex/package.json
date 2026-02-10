@@ -1,7 +1,7 @@
 {
   "name": "@drift/cortex",
   "version": "0.1.0",
-  "description": "Cortex persistent memory system — 33 MCP tools + CLI over Rust NAPI bindings",
+  "description": "Cortex persistent memory system — 61 MCP tools + CLI over Rust NAPI bindings",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

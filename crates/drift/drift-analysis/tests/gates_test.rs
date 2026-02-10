@@ -21,6 +21,8 @@ fn make_gate_input() -> GateInput {
                 file: "src/main.ts".to_string(),
                 line: 20,
                 column: None,
+                end_line: None,
+                end_column: None,
                 deviation_score: 2.0,
                 message: "Naming deviation".to_string(),
             }],
@@ -43,6 +45,8 @@ fn make_gate_input() -> GateInput {
         previous_health_score: Some(80.0),
         current_health_score: Some(82.0),
         predecessor_results: std::collections::HashMap::new(),
+        baseline_violations: std::collections::HashSet::new(),
+        feedback_stats: None,
     }
 }
 
@@ -82,6 +86,8 @@ fn test_dag_respects_dependencies() {
                 file: format!("src/file{i}.ts"),
                 line: i as u32,
                 column: None,
+                end_line: None,
+                end_column: None,
                 deviation_score: 5.0,
                 message: "Critical deviation".to_string(),
             })
@@ -228,6 +234,8 @@ fn test_gate_performance_10k_violations() {
             file: format!("src/file{}.ts", i / 100),
             line: (i % 1000) as u32,
             column: None,
+            end_line: None,
+            end_column: None,
             deviation_score: 2.0,
             message: format!("Violation {i}"),
         })

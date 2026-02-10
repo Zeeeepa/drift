@@ -66,3 +66,55 @@ pub fn drift_shutdown() -> napi::Result<()> {
 pub fn drift_is_initialized() -> bool {
     runtime::is_initialized()
 }
+
+/// Run garbage collection and data retention on drift.db.
+///
+/// Applies tiered retention policy:
+/// - **Orphan cleanup**: removes data for files no longer tracked
+/// - **Short (30d)**: detections, violations, findings
+/// - **Medium (90d)**: trends, feedback, history
+/// - **Long (365d)**: caches, decisions
+///
+/// Follows with incremental vacuum to reclaim disk space.
+///
+/// @param short_days - Override short retention period (default 30).
+/// @param medium_days - Override medium retention period (default 90).
+/// @param long_days - Override long retention period (default 365).
+#[napi(js_name = "driftGC")]
+pub fn drift_gc(
+    short_days: Option<u32>,
+    medium_days: Option<u32>,
+    long_days: Option<u32>,
+) -> napi::Result<serde_json::Value> {
+    let rt = runtime::get()?;
+
+    let policy = drift_storage::retention::RetentionPolicy {
+        short_days: short_days.unwrap_or(30),
+        medium_days: medium_days.unwrap_or(90),
+        long_days: long_days.unwrap_or(365),
+    };
+
+    let retention_report = rt.db.with_writer(|conn| {
+        drift_storage::retention::apply_retention(conn, &policy)
+    }).map_err(|e| {
+        napi::Error::from_reason(format!(
+            "[{}] Retention cleanup failed: {e}",
+            error_codes::STORAGE_ERROR
+        ))
+    })?;
+
+    // Incremental vacuum to reclaim space
+    let _ = rt.db.with_writer(|conn| -> Result<(), drift_core::errors::StorageError> {
+        conn.execute_batch("PRAGMA incremental_vacuum")
+            .map_err(|e| drift_core::errors::StorageError::SqliteError { message: e.to_string() })?;
+        Ok(())
+    });
+
+    Ok(serde_json::json!({
+        "total_deleted": retention_report.total_deleted,
+        "duration_ms": retention_report.duration_ms,
+        "per_table": retention_report.per_table.iter().map(|t| {
+            serde_json::json!({ "table": t.table, "deleted": t.deleted })
+        }).collect::<Vec<_>>(),
+    }))
+}

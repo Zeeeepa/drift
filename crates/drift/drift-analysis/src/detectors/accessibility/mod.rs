@@ -5,6 +5,7 @@ use smallvec::SmallVec;
 use crate::detectors::traits::{Detector, DetectorCategory, DetectorVariant};
 use crate::engine::types::{DetectionMethod, PatternCategory, PatternMatch};
 use crate::engine::visitor::DetectionContext;
+use crate::scanner::language_detect::Language;
 
 pub struct AccessibilityDetector;
 
@@ -14,6 +15,11 @@ impl Detector for AccessibilityDetector {
     fn variant(&self) -> DetectorVariant { DetectorVariant::Base }
 
     fn detect(&self, ctx: &DetectionContext) -> Vec<PatternMatch> {
+        // DP-FE-03: Only run for frontend languages
+        if !matches!(ctx.language, Language::TypeScript | Language::JavaScript) {
+            return Vec::new();
+        }
+
         let mut matches = Vec::new();
 
         // Detect a11y-related imports (testing-library, axe-core, etc.)

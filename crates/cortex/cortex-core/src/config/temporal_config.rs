@@ -22,6 +22,9 @@ pub struct TemporalConfig {
     pub drift_daily_enabled: bool,
     pub drift_weekly_enabled: bool,
 
+    // Drift detection window (F-06)
+    pub drift_detection_window_hours: u64,
+
     // Alert thresholds (TR7)
     pub alert_ksi_threshold: f64,
     pub alert_confidence_erosion_windows: u32,
@@ -51,6 +54,7 @@ impl Default for TemporalConfig {
             drift_hourly_enabled: true,
             drift_daily_enabled: true,
             drift_weekly_enabled: true,
+            drift_detection_window_hours: 168, // 1 week default
             alert_ksi_threshold: 0.3,
             alert_confidence_erosion_windows: 2,
             alert_contradiction_density_threshold: 0.10,

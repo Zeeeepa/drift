@@ -3,7 +3,7 @@
  */
 
 import type { CortexClient } from "../../bridge/client.js";
-import type { McpToolDefinition, MemoryType } from "../../bridge/types.js";
+import type { McpToolDefinition } from "../../bridge/types.js";
 
 export function driftCortexReembed(client: CortexClient): McpToolDefinition {
   return {
@@ -21,26 +21,11 @@ export function driftCortexReembed(client: CortexClient): McpToolDefinition {
       },
     },
     handler: async (args) => {
-      // Re-embedding is triggered by listing memories and touching them
-      // through the retrieval engine which regenerates embeddings on access.
-      const memories = await client.memoryList(args.memory_type as MemoryType | undefined);
-
-      // Trigger search for each memory to force embedding regeneration
-      let reembedded = 0;
-      for (const memory of memories) {
-        try {
-          await client.search(memory.summary, 1);
-          reembedded++;
-        } catch {
-          // Skip failures — degraded mode handles fallback
-        }
-      }
-
-      return {
-        total_memories: memories.length,
-        reembedded,
-        status: "reembedding_complete",
-      };
+      // E-01: Call the real reembed NAPI binding which iterates memories,
+      // regenerates embeddings via the configured provider chain, and
+      // stores them in the embeddings table.
+      const result = await client.reembed(args.memory_type as string | undefined);
+      return result;
     },
   };
 }

@@ -33,14 +33,37 @@ export const DRIFT_CONTEXT_SCHEMA = {
 };
 
 /**
- * Execute drift_context — intent-weighted context with token budgeting.
+ * Execute drift_context — intent-weighted context via NAPI drift_context().
+ * The contract method returns Promise<string> (JSON). We parse it into ContextOutput.
  */
 export async function handleDriftContext(
   params: DriftContextParams,
 ): Promise<ContextOutput> {
   const napi = loadNapi();
   const depth = params.depth ?? 'standard';
-  const result = napi.drift_context(params.intent, depth);
+  const dataJson = params.focus ? JSON.stringify({ focus: params.focus }) : '{}';
+  const jsonStr = await napi.driftContext(params.intent, depth, dataJson);
+
+  let parsed: { sections?: Array<{ name: string; content: string }>; tokenCount?: number; intent?: string; depth?: string };
+  try {
+    parsed = JSON.parse(jsonStr) as typeof parsed;
+  } catch {
+    parsed = {};
+  }
+
+  const sections = (parsed.sections ?? []).map((s, i) => ({
+    title: s.name,
+    content: s.content,
+    relevanceScore: 1.0 - i * 0.1,
+  }));
+
+  const result: ContextOutput = {
+    intent: params.intent,
+    depth,
+    sections,
+    tokenCount: parsed.tokenCount ?? 0,
+    truncated: false,
+  };
 
   // If focus is specified, filter sections by relevance to focus area
   if (params.focus && result.sections) {

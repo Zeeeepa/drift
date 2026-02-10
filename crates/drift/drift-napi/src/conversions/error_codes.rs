@@ -51,6 +51,7 @@ pub const INVALID_FILTER: &str = "INVALID_FILTER";
 // General
 pub const INTERNAL_ERROR: &str = "INTERNAL_ERROR";
 pub const CANCELLED: &str = "CANCELLED";
+pub const INVALID_ARGUMENT: &str = "INVALID_ARGUMENT";
 
 /// Convert any Drift error implementing `DriftErrorCode + Display` to a structured NAPI error.
 ///

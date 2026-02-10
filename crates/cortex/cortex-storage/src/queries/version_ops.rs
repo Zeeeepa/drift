@@ -20,7 +20,36 @@ pub struct MemoryVersion {
 }
 
 /// Insert a new version snapshot for a memory.
+/// Wrapped in a SAVEPOINT for atomicity: SELECT MAX(version) + INSERT are atomic (no TOCTOU).
 pub fn insert_version(
+    conn: &Connection,
+    memory_id: &str,
+    content: &str,
+    summary: &str,
+    confidence: f64,
+    changed_by: &str,
+    reason: &str,
+) -> CortexResult<i64> {
+    conn.execute_batch("SAVEPOINT insert_ver")
+        .map_err(|e| to_storage_err(format!("insert_version savepoint: {e}")))?;
+
+    match insert_version_inner(conn, memory_id, content, summary, confidence, changed_by, reason) {
+        Ok(ver) => {
+            conn.execute_batch("RELEASE insert_ver")
+                .map_err(|e| to_storage_err(format!("insert_version release: {e}")))?;
+            Ok(ver)
+        }
+        Err(e) => {
+            let _ = conn.execute_batch("ROLLBACK TO insert_ver");
+            let _ = conn.execute_batch("RELEASE insert_ver");
+            Err(e)
+        }
+    }
+}
+
+/// Inner insert_version logic.
+#[allow(clippy::too_many_arguments)]
+fn insert_version_inner(
     conn: &Connection,
     memory_id: &str,
     content: &str,
@@ -51,14 +80,16 @@ pub fn insert_version(
         "version": next_version,
         "reason": reason,
     });
-    let _ = crate::temporal_events::emit_event(
+    if let Err(e) = crate::temporal_events::emit_event(
         conn,
         memory_id,
         "content_updated",
         &delta,
         "system",
         "version_ops",
-    );
+    ) {
+        tracing::warn!(memory_id = %memory_id, error = %e, "failed to emit version event");
+    }
 
     Ok(next_version)
 }

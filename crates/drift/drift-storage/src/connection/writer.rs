@@ -12,18 +12,21 @@ pub fn with_immediate_transaction<F, T>(
 where
     F: FnOnce(&rusqlite::Transaction<'_>) -> Result<T, StorageError>,
 {
+    // Use unchecked_transaction with IMMEDIATE behavior.
+    // We issue BEGIN IMMEDIATE directly, then wrap in Transaction for auto-rollback.
+    conn.execute_batch("BEGIN IMMEDIATE")
+        .map_err(|e| StorageError::SqliteError {
+            message: format!("failed to begin immediate transaction: {e}"),
+        })?;
+
+    // SAFETY: we just started a transaction via BEGIN IMMEDIATE above,
+    // so unchecked_transaction wraps the existing transaction without
+    // issuing another BEGIN statement.
     let tx = conn
         .unchecked_transaction()
         .map_err(|e| StorageError::SqliteError {
-            message: format!("failed to begin transaction: {e}"),
+            message: format!("failed to wrap transaction: {e}"),
         })?;
-
-    // Set to IMMEDIATE mode
-    conn.execute_batch("BEGIN IMMEDIATE")
-        .map_err(|e| StorageError::SqliteError {
-            message: format!("failed to begin immediate: {e}"),
-        })
-        .ok(); // May fail if already in transaction from unchecked_transaction
 
     let result = f(&tx)?;
 

@@ -304,6 +304,7 @@ fn stress_confidence_10k_patterns_under_500ms() {
     let scorer = ConfidenceScorer::new(ScorerConfig {
         total_files: 10_000,
         default_age_days: 30,
+    default_data_quality: None,
     });
 
     let patterns: Vec<AggregatedPattern> = (0..10_000)
@@ -311,7 +312,7 @@ fn stress_confidence_10k_patterns_under_500ms() {
         .collect();
 
     let start = Instant::now();
-    let scores = scorer.score_batch(&patterns);
+    let scores = scorer.score_batch(&patterns, None);
     let elapsed = start.elapsed();
 
     assert_eq!(scores.len(), 10_000);
@@ -441,6 +442,7 @@ fn stress_confidence_with_momentum_decay() {
     let scorer = ConfidenceScorer::new(ScorerConfig {
         total_files: 100,
         default_age_days: 30,
+    default_data_quality: None,
     });
     let pattern = make_pattern("decay_test", 80, 70);
     let mut tracker = MomentumTracker::new();
@@ -454,10 +456,11 @@ fn stress_confidence_with_momentum_decay() {
     let month_old = scorer.score_with_momentum(&pattern, &tracker, 30, 30);
     let year_old = scorer.score_with_momentum(&pattern, &tracker, 30, 365);
 
-    // Confidence must monotonically decrease with staleness
-    assert!(fresh.posterior_mean >= week_old.posterior_mean);
-    assert!(week_old.posterior_mean >= month_old.posterior_mean);
-    assert!(month_old.posterior_mean >= year_old.posterior_mean);
+    // Confidence must monotonically decrease with staleness (within f64 precision)
+    let eps = 1e-12;
+    assert!(fresh.posterior_mean + eps >= week_old.posterior_mean);
+    assert!(week_old.posterior_mean + eps >= month_old.posterior_mean);
+    assert!(month_old.posterior_mean + eps >= year_old.posterior_mean);
 
     // All must remain finite and valid
     for s in [&fresh, &week_old, &month_old, &year_old] {
@@ -754,8 +757,9 @@ fn stress_full_pipeline_production_simulation() {
     let scorer = ConfidenceScorer::new(ScorerConfig {
         total_files: 500,
         default_age_days: 30,
+    default_data_quality: None,
     });
-    let scores = scorer.score_batch(&agg_result.patterns);
+    let scores = scorer.score_batch(&agg_result.patterns, None);
     let score_time = start.elapsed();
 
     assert_eq!(scores.len(), 200);
@@ -812,6 +816,7 @@ fn stress_tier_distribution_sanity() {
     let scorer = ConfidenceScorer::new(ScorerConfig {
         total_files: 100,
         default_age_days: 14,
+    default_data_quality: None,
     });
 
     let mut tier_counts = std::collections::HashMap::new();
@@ -820,7 +825,7 @@ fn stress_tier_distribution_sanity() {
         let spread = (i % 100) + 1; // 1..100
         let locs = spread + (i % 20);
         let pattern = make_pattern(&format!("p_{}", i), locs as u32, spread as u32);
-        let score = scorer.score(&pattern, MomentumDirection::Stable, 14);
+        let score = scorer.score(&pattern, MomentumDirection::Stable, 14, None, None);
         *tier_counts.entry(score.tier).or_insert(0u32) += 1;
     }
 
@@ -899,9 +904,10 @@ fn stress_scorer_zero_total_files() {
     let scorer = ConfidenceScorer::new(ScorerConfig {
         total_files: 0,
         default_age_days: 7,
+    default_data_quality: None,
     });
     let pattern = make_pattern("edge", 10, 5);
-    let score = scorer.score(&pattern, MomentumDirection::Stable, 7);
+    let score = scorer.score(&pattern, MomentumDirection::Stable, 7, None, None);
 
     assert!(score.posterior_mean.is_finite());
     assert!(score.alpha > 0.0);
@@ -914,9 +920,10 @@ fn stress_scorer_max_u64_files() {
     let scorer = ConfidenceScorer::new(ScorerConfig {
         total_files: 1_000_000,
         default_age_days: 7,
+    default_data_quality: None,
     });
     let pattern = make_pattern("huge", 10, 5);
-    let score = scorer.score(&pattern, MomentumDirection::Stable, 7);
+    let score = scorer.score(&pattern, MomentumDirection::Stable, 7, None, None);
 
     assert!(score.posterior_mean.is_finite());
     assert!(score.posterior_mean >= 0.0 && score.posterior_mean <= 1.0);

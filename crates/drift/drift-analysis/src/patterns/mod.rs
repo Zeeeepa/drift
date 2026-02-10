@@ -9,3 +9,4 @@ pub mod aggregation;
 pub mod confidence;
 pub mod outliers;
 pub mod learning;
+pub mod pipeline;

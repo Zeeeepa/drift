@@ -133,3 +133,16 @@ pub fn count_functions(conn: &Connection) -> Result<i64, StorageError> {
             message: e.to_string(),
         })
 }
+
+/// Count entry point functions — functions with zero incoming call edges.
+pub fn count_entry_points(conn: &Connection) -> Result<i64, StorageError> {
+    conn.query_row(
+        "SELECT COUNT(*) FROM functions f
+         WHERE f.id NOT IN (SELECT DISTINCT callee_id FROM call_edges)",
+        [],
+        |row| row.get(0),
+    )
+    .map_err(|e| StorageError::SqliteError {
+        message: e.to_string(),
+    })
+}

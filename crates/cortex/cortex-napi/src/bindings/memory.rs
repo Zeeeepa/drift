@@ -32,13 +32,44 @@ pub fn cortex_memory_get(id: String) -> napi::Result<serde_json::Value> {
 }
 
 /// Update an existing memory.
+/// D-03: If content changed, regenerate the embedding so similarity scores stay fresh.
 #[napi]
 pub fn cortex_memory_update(memory_json: serde_json::Value) -> napi::Result<()> {
     let rt = runtime::get()?;
     let memory = memory_types::memory_from_json(memory_json)?;
+
+    // Check if content changed by comparing content_hash with existing.
+    let content_changed = rt
+        .storage
+        .get(&memory.id)
+        .ok()
+        .flatten()
+        .map(|existing| existing.content_hash != memory.content_hash)
+        .unwrap_or(false);
+
     rt.storage
         .update(&memory)
-        .map_err(error_types::to_napi_error)
+        .map_err(error_types::to_napi_error)?;
+
+    // D-03: Regenerate embedding if content changed.
+    if content_changed {
+        let mut emb = rt.embeddings.lock().map_err(|e| {
+            napi::Error::from_reason(format!("Embedding lock poisoned: {e}"))
+        })?;
+        if let Ok(embedding) = emb.embed_memory(&memory) {
+            let _ = rt.storage.pool().writer.with_conn_sync(|conn| {
+                cortex_storage::queries::vector_search::store_embedding(
+                    conn,
+                    &memory.id,
+                    &memory.content_hash,
+                    &embedding,
+                    emb.active_provider(),
+                )
+            });
+        }
+    }
+
+    Ok(())
 }
 
 /// Delete a memory by ID.

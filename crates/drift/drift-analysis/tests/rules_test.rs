@@ -18,6 +18,8 @@ fn make_pattern(id: &str, category: &str, confidence: f64, cwe_ids: Vec<u32>) ->
             file: "src/utils.ts".to_string(),
             line: 25,
             column: Some(5),
+            end_line: None,
+            end_column: None,
             deviation_score: 2.5,
             message: format!("Deviates from pattern '{id}'"),
         }],
@@ -37,6 +39,7 @@ fn test_rules_engine_maps_patterns_to_violations() {
             make_pattern("sql-injection", "security", 0.95, vec![89]),
         ],
         source_lines: HashMap::new(),
+        baseline_violation_ids: std::collections::HashSet::new(),
     };
 
     let violations = evaluator.evaluate(&input);
@@ -83,6 +86,8 @@ fn test_inline_suppression() {
                     file: "src/utils.ts".to_string(),
                     line: 3,
                     column: None,
+                    end_line: None,
+                    end_column: None,
                     deviation_score: 3.0,
                     message: "Unsafe query".to_string(),
                 },
@@ -90,6 +95,8 @@ fn test_inline_suppression() {
                     file: "src/utils.ts".to_string(),
                     line: 4,
                     column: None,
+                    end_line: None,
+                    end_column: None,
                     deviation_score: 3.0,
                     message: "Another unsafe".to_string(),
                 },
@@ -98,6 +105,7 @@ fn test_inline_suppression() {
             owasp_categories: vec![],
         }],
         source_lines,
+        baseline_violation_ids: std::collections::HashSet::new(),
     };
 
     let violations = evaluator.evaluate(&input);
@@ -166,6 +174,8 @@ fn test_quick_fix_strategies() {
             file: "test.ts".to_string(),
             line: 1,
             column: None,
+            end_line: None,
+            end_column: None,
             deviation_score: 2.0,
             message: "test".to_string(),
         };
@@ -199,6 +209,8 @@ fn test_violation_deduplication() {
                     file: "src/app.ts".to_string(),
                     line: 10,
                     column: None,
+                    end_line: None,
+                    end_column: None,
                     deviation_score: 2.0,
                     message: "Naming violation from detector A".to_string(),
                 }],
@@ -214,6 +226,8 @@ fn test_violation_deduplication() {
                     file: "src/app.ts".to_string(),
                     line: 10,
                     column: None,
+                    end_line: None,
+                    end_column: None,
                     deviation_score: 2.0,
                     message: "Naming violation from detector B".to_string(),
                 }],
@@ -222,6 +236,7 @@ fn test_violation_deduplication() {
             },
         ],
         source_lines: HashMap::new(),
+        baseline_violation_ids: std::collections::HashSet::new(),
     };
 
     let violations = evaluator.evaluate(&input);
@@ -238,6 +253,7 @@ fn test_severity_assignment_by_cwe() {
     let input = RulesInput {
         patterns: vec![make_pattern("sql-inj", "security", 0.95, vec![89])],
         source_lines: HashMap::new(),
+        baseline_violation_ids: std::collections::HashSet::new(),
     };
     let violations = evaluator.evaluate(&input);
     assert!(violations.iter().all(|v| v.severity == Severity::Error));
@@ -246,6 +262,7 @@ fn test_severity_assignment_by_cwe() {
     let input2 = RulesInput {
         patterns: vec![make_pattern("camelCase", "naming", 0.8, vec![])],
         source_lines: HashMap::new(),
+        baseline_violation_ids: std::collections::HashSet::new(),
     };
     let violations2 = evaluator.evaluate(&input2);
     assert!(violations2.iter().all(|v| v.severity == Severity::Info || v.severity == Severity::Warning));
@@ -254,6 +271,7 @@ fn test_severity_assignment_by_cwe() {
     let input3 = RulesInput {
         patterns: vec![make_pattern("jsdoc", "documentation", 0.7, vec![])],
         source_lines: HashMap::new(),
+        baseline_violation_ids: std::collections::HashSet::new(),
     };
     let violations3 = evaluator.evaluate(&input3);
     assert!(violations3.iter().all(|v| v.severity == Severity::Info));

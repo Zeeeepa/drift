@@ -26,7 +26,6 @@ use cortex_storage::queries::multiagent_ops;
 
 /// Computes and manages agent trust scores.
 pub struct TrustScorer {
-    #[allow(dead_code)]
     config: MultiAgentConfig,
 }
 
@@ -36,6 +35,35 @@ impl TrustScorer {
         Self {
             config: config.clone(),
         }
+    }
+
+    /// Get the config.
+    pub fn config(&self) -> &MultiAgentConfig {
+        &self.config
+    }
+
+    /// Get the bootstrap trust score for new agents from config.
+    pub fn bootstrap_score(&self) -> f64 {
+        self.config.trust_bootstrap_score
+    }
+
+    /// Compute config-weighted trust score.
+    ///
+    /// Uses the configured penalty/bonus weights instead of the default
+    /// symmetric formula. This allows operators to tune how aggressively
+    /// contradictions penalize trust vs how quickly validations build it.
+    pub fn compute_weighted_trust(&self, evidence: &TrustEvidence) -> f64 {
+        let total = evidence.total_received as f64;
+        if total < f64::EPSILON {
+            return self.config.trust_bootstrap_score;
+        }
+
+        let validation_score = evidence.validated_count as f64 * self.config.trust_validation_bonus;
+        let usage_score = evidence.useful_count as f64 * self.config.trust_usage_bonus;
+        let contradiction_penalty = evidence.contradicted_count as f64 * self.config.trust_contradiction_penalty;
+
+        let raw = self.config.trust_bootstrap_score + validation_score + usage_score - contradiction_penalty;
+        raw.clamp(0.0, 1.0)
     }
 
     /// Get the trust relationship from `agent_id` toward `target_agent`.

@@ -139,6 +139,8 @@ impl CloudEngine {
         {
             Ok(report) => {
                 self.status = CloudStatus::Connected;
+                // C-10: Record that sync completed so the frequency throttle resets.
+                self.quota.record_sync_completed();
                 Ok(SyncResult {
                     status: SyncResultStatus::Success,
                     pushed: report.pushed,

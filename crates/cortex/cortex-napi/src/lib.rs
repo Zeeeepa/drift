@@ -6,7 +6,7 @@
 //! ## Architecture
 //!
 //! - `runtime.rs` — Global `CortexRuntime` singleton owning all engines
-//! - `bindings/` — 12 domain-specific NAPI binding modules (33 exported functions)
+//! - `bindings/` — 17 domain-specific NAPI binding modules (68 exported functions)
 //! - `conversions/` — Rust ↔ JS type conversions via serde_json
 
 pub mod bindings;

@@ -236,6 +236,8 @@ pub enum ErrorHandlingKind {
     AsyncAwaitTry,
     Rescue,
     Defer,
+    DeferRecover,
+    WithStatement,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

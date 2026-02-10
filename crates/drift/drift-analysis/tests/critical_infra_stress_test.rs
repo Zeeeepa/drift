@@ -143,7 +143,7 @@ fn critical_health_score_always_bounded() {
         outlier_count: 0,
         in_call_graph: true,
         constraint_issues: 0,
-        has_error_issues: false,
+        has_error_issues: false, locations: vec![],
     }];
     let (score, _) = scorer.compute(&patterns, &[]);
     assert!((0.0..=100.0).contains(&score), "Max input: score={score}");
@@ -159,7 +159,7 @@ fn critical_health_score_always_bounded() {
         outlier_count: 1000,
         in_call_graph: false,
         constraint_issues: 100,
-        has_error_issues: true,
+        has_error_issues: true, locations: vec![],
     }];
     let (score_min, _) = scorer.compute(&patterns_min, &[]);
     assert!((0.0..=100.0).contains(&score_min), "Min input: score={score_min}");
@@ -180,7 +180,7 @@ fn critical_health_scorer_dup_groups_exceed_patterns() {
         outlier_count: 0,
         in_call_graph: true,
         constraint_issues: 0,
-        has_error_issues: false,
+        has_error_issues: false, locations: vec![],
     }];
 
     // 5 duplicate groups with 2 patterns each = 10 patterns in dup groups
@@ -216,19 +216,19 @@ fn critical_health_scorer_per_category_completeness() {
             id: "p1".to_string(), name: "p1".to_string(),
             category: "naming".to_string(), status: PatternStatus::Approved,
             confidence: 0.9, location_count: 10, outlier_count: 1,
-            in_call_graph: true, constraint_issues: 0, has_error_issues: false,
+            in_call_graph: true, constraint_issues: 0, has_error_issues: false, locations: vec![],
         },
         PatternAuditData {
             id: "p2".to_string(), name: "p2".to_string(),
             category: "security".to_string(), status: PatternStatus::Approved,
             confidence: 0.95, location_count: 20, outlier_count: 0,
-            in_call_graph: true, constraint_issues: 0, has_error_issues: false,
+            in_call_graph: true, constraint_issues: 0, has_error_issues: false, locations: vec![],
         },
         PatternAuditData {
             id: "p3".to_string(), name: "p3".to_string(),
             category: "error_handling".to_string(), status: PatternStatus::Discovered,
             confidence: 0.7, location_count: 5, outlier_count: 2,
-            in_call_graph: false, constraint_issues: 1, has_error_issues: false,
+            in_call_graph: false, constraint_issues: 1, has_error_issues: false, locations: vec![],
         },
     ];
 
@@ -360,10 +360,10 @@ fn critical_policy_required_gate_missing_from_results() {
 
     let engine = PolicyEngine::new(policy);
     let pr = engine.evaluate(&results);
-    // Current behavior: missing required gate = treated as passed (map_or(true, ...))
-    // This is a design decision — document it
-    assert!(pr.required_gates_passed,
-        "Missing required gate is treated as passed (not evaluated = not failed)");
+    // Fixed behavior: missing required gate = treated as FAILED (is_some_and returns false for None)
+    // This was a Phase B fix — map_or(true,...) → is_some_and(|r| r.passed)
+    assert!(!pr.required_gates_passed,
+        "Missing required gate must be treated as failed (not evaluated = not passed)");
 }
 
 /// Threshold mode at exact boundary — score == threshold must pass.
@@ -410,6 +410,8 @@ fn critical_orchestrator_cascading_skip() {
                 file: "src/app.ts".to_string(),
                 line: 1,
                 column: None,
+                end_line: None,
+                end_column: None,
                 deviation_score: 5.0,
                 message: "Critical violation".to_string(),
             }],
@@ -432,10 +434,11 @@ fn critical_orchestrator_cascading_skip() {
     assert_eq!(sb.status, GateStatus::Skipped,
         "SecurityBoundaries must be SKIPPED when PatternCompliance fails");
 
-    // Gates without dependencies should still execute
+    // Gates without dependencies should still execute (not dependency-skipped).
+    // TestCoverage self-skips due to no data, but it was NOT dependency-skipped.
     let tc = results.iter().find(|r| r.gate_id == GateId::TestCoverage).unwrap();
-    assert_ne!(tc.status, GateStatus::Skipped,
-        "TestCoverage has no dependencies — should NOT be skipped");
+    assert!(!tc.summary.contains("dependencies not met"),
+        "TestCoverage has no dependencies — should NOT be dependency-skipped");
 }
 
 /// Skipped gates must have passed=true (they don't block the pipeline).
@@ -450,6 +453,8 @@ fn critical_orchestrator_skipped_gates_are_passing() {
             locations: vec![],
             outliers: vec![OutlierLocation {
                 file: "x.ts".to_string(), line: 1, column: None,
+                end_line: None,
+                end_column: None,
                 deviation_score: 5.0, message: "fail".to_string(),
             }],
             cwe_ids: vec![89],
@@ -642,7 +647,7 @@ fn critical_auto_approve_zero_locations() {
         outlier_count: 0,
         in_call_graph: true,
         constraint_issues: 0,
-        has_error_issues: false,
+        has_error_issues: false, locations: vec![],
     }];
 
     let (approved, _, _) = approver.classify(&patterns);
@@ -665,6 +670,7 @@ fn critical_auto_approve_error_issues_block() {
         in_call_graph: true,
         constraint_issues: 0,
         has_error_issues: true, // blocks auto-approve
+        locations: vec![],
     }];
 
     let (approved, review, _) = approver.classify(&patterns);
@@ -688,7 +694,7 @@ fn critical_auto_approve_skips_already_approved() {
         outlier_count: 0,
         in_call_graph: true,
         constraint_issues: 0,
-        has_error_issues: false,
+        has_error_issues: false, locations: vec![],
     }];
 
     let (approved, review, fp) = approver.classify(&patterns);
@@ -711,7 +717,7 @@ fn critical_auto_approve_outlier_ratio_exact_boundary() {
         outlier_count: 5,   // 5 outliers → ratio = 5/10 = 0.50 (exactly at threshold)
         in_call_graph: true,
         constraint_issues: 0,
-        has_error_issues: false,
+        has_error_issues: false, locations: vec![],
     }];
 
     let (approved, _, _) = approver.classify(&patterns);
@@ -984,10 +990,19 @@ fn critical_sarif_both_cwe_and_owasp() {
 
     let output = reporter.generate(&results).unwrap();
     let sarif: serde_json::Value = serde_json::from_str(&output).unwrap();
-    let taxa = sarif["runs"][0]["results"][0]["taxa"].as_array().unwrap();
-    assert_eq!(taxa.len(), 2, "Must have both CWE and OWASP taxa entries");
-    assert!(taxa.iter().any(|t| t["id"].as_str().unwrap().contains("CWE")));
-    assert!(taxa.iter().any(|t| t["id"].as_str().unwrap().contains("A03")));
+
+    // Taxonomies are at runs[0].taxonomies (SARIF 2.1.0 §3.14.8)
+    let taxonomies = sarif["runs"][0]["taxonomies"].as_array().unwrap();
+    assert_eq!(taxonomies.len(), 2, "Must have both CWE and OWASP taxonomy entries");
+    assert!(taxonomies.iter().any(|t| t["name"].as_str().unwrap() == "CWE"));
+    assert!(taxonomies.iter().any(|t| t["name"].as_str().unwrap() == "OWASP"));
+
+    // CWE/OWASP references are in rules[0].relationships (SARIF 2.1.0 §3.49.3)
+    let rules = sarif["runs"][0]["tool"]["driver"]["rules"].as_array().unwrap();
+    let relationships = rules[0]["relationships"].as_array().unwrap();
+    assert_eq!(relationships.len(), 2, "Rule must reference both CWE and OWASP");
+    assert!(relationships.iter().any(|r| r["target"]["id"].as_str().unwrap().contains("CWE")));
+    assert!(relationships.iter().any(|r| r["target"]["id"].as_str().unwrap().contains("A03")));
 }
 
 /// SARIF rules deduplication: same rule_id from multiple violations → one rule entry.
@@ -1031,13 +1046,13 @@ fn critical_dedup_cross_category_isolation() {
             id: "naming-1".to_string(), name: "camelCase".to_string(),
             category: "naming".to_string(), status: PatternStatus::Approved,
             confidence: 0.9, location_count: 10, outlier_count: 0,
-            in_call_graph: true, constraint_issues: 0, has_error_issues: false,
+            in_call_graph: true, constraint_issues: 0, has_error_issues: false, locations: vec![],
         },
         PatternAuditData {
             id: "security-1".to_string(), name: "parameterized".to_string(),
             category: "security".to_string(), status: PatternStatus::Approved,
             confidence: 0.9, location_count: 10, outlier_count: 0,
-            in_call_graph: true, constraint_issues: 0, has_error_issues: false,
+            in_call_graph: true, constraint_issues: 0, has_error_issues: false, locations: vec![],
         },
     ];
 
@@ -1055,13 +1070,13 @@ fn critical_dedup_identical_counts_same_category() {
             id: "a".to_string(), name: "a".to_string(),
             category: "naming".to_string(), status: PatternStatus::Approved,
             confidence: 0.9, location_count: 10, outlier_count: 0,
-            in_call_graph: true, constraint_issues: 0, has_error_issues: false,
+            in_call_graph: true, constraint_issues: 0, has_error_issues: false, locations: vec![],
         },
         PatternAuditData {
             id: "b".to_string(), name: "b".to_string(),
             category: "naming".to_string(), status: PatternStatus::Approved,
             confidence: 0.9, location_count: 10, outlier_count: 0,
-            in_call_graph: true, constraint_issues: 0, has_error_issues: false,
+            in_call_graph: true, constraint_issues: 0, has_error_issues: false, locations: vec![],
         },
     ];
 
@@ -1183,13 +1198,18 @@ fn critical_storage_null_optional_fields() {
         file: "test.ts".to_string(),
         line: 1,
         column: None,       // NULL
+        end_line: None,
+        end_column: None,
         severity: "info".to_string(),
         pattern_id: "test".to_string(),
         rule_id: "test/rule".to_string(),
         message: "test".to_string(),
+        quick_fix_strategy: None,
+        quick_fix_description: None,
         cwe_id: None,       // NULL
         owasp_category: None, // NULL
         suppressed: false,
+        is_new: false,
     };
 
     insert_violation(&conn, &v).unwrap();
@@ -1214,13 +1234,18 @@ fn critical_storage_upsert_no_duplicates() {
         file: "test.ts".to_string(),
         line: 10,
         column: None,
+        end_line: None,
+        end_column: None,
         severity: "warning".to_string(),
         pattern_id: "test".to_string(),
         rule_id: "test/rule".to_string(),
         message: "original message".to_string(),
+        quick_fix_strategy: None,
+        quick_fix_description: None,
         cwe_id: None,
         owasp_category: None,
         suppressed: false,
+        is_new: false,
     };
 
     let v2 = ViolationRow {
@@ -1228,13 +1253,18 @@ fn critical_storage_upsert_no_duplicates() {
         file: "test.ts".to_string(),
         line: 10,
         column: None,
+        end_line: None,
+        end_column: None,
         severity: "error".to_string(), // CHANGED severity
         pattern_id: "test".to_string(),
         rule_id: "test/rule".to_string(),
         message: "updated message".to_string(), // CHANGED message
+        quick_fix_strategy: None,
+        quick_fix_description: None,
         cwe_id: Some(89), // ADDED CWE
         owasp_category: None,
         suppressed: false,
+        is_new: false,
     };
 
     insert_violation(&conn, &v1).unwrap();
@@ -1363,8 +1393,10 @@ fn critical_storage_long_gate_result() {
         score: 85.0,
         summary: long_summary.clone(),
         violation_count: 0,
+        warning_count: 0,
         execution_time_ms: 0,
         details: Some(long_details.clone()),
+        error: None,
         run_at: 0,
     };
     insert_gate_result(&conn, &g).unwrap();

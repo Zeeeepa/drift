@@ -87,6 +87,8 @@ pub struct DeadCodeResult {
     pub exclusion: Option<DeadCodeExclusion>,
     /// Whether this is actually dead (false if excluded).
     pub is_dead: bool,
+    /// CG-DC-04: Confidence score (0.0-1.0). Lower when resolution rate is poor.
+    pub confidence: f32,
 }
 
 /// Why a function was flagged as dead code.

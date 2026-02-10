@@ -1,4 +1,4 @@
-//! 15 NAPI-ready bridge functions.
+//! 20 NAPI-ready bridge functions.
 //!
 //! These return serde_json::Value for easy NAPI serialization.
 //! The cortex-drift-napi crate wraps these with #[napi] macros.
@@ -32,11 +32,12 @@ pub fn bridge_status(
 pub fn bridge_ground_memory(
     memory: &MemoryForGrounding,
     config: &GroundingConfig,
+    drift_db: Option<&rusqlite::Connection>,
     bridge_db: Option<&rusqlite::Connection>,
 ) -> BridgeResult<serde_json::Value> {
     let runner = GroundingLoopRunner::new(config.clone());
-    let result = runner.ground_single(memory, None, bridge_db)?;
-    Ok(serde_json::to_value(&result).unwrap_or(json!({"error": "serialization failed"})))
+    let result = runner.ground_single(memory, drift_db, bridge_db)?;
+    Ok(serde_json::to_value(&result)?)
 }
 
 // ---- 3. bridge_ground_all ----
@@ -44,16 +45,17 @@ pub fn bridge_ground_memory(
 pub fn bridge_ground_all(
     memories: &[MemoryForGrounding],
     config: &GroundingConfig,
+    drift_db: Option<&rusqlite::Connection>,
     bridge_db: Option<&rusqlite::Connection>,
 ) -> BridgeResult<serde_json::Value> {
     let runner = GroundingLoopRunner::new(config.clone());
     let snapshot = runner.run(
         memories,
-        None,
+        drift_db,
         bridge_db,
         crate::grounding::TriggerType::OnDemand,
     )?;
-    Ok(serde_json::to_value(&snapshot).unwrap_or(json!({"error": "serialization failed"})))
+    Ok(serde_json::to_value(&snapshot)?)
 }
 
 // ---- 4. bridge_grounding_history ----
@@ -85,7 +87,7 @@ pub fn bridge_translate_link(
     confidence: f64,
 ) -> serde_json::Value {
     let link = EntityLink::from_pattern(pattern_id, pattern_name, confidence);
-    serde_json::to_value(&link).unwrap_or(json!({"error": "serialization failed"}))
+    serde_json::to_value(&link).unwrap_or_else(|e| json!({"error": e.to_string()}))
 }
 
 // ---- 6. bridge_translate_constraint_link ----
@@ -95,7 +97,7 @@ pub fn bridge_translate_constraint_link(
     constraint_name: &str,
 ) -> serde_json::Value {
     let link = EntityLink::from_constraint(constraint_id, constraint_name);
-    serde_json::to_value(&link).unwrap_or(json!({"error": "serialization failed"}))
+    serde_json::to_value(&link).unwrap_or_else(|e| json!({"error": e.to_string()}))
 }
 
 // ---- 7. bridge_event_mappings ----
@@ -259,4 +261,52 @@ pub fn bridge_explain_spec(
         causal_engine,
     );
     json!({ "memory_id": memory_id, "explanation": explanation })
+}
+
+// ---- 16. bridge_counterfactual ----
+/// Counterfactual analysis: "What if this memory didn't exist?"
+pub fn bridge_counterfactual(
+    memory_id: &str,
+    causal_engine: Option<&cortex_causal::CausalEngine>,
+) -> BridgeResult<serde_json::Value> {
+    crate::tools::handle_drift_counterfactual(memory_id, causal_engine)
+}
+
+// ---- 17. bridge_intervention ----
+/// Intervention analysis: "If we change this, what breaks?"
+pub fn bridge_intervention(
+    memory_id: &str,
+    causal_engine: Option<&cortex_causal::CausalEngine>,
+) -> BridgeResult<serde_json::Value> {
+    crate::tools::handle_drift_intervention(memory_id, causal_engine)
+}
+
+// ---- 18. bridge_health ----
+/// Bridge health status check.
+pub fn bridge_health(
+    cortex_db: Option<&std::sync::Mutex<rusqlite::Connection>>,
+    drift_db: Option<&std::sync::Mutex<rusqlite::Connection>>,
+    causal_engine: Option<&cortex_causal::CausalEngine>,
+) -> BridgeResult<serde_json::Value> {
+    crate::tools::handle_drift_health(cortex_db, drift_db, causal_engine)
+}
+
+// ---- 19. bridge_unified_narrative ----
+/// Unified causal narrative combining origins, effects, and narrative sections.
+pub fn bridge_unified_narrative(
+    memory_id: &str,
+    causal_engine: &cortex_causal::CausalEngine,
+) -> BridgeResult<serde_json::Value> {
+    let narrative = crate::causal::build_narrative(causal_engine, memory_id)?;
+    Ok(serde_json::to_value(&narrative)?)
+}
+
+// ---- 20. bridge_prune_causal ----
+/// Prune weak causal edges below a strength threshold.
+pub fn bridge_prune_causal(
+    causal_engine: &cortex_causal::CausalEngine,
+    threshold: f64,
+) -> BridgeResult<serde_json::Value> {
+    let report = crate::causal::prune_weak_edges(causal_engine, threshold)?;
+    Ok(serde_json::to_value(&report)?)
 }

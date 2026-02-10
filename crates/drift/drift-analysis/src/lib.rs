@@ -4,7 +4,7 @@
 //! Contains scanner, parsers, engine, detectors, call graph,
 //! boundaries, and language provider systems.
 
-#![allow(dead_code, unused)]
+// PH4-02: Blanket dead_code/unused suppression removed. Add targeted #[allow] on specific items if needed.
 #![allow(clippy::module_inception)]
 
 pub mod scanner;

@@ -6,27 +6,8 @@
 //! - Weak: ≥ 0.2
 //! - Invalidated: < 0.2
 
-use serde::{Deserialize, Serialize};
-
 use super::evidence::GroundingEvidence;
-use super::{AdjustmentMode, ConfidenceAdjustment, GroundingConfig};
-
-/// Grounding verdict — the outcome of comparing memory against reality.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum GroundingVerdict {
-    /// Memory is strongly supported by Drift data (score >= 0.7).
-    Validated,
-    /// Memory is partially supported (0.4 <= score < 0.7).
-    Partial,
-    /// Memory is weakly supported (0.2 <= score < 0.4).
-    Weak,
-    /// Memory is contradicted by Drift data (score < 0.2).
-    Invalidated,
-    /// Memory type is not groundable.
-    NotGroundable,
-    /// Insufficient Drift data to ground this memory.
-    InsufficientData,
-}
+use super::{AdjustmentMode, ConfidenceAdjustment, GroundingConfig, GroundingVerdict};
 
 /// Grounding score computation engine.
 pub struct GroundingScorer {
@@ -127,7 +108,9 @@ impl GroundingScorer {
                     ),
                 }
             }
-            GroundingVerdict::NotGroundable | GroundingVerdict::InsufficientData => {
+            GroundingVerdict::NotGroundable
+            | GroundingVerdict::InsufficientData
+            | GroundingVerdict::Error => {
                 ConfidenceAdjustment {
                     mode: AdjustmentMode::NoChange,
                     delta: None,

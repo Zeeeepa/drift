@@ -23,7 +23,7 @@ fn memory_with_pattern(id: &str, confidence: f64, pattern_conf: f64) -> MemoryFo
         error_handling_gaps: None,
         decision_evidence: None,
         boundary_data: None,
-    }
+        evidence_context: None,    }
 }
 
 /// Helper: create a MemoryForGrounding with all evidence types populated.
@@ -42,7 +42,7 @@ fn memory_full_evidence(id: &str, support_level: f64) -> MemoryForGrounding {
         error_handling_gaps: Some(((1.0 - support_level) * 100.0) as u32),
         decision_evidence: Some(support_level),
         boundary_data: Some(support_level),
-    }
+        evidence_context: None,    }
 }
 
 /// Helper: create a non-groundable memory.
@@ -61,7 +61,7 @@ fn memory_not_groundable(id: &str) -> MemoryForGrounding {
         error_handling_gaps: None,
         decision_evidence: None,
         boundary_data: None,
-    }
+        evidence_context: None,    }
 }
 
 /// Helper: create an in-memory bridge DB.
@@ -362,7 +362,7 @@ fn t9_gnd_08_no_evidence_returns_insufficient_data() {
         error_handling_gaps: None,
         decision_evidence: None,
         boundary_data: None,
-    };
+        evidence_context: None,    };
     let result = runner.ground_single(&memory, None, None).unwrap();
     assert_eq!(result.verdict, GroundingVerdict::InsufficientData);
 }

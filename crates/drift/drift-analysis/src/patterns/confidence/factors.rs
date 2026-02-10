@@ -1,23 +1,32 @@
-//! 5-factor model: Frequency, Consistency, Age, Spread, Momentum.
+//! 6-factor model: Frequency, Consistency, Age, Spread, Momentum, DataQuality.
 //!
 //! Each factor contributes to alpha/beta updates on the Beta distribution.
-//! Weights: frequency=0.30, consistency=0.25, age=0.10, spread=0.15, momentum=0.20.
+//! Weights: frequency=0.25, consistency=0.20, age=0.10, spread=0.15, momentum=0.15, data_quality=0.15.
+//!
+//! The DataQuality factor accounts for upstream data quality — resolution confidence,
+//! taint precision, detector language coverage. Without it, confidence scores are
+//! calibrated against theoretical perfect data rather than actual degraded inputs.
 
 use super::types::MomentumDirection;
 
-/// Weights for the 5-factor model.
-pub const WEIGHT_FREQUENCY: f64 = 0.30;
-pub const WEIGHT_CONSISTENCY: f64 = 0.25;
+/// Weights for the 6-factor model.
+pub const WEIGHT_FREQUENCY: f64 = 0.25;
+pub const WEIGHT_CONSISTENCY: f64 = 0.20;
 pub const WEIGHT_AGE: f64 = 0.10;
 pub const WEIGHT_SPREAD: f64 = 0.15;
-pub const WEIGHT_MOMENTUM: f64 = 0.20;
+pub const WEIGHT_MOMENTUM: f64 = 0.15;
+pub const WEIGHT_DATA_QUALITY: f64 = 0.15;
 
-/// Input data for the 5-factor model.
+/// Default data quality when no upstream quality signal is available.
+/// 0.7 = moderate quality assumption (neither optimistic nor pessimistic).
+pub const DEFAULT_DATA_QUALITY: f64 = 0.7;
+
+/// Input data for the 6-factor model.
 #[derive(Debug, Clone)]
 pub struct FactorInput {
     /// Number of pattern occurrences.
     pub occurrences: u64,
-    /// Total applicable locations (files × applicable sites).
+    /// Total applicable locations in the same category (sum of all patterns' locations).
     pub total_locations: u64,
     /// Confidence variance across locations (0 = perfectly consistent).
     pub variance: f64,
@@ -29,6 +38,10 @@ pub struct FactorInput {
     pub total_files: u64,
     /// Momentum direction.
     pub momentum: MomentumDirection,
+    /// Upstream data quality signal in [0.0, 1.0].
+    /// Computed from resolution confidence, taint precision, detector language coverage.
+    /// `None` uses `DEFAULT_DATA_QUALITY` (0.7).
+    pub data_quality: Option<f64>,
 }
 
 /// Computed factor values (each normalized to [0.0, 1.0]).
@@ -39,9 +52,10 @@ pub struct FactorValues {
     pub age: f64,
     pub spread: f64,
     pub momentum: f64,
+    pub data_quality: f64,
 }
 
-/// Compute all 5 factors from input data.
+/// Compute all 6 factors from input data.
 pub fn compute_factors(input: &FactorInput) -> FactorValues {
     FactorValues {
         frequency: compute_frequency(input.occurrences, input.total_locations),
@@ -49,6 +63,7 @@ pub fn compute_factors(input: &FactorInput) -> FactorValues {
         age: compute_age(input.days_since_first_seen),
         spread: compute_spread(input.file_count, input.total_files),
         momentum: compute_momentum(input.momentum),
+        data_quality: compute_data_quality(input.data_quality),
     }
 }
 
@@ -58,7 +73,8 @@ pub fn weighted_score(factors: &FactorValues) -> f64 {
         + factors.consistency * WEIGHT_CONSISTENCY
         + factors.age * WEIGHT_AGE
         + factors.spread * WEIGHT_SPREAD
-        + factors.momentum * WEIGHT_MOMENTUM;
+        + factors.momentum * WEIGHT_MOMENTUM
+        + factors.data_quality * WEIGHT_DATA_QUALITY;
     score.clamp(0.0, 1.0)
 }
 
@@ -133,6 +149,19 @@ fn compute_momentum(direction: MomentumDirection) -> f64 {
     }
 }
 
+/// Factor 6: DataQuality — upstream data quality signal.
+///
+/// Accounts for resolution confidence, taint precision, detector language coverage.
+/// A finding backed by Fuzzy resolution (0.40) should score lower than one backed
+/// by ImportBased resolution (0.75). Without this factor, all findings are treated
+/// as if they have perfect upstream data.
+fn compute_data_quality(data_quality: Option<f64>) -> f64 {
+    match data_quality {
+        Some(q) => q.clamp(0.0, 1.0),
+        None => DEFAULT_DATA_QUALITY,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -181,7 +210,55 @@ mod tests {
 
     #[test]
     fn test_weighted_score_sums_correctly() {
-        let sum = WEIGHT_FREQUENCY + WEIGHT_CONSISTENCY + WEIGHT_AGE + WEIGHT_SPREAD + WEIGHT_MOMENTUM;
-        assert!((sum - 1.0).abs() < 1e-10, "Weights must sum to 1.0");
+        let sum = WEIGHT_FREQUENCY + WEIGHT_CONSISTENCY + WEIGHT_AGE + WEIGHT_SPREAD + WEIGHT_MOMENTUM + WEIGHT_DATA_QUALITY;
+        assert!((sum - 1.0).abs() < 1e-10, "Weights must sum to 1.0, got {}", sum);
+    }
+
+    #[test]
+    fn test_data_quality_default() {
+        assert!((compute_data_quality(None) - DEFAULT_DATA_QUALITY).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_data_quality_explicit() {
+        assert!((compute_data_quality(Some(0.4)) - 0.4).abs() < 1e-10);
+        assert!((compute_data_quality(Some(0.9)) - 0.9).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_data_quality_clamped() {
+        assert!((compute_data_quality(Some(-0.5)) - 0.0).abs() < 1e-10);
+        assert!((compute_data_quality(Some(1.5)) - 1.0).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_low_data_quality_lowers_score() {
+        let base_input = FactorInput {
+            occurrences: 50,
+            total_locations: 100,
+            variance: 0.05,
+            days_since_first_seen: 30,
+            file_count: 40,
+            total_files: 100,
+            momentum: MomentumDirection::Stable,
+            data_quality: Some(0.9),
+        };
+        let low_quality_input = FactorInput {
+            data_quality: Some(0.3),
+            ..base_input.clone()
+        };
+
+        let high_factors = compute_factors(&base_input);
+        let low_factors = compute_factors(&low_quality_input);
+
+        let high_score = weighted_score(&high_factors);
+        let low_score = weighted_score(&low_factors);
+
+        assert!(
+            high_score > low_score,
+            "High data quality ({}) should score higher than low ({})",
+            high_score,
+            low_score
+        );
     }
 }

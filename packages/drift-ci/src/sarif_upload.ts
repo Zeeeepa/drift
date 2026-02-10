@@ -137,6 +137,17 @@ export function writeSarifFile(
   fs.writeFileSync(outputPath, JSON.stringify(sarif, null, 2), 'utf-8');
 }
 
+/**
+ * Write SARIF file using the native driftReport() engine.
+ * Produces richer output than manual conversion (includes taxonomies, CWE data, etc.)
+ */
+export function writeSarifFromNapi(outputPath: string): void {
+  const { loadNapi } = require('./napi.js') as { loadNapi: () => { driftReport: (format: string) => string } };
+  const napi = loadNapi();
+  const sarif = napi.driftReport('sarif');
+  fs.writeFileSync(outputPath, sarif, 'utf-8');
+}
+
 function mapSeverity(severity?: string): string {
   switch (severity?.toLowerCase()) {
     case 'error':

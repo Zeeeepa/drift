@@ -78,19 +78,24 @@ pub fn detect_entry_points(graph: &CallGraph) -> Vec<NodeIndex> {
 
 /// Mark entry points directly on the graph (mutable).
 pub fn mark_entry_points(graph: &mut CallGraph, parse_results: &[ParseResult]) {
-    // Build a set of route handler function names
+    // Build a set of route handler function names from decorators
     let mut route_handlers: FxHashSet<String> = FxHashSet::default();
     for pr in parse_results {
+        // CG-EP-01: Check function-level decorators
         for func in &pr.functions {
-            for dec in &func.decorators {
-                let dec_lower = dec.name.to_lowercase();
-                if dec_lower.contains("route") || dec_lower.contains("get")
-                    || dec_lower.contains("post") || dec_lower.contains("put")
-                    || dec_lower.contains("delete") || dec_lower.contains("patch")
-                    || dec_lower.contains("controller") || dec_lower.contains("api")
-                    || dec_lower.contains("endpoint")
-                {
-                    route_handlers.insert(format!("{}::{}", pr.file, func.name));
+            if has_entry_point_decorator(&func.decorators) {
+                route_handlers.insert(format!("{}::{}", pr.file, func.name));
+            }
+        }
+        // CG-EP-01: Check class-level decorators (controllers) and their methods
+        for class in &pr.classes {
+            let is_controller = class.decorators.iter().any(|d| {
+                let dl = d.name.to_lowercase();
+                dl.contains("controller") || dl.contains("api") || dl.contains("resolver")
+            });
+            for method in &class.methods {
+                if has_entry_point_decorator(&method.decorators) || is_controller {
+                    route_handlers.insert(format!("{}::{}", pr.file, method.name));
                 }
             }
         }
@@ -109,24 +114,59 @@ pub fn mark_entry_points(graph: &mut CallGraph, parse_results: &[ParseResult]) {
     }
 }
 
+/// CG-EP-01: Check if decorators indicate an entry point (route handler, API endpoint, etc.).
+fn has_entry_point_decorator(decorators: &[crate::parsers::types::DecoratorInfo]) -> bool {
+    decorators.iter().any(|d| {
+        let dl = d.name.to_lowercase();
+        // HTTP route decorators
+        dl.contains("route") || dl.contains("get") || dl.contains("post")
+            || dl.contains("put") || dl.contains("delete") || dl.contains("patch")
+            || dl.contains("head") || dl.contains("options")
+            // Spring
+            || dl.contains("requestmapping") || dl.contains("getmapping")
+            || dl.contains("postmapping") || dl.contains("putmapping")
+            || dl.contains("deletemapping") || dl.contains("patchmapping")
+            // NestJS / general
+            || dl.contains("controller") || dl.contains("api")
+            || dl.contains("endpoint")
+            // DRF
+            || dl.contains("api_view")
+            // Scheduled / event
+            || dl.contains("scheduled") || dl.contains("eventlistener")
+            || dl.contains("subscribe") || dl.contains("cron")
+            // GraphQL (CG-EP-04)
+            || dl.contains("query") || dl.contains("mutation")
+            || dl.contains("subscription") || dl.contains("resolvefield")
+            || dl.contains("resolver")
+    })
+}
+
 /// Check if a function node is an entry point based on heuristics.
 fn is_entry_point(node: &FunctionNode) -> bool {
-    // 1. Exported functions
+    // 1. Exported functions (CG-EP-02)
     if node.is_exported {
         return true;
     }
 
-    // 2. Main/index file functions
+    // 2. Main/index file functions (CG-EP-03: expanded patterns)
     let file_lower = node.file.to_lowercase();
+    let name_lower = node.name.to_lowercase();
     if (file_lower.contains("main.") || file_lower.contains("index.")
-        || file_lower.contains("app.") || file_lower.contains("server."))
-        && matches!(node.name.as_str(), "main" | "run" | "start" | "init" | "bootstrap")
+        || file_lower.contains("app.") || file_lower.contains("server.")
+        || file_lower.contains("boot.") || file_lower.contains("startup."))
+        && matches!(name_lower.as_str(), "main" | "run" | "start" | "init" | "bootstrap"
+            | "app" | "createapp" | "createserver" | "application" | "default")
     {
         return true;
     }
 
+    // CG-EP-03: Framework main function patterns (any file)
+    if matches!(node.name.as_str(), "main" | "createApp" | "createServer"
+        | "Application" | "WebApplication" | "gin.Default") {
+        return true;
+    }
+
     // 3. Test functions
-    let name_lower = node.name.to_lowercase();
     if name_lower.starts_with("test_") || name_lower.starts_with("test")
         || name_lower.starts_with("it_") || name_lower.starts_with("spec_")
     {
@@ -134,8 +174,31 @@ fn is_entry_point(node: &FunctionNode) -> bool {
     }
 
     // 4. CLI entry points
-    if matches!(node.name.as_str(), "main" | "cli" | "run_cli" | "parse_args") {
+    if matches!(node.name.as_str(), "cli" | "run_cli" | "parse_args") {
         return true;
+    }
+
+    // CG-EP-02: Go uppercase-exported functions
+    if node.language == "Go" {
+        if let Some(first_char) = node.name.chars().next() {
+            if first_char.is_uppercase() {
+                return true;
+            }
+        }
+    }
+
+    // CG-EP-02: Rust pub fn (is_exported covers this via visibility)
+    // CG-EP-04: GraphQL resolver patterns
+    if name_lower.starts_with("query") || name_lower.starts_with("mutation")
+        || name_lower.starts_with("subscription") || name_lower.starts_with("resolve")
+    {
+        if let Some(ref qn) = node.qualified_name {
+            let qn_lower = qn.to_lowercase();
+            if qn_lower.contains("resolver") || qn_lower.contains("query")
+                || qn_lower.contains("mutation") {
+                return true;
+            }
+        }
     }
 
     false

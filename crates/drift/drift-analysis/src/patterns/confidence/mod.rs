@@ -10,5 +10,8 @@ pub mod momentum;
 pub mod scorer;
 
 pub use types::{ConfidenceScore, ConfidenceTier, MomentumDirection};
-pub use scorer::ConfidenceScorer;
+pub use scorer::{
+    ConfidenceScorer, ScorerConfig, FeedbackStore, InMemoryFeedbackStore,
+    ConfidenceDiagnostics, CategoryConfidenceSummary,
+};
 pub use beta::BetaPosterior;

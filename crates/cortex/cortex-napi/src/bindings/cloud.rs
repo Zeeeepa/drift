@@ -59,10 +59,30 @@ pub fn cortex_cloud_resolve_conflict(
     let mut engine = cloud
         .lock()
         .map_err(|e| napi::Error::from_reason(format!("Cloud lock poisoned: {e}")))?;
-    // Resolve via the conflict resolver.
-    let _resolver = engine.conflict_resolver();
+
+    // Parse the resolution strategy from the input string.
+    let strategy = match resolution.as_str() {
+        "local_wins" => cortex_cloud::conflict::Strategy::LocalWins,
+        "remote_wins" => cortex_cloud::conflict::Strategy::RemoteWins,
+        "last_write_wins" => cortex_cloud::conflict::Strategy::LastWriteWins,
+        "crdt_merge" => cortex_cloud::conflict::Strategy::CrdtMerge,
+        "manual" => cortex_cloud::conflict::Strategy::Manual,
+        other => {
+            return Err(napi::Error::from_reason(format!(
+                "Invalid resolution strategy '{other}'. Expected: local_wins, remote_wins, last_write_wins, crdt_merge, manual"
+            )));
+        }
+    };
+
+    // Apply the strategy to the conflict resolver.
+    let resolver = engine.conflict_resolver();
+    let old_strategy = resolver.strategy();
+    resolver.set_strategy(strategy);
+
     Ok(json!({
         "memory_id": memory_id,
         "resolution": resolution,
+        "previous_strategy": format!("{:?}", old_strategy),
+        "applied": true,
     }))
 }

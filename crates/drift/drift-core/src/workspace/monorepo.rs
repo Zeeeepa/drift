@@ -135,14 +135,10 @@ fn parse_pnpm_workspace(root: &Path) -> WorkspaceResult<WorkspaceLayout> {
         }
     }
 
-    if packages.is_empty() {
-        Ok(WorkspaceLayout::SingleProject(root.to_path_buf()))
-    } else {
-        Ok(WorkspaceLayout::Monorepo {
-            root: root.to_path_buf(),
-            packages,
-        })
-    }
+    Ok(WorkspaceLayout::Monorepo {
+        root: root.to_path_buf(),
+        packages,
+    })
 }
 
 fn parse_npm_workspace(root: &Path, content: &str) -> WorkspaceResult<WorkspaceLayout> {
@@ -187,45 +183,29 @@ fn parse_npm_workspace(root: &Path, content: &str) -> WorkspaceResult<WorkspaceL
         }
     }
 
-    if packages.is_empty() {
-        Ok(WorkspaceLayout::SingleProject(root.to_path_buf()))
-    } else {
-        Ok(WorkspaceLayout::Monorepo {
-            root: root.to_path_buf(),
-            packages,
-        })
-    }
+    Ok(WorkspaceLayout::Monorepo {
+        root: root.to_path_buf(),
+        packages,
+    })
 }
 
 fn parse_cargo_workspace(root: &Path, content: &str) -> WorkspaceResult<WorkspaceLayout> {
     let mut packages = Vec::new();
 
     // Extract members from [workspace] section
-    // Simple parsing: find lines like `members = ["crate-a", "crate-b"]`
+    // Parse quoted strings from lines between `members = [` and `]`
     let mut in_members = false;
+    let mut quoted_parts: Vec<String> = Vec::new();
     for line in content.lines() {
         let trimmed = line.trim();
         if trimmed.starts_with("members") && trimmed.contains('[') {
             in_members = true;
         }
         if in_members {
-            // Extract quoted strings
-            for part in trimmed.split('"') {
-                // Every odd index is inside quotes
-                let path = Path::new(part);
-                let full = root.join(part);
-                if full.is_dir() && full.join("Cargo.toml").exists() {
-                    packages.push(PackageInfo {
-                        name: path
-                            .file_name()
-                            .and_then(|n| n.to_str())
-                            .unwrap_or(part)
-                            .to_string(),
-                        path: PathBuf::from(part),
-                        language: Some("rust".to_string()),
-                        framework: None,
-                        dependencies: vec![],
-                    });
+            let parts: Vec<&str> = trimmed.split('"').collect();
+            for (i, part) in parts.iter().enumerate() {
+                if i % 2 == 1 && !part.is_empty() {
+                    quoted_parts.push(part.to_string());
                 }
             }
             if trimmed.contains(']') {
@@ -234,14 +214,58 @@ fn parse_cargo_workspace(root: &Path, content: &str) -> WorkspaceResult<Workspac
         }
     }
 
-    if packages.is_empty() {
-        Ok(WorkspaceLayout::SingleProject(root.to_path_buf()))
-    } else {
-        Ok(WorkspaceLayout::Monorepo {
-            root: root.to_path_buf(),
-            packages,
-        })
+    // Resolve each member pattern
+    for member in &quoted_parts {
+        if member.ends_with("/*") || member.ends_with("/**") {
+            // Glob pattern — expand by listing directory
+            let base = member.trim_end_matches("/**").trim_end_matches("/*");
+            let base_path = root.join(base);
+            if base_path.is_dir() {
+                if let Ok(entries) = std::fs::read_dir(&base_path) {
+                    for entry in entries.flatten() {
+                        let entry_path = entry.path();
+                        if entry_path.is_dir() && entry_path.join("Cargo.toml").exists() {
+                            let name = entry_path
+                                .file_name()
+                                .and_then(|n| n.to_str())
+                                .unwrap_or("unknown")
+                                .to_string();
+                            let relative = format!("{}/{}", base, name);
+                            packages.push(PackageInfo {
+                                name,
+                                path: PathBuf::from(relative),
+                                language: Some("rust".to_string()),
+                                framework: None,
+                                dependencies: vec![],
+                            });
+                        }
+                    }
+                }
+            }
+        } else {
+            // Exact path
+            let full = root.join(member);
+            if full.is_dir() && full.join("Cargo.toml").exists() {
+                let name = full
+                    .file_name()
+                    .and_then(|n| n.to_str())
+                    .unwrap_or(member)
+                    .to_string();
+                packages.push(PackageInfo {
+                    name,
+                    path: PathBuf::from(member),
+                    language: Some("rust".to_string()),
+                    framework: None,
+                    dependencies: vec![],
+                });
+            }
+        }
     }
+
+    Ok(WorkspaceLayout::Monorepo {
+        root: root.to_path_buf(),
+        packages,
+    })
 }
 
 fn parse_go_workspace(root: &Path) -> WorkspaceResult<WorkspaceLayout> {
@@ -270,14 +294,10 @@ fn parse_go_workspace(root: &Path) -> WorkspaceResult<WorkspaceLayout> {
         }
     }
 
-    if packages.is_empty() {
-        Ok(WorkspaceLayout::SingleProject(root.to_path_buf()))
-    } else {
-        Ok(WorkspaceLayout::Monorepo {
-            root: root.to_path_buf(),
-            packages,
-        })
-    }
+    Ok(WorkspaceLayout::Monorepo {
+        root: root.to_path_buf(),
+        packages,
+    })
 }
 
 fn parse_lerna_workspace(root: &Path) -> WorkspaceResult<WorkspaceLayout> {
@@ -309,14 +329,10 @@ fn parse_lerna_workspace(root: &Path) -> WorkspaceResult<WorkspaceLayout> {
         }
     }
 
-    if packages.is_empty() {
-        Ok(WorkspaceLayout::SingleProject(root.to_path_buf()))
-    } else {
-        Ok(WorkspaceLayout::Monorepo {
-            root: root.to_path_buf(),
-            packages,
-        })
-    }
+    Ok(WorkspaceLayout::Monorepo {
+        root: root.to_path_buf(),
+        packages,
+    })
 }
 
 fn package_from_dir(dir: &Path, root: &Path) -> PackageInfo {

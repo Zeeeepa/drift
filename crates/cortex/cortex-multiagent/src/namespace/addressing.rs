@@ -34,7 +34,7 @@ pub fn parse(uri: &str) -> CortexResult<NamespaceId> {
         ))
         .into());
     }
-    if !name.chars().all(|c| c.is_alphanumeric() || c == '-' || c == '_' || c == '.') {
+    if !name.chars().all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_' || c == '.') {
         return Err(MultiAgentError::InvalidNamespaceUri(format!(
             "namespace name contains invalid characters (allowed: alphanumeric, -, _, .): {uri}"
         ))

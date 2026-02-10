@@ -126,3 +126,41 @@ pub fn extreme_deviation_rule(n_stddev: f64) -> OutlierRule {
         significance: SignificanceTier::Critical,
     }
 }
+
+/// PI-OUT-05: Confidence cliff rule — flag locations where confidence drops >50% vs pattern mean.
+///
+/// Example: pattern mean is 0.9, a location with 0.3 is flagged (drop of 67%).
+pub fn confidence_cliff_rule() -> OutlierRule {
+    OutlierRule {
+        id: "confidence_cliff".to_string(),
+        description: "Confidence drops >50% below pattern mean".to_string(),
+        check: Box::new(|val, ctx| {
+            if ctx.mean <= 0.0 {
+                return false;
+            }
+            let drop_ratio = (ctx.mean - val) / ctx.mean;
+            drop_ratio > 0.5
+        }),
+        significance: SignificanceTier::High,
+    }
+}
+
+/// PI-OUT-06: File isolation rule — flag singleton values in patterns with many data points.
+///
+/// When a pattern has 10+ observations and a value is far below the minimum
+/// of the non-outlier cluster, it's likely an isolated anomaly.
+/// This uses a simple heuristic: value < mean - 3*stddev in large samples.
+pub fn file_isolation_rule() -> OutlierRule {
+    OutlierRule {
+        id: "file_isolation".to_string(),
+        description: "Isolated low-confidence value in large pattern".to_string(),
+        check: Box::new(|val, ctx| {
+            if ctx.count < 10 || ctx.stddev <= 0.0 {
+                return false;
+            }
+            // Flag values more than 3 stddev below the mean in large patterns
+            val < ctx.mean - 3.0 * ctx.stddev
+        }),
+        significance: SignificanceTier::Moderate,
+    }
+}

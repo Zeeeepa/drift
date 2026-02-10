@@ -254,6 +254,22 @@ export class CortexClient {
     );
   }
 
+  // ─── Validation ─────────────────────────────────────────────────────────
+
+  /** E-02: Run 4-dimension validation on candidate memories. */
+  async validationRun(
+    minConfidence?: number,
+    maxConfidence?: number,
+  ): Promise<unknown> {
+    return wrap(
+      () =>
+        this.native.cortexValidationRun(
+          minConfidence ?? null,
+          maxConfidence ?? null,
+        ),
+    );
+  }
+
   // ─── Consolidation ──────────────────────────────────────────────────────
 
   async consolidate(memoryType?: MemoryType): Promise<ConsolidationResult> {
@@ -268,6 +284,20 @@ export class CortexClient {
 
   async consolidationStatus(): Promise<ConsolidationStatus> {
     return wrap(() => this.native.cortexConsolidationGetStatus() as ConsolidationStatus);
+  }
+
+  // ─── Embeddings ────────────────────────────────────────────────────────
+
+  /** E-01: Re-embed all memories (or a specific type) using the configured provider chain. */
+  async reembed(memoryType?: string): Promise<unknown> {
+    return wrap(() => this.native.cortexReembed(memoryType ?? null));
+  }
+
+  // ─── Decay ────────────────────────────────────────────────────────────
+
+  /** C-07: Run decay on all memories — compute new confidence, archive if needed. */
+  async decayRun(): Promise<unknown> {
+    return wrap(() => this.native.cortexDecayRun());
   }
 
   // ─── Health ──────────────────────────────────────────────────────────────

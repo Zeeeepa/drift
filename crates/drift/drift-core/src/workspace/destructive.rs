@@ -35,21 +35,27 @@ where
     let backup = backup_mgr.create_backup(BackupReason::PreDestructiveOperation, drift_version)?;
 
     // Log the operation start
+    let start_details = serde_json::json!({
+        "operation": operation_name,
+        "backup_id": backup.id,
+    })
+    .to_string();
     conn.execute(
         "INSERT INTO workspace_events (event_type, details) VALUES ('destructive_op_start', ?1)",
-        [format!(
-            r#"{{"operation":"{}","backup_id":"{}"}}"#,
-            operation_name, backup.id
-        )],
+        [&start_details],
     )?;
 
     // Execute the operation
     let result = operation()?;
 
     // Log completion
+    let complete_details = serde_json::json!({
+        "operation": operation_name,
+    })
+    .to_string();
     conn.execute(
         "INSERT INTO workspace_events (event_type, details) VALUES ('destructive_op_complete', ?1)",
-        [format!(r#"{{"operation":"{}"}}"#, operation_name)],
+        [&complete_details],
     )?;
 
     Ok(result)

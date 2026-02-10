@@ -7,7 +7,7 @@ use rusqlite::Connection;
 
 use cortex_core::errors::CortexResult;
 
-use super::pragmas::apply_pragmas;
+use super::pragmas::apply_read_pragmas;
 use crate::to_storage_err;
 
 /// Default number of read connections.
@@ -34,7 +34,7 @@ impl ReadPool {
                     | rusqlite::OpenFlags::SQLITE_OPEN_NO_MUTEX,
             )
             .map_err(|e| to_storage_err(e.to_string()))?;
-            apply_pragmas(&conn)?;
+            apply_read_pragmas(&conn)?;
             connections.push(std::sync::Mutex::new(conn));
         }
         Ok(Self {
@@ -53,7 +53,7 @@ impl ReadPool {
             // in-memory DB, so we open them normally. In production, the file-based
             // path uses SQLITE_OPEN_READ_ONLY.
             let conn = Connection::open_in_memory().map_err(|e| to_storage_err(e.to_string()))?;
-            apply_pragmas(&conn)?;
+            apply_read_pragmas(&conn)?;
             connections.push(std::sync::Mutex::new(conn));
         }
         Ok(Self {

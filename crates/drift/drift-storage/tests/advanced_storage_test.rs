@@ -220,33 +220,31 @@ fn t7_spec_24_concurrent_status_updates() {
     }
 }
 
-// ─── T7-SPEC-26: migration_projects table missing → auto-recreated ───
+// ─── T7-SPEC-26: migration_projects table created by v007 migration ───
 
 #[test]
-fn t7_spec_26_migration_tables_auto_recreated() {
+fn t7_spec_26_migration_tables_created_by_migration() {
     let conn = Connection::open_in_memory().unwrap();
     apply_pragmas(&conn).unwrap();
-    // Run migrations up to v006 only (skip v007) to simulate missing tables
-    // Instead, just run all migrations then drop the table
+    // v007 migration creates migration_projects, migration_modules, migration_corrections
     migrations::run_migrations(&conn).unwrap();
 
-    // Drop the migration_projects table
-    conn.execute_batch("DROP TABLE IF EXISTS migration_corrections; DROP TABLE IF EXISTS migration_modules; DROP TABLE IF EXISTS migration_projects;").unwrap();
+    // Verify all 3 tables exist after migrations
+    for table in &["migration_projects", "migration_modules", "migration_corrections"] {
+        let count: i32 = conn
+            .query_row(
+                &format!("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='{table}'"),
+                [],
+                |r| r.get(0),
+            )
+            .unwrap();
+        assert_eq!(count, 1, "Table {table} should exist after v007 migration");
+    }
 
-    // Verify table is gone
-    let count: i32 = conn
-        .query_row(
-            "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='migration_projects'",
-            [],
-            |r| r.get(0),
-        )
-        .unwrap();
-    assert_eq!(count, 0, "Table should be dropped");
-
-    // create_migration_project calls ensure_migration_tables internally
+    // create_migration_project works on migrated database
     let proj_id = advanced::create_migration_project(
         &conn,
-        "Recreated Project",
+        "Migrated Project",
         "ruby",
         "go",
         Some("rails"),
@@ -256,7 +254,6 @@ fn t7_spec_26_migration_tables_auto_recreated() {
 
     assert!(proj_id > 0);
 
-    // Verify table was recreated and data persisted
     let name: String = conn
         .query_row(
             "SELECT name FROM migration_projects WHERE id = ?1",
@@ -264,7 +261,7 @@ fn t7_spec_26_migration_tables_auto_recreated() {
             |r| r.get(0),
         )
         .unwrap();
-    assert_eq!(name, "Recreated Project");
+    assert_eq!(name, "Migrated Project");
 }
 
 // ─── T7-SPEC-27: Invalid status string in migration_modules row ───

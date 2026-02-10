@@ -74,6 +74,10 @@ impl ParserManager {
             Language::Ruby => &self.ruby,
             Language::Php => &self.php,
             Language::Kotlin => &self.kotlin,
+            // C/C++ use C# parser as closest approximation until dedicated parsers are added
+            Language::Cpp | Language::C => &self.csharp,
+            // Swift/Scala use Java parser as closest approximation
+            Language::Swift | Language::Scala => &self.java,
         }
     }
 
@@ -128,6 +132,38 @@ impl ParserManager {
         let result = parser.parse(source, path)?;
         self.cache.insert(content_hash, result.clone());
         Ok(result)
+    }
+
+    /// Parse a file and return both the `ParseResult` and the tree-sitter `Tree`.
+    ///
+    /// This avoids a redundant re-parse when the caller also needs the raw AST
+    /// (e.g. the detection engine in `drift_analyze()`). The `ParseResult` is
+    /// still cached for future `parse()` calls.
+    pub fn parse_returning_tree(
+        &self,
+        source: &[u8],
+        path: &Path,
+    ) -> Result<(ParseResult, tree_sitter::Tree), ParseError> {
+        let lang = self.detect_language(path).ok_or_else(|| {
+            ParseError::UnsupportedLanguage {
+                extension: path
+                    .extension()
+                    .and_then(|e| e.to_str())
+                    .unwrap_or("unknown")
+                    .to_string(),
+            }
+        })?;
+
+        let ts_lang = lang.ts_language_for_ext(path.extension().and_then(|e| e.to_str()));
+
+        let (result, tree) = super::languages::parse_with_language_and_tree(
+            source, path, lang, ts_lang,
+        )?;
+
+        let content_hash = hash_content(source);
+        self.cache.insert(content_hash, result.clone());
+
+        Ok((result, tree))
     }
 
     /// Get the number of cached parse results.

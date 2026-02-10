@@ -124,6 +124,45 @@ pub fn get_detections_by_category(
     Ok(result)
 }
 
+/// Get all detections (no category filter), ordered by confidence desc.
+pub fn query_all_detections(
+    conn: &Connection,
+    limit: usize,
+) -> Result<Vec<DetectionRecord>, StorageError> {
+    let mut stmt = conn
+        .prepare_cached(
+            "SELECT id, file, line, column_num, pattern_id, category, confidence,
+                    detection_method, cwe_ids, owasp, matched_text, created_at
+             FROM detections ORDER BY confidence DESC LIMIT ?1",
+        )
+        .map_err(|e| StorageError::SqliteError { message: e.to_string() })?;
+
+    let rows = stmt
+        .query_map(params![limit as i64], |row| {
+            Ok(DetectionRecord {
+                id: row.get(0)?,
+                file: row.get(1)?,
+                line: row.get(2)?,
+                column_num: row.get(3)?,
+                pattern_id: row.get(4)?,
+                category: row.get(5)?,
+                confidence: row.get(6)?,
+                detection_method: row.get(7)?,
+                cwe_ids: row.get(8)?,
+                owasp: row.get(9)?,
+                matched_text: row.get(10)?,
+                created_at: row.get(11)?,
+            })
+        })
+        .map_err(|e| StorageError::SqliteError { message: e.to_string() })?;
+
+    let mut result = Vec::new();
+    for row in rows {
+        result.push(row.map_err(|e| StorageError::SqliteError { message: e.to_string() })?);
+    }
+    Ok(result)
+}
+
 /// Delete all detections for a given file.
 pub fn delete_detections_by_file(
     conn: &Connection,

@@ -316,8 +316,8 @@ fn namespace_uri_validation_edge_cases() {
     assert!(addressing::parse("project://proj_123/").is_ok());
     assert!(addressing::parse("AGENT://case-insensitive/").is_ok()); // Case-insensitive scope.
 
-    // Valid: Unicode alphanumeric chars are accepted by is_alphanumeric().
-    assert!(addressing::parse("agent://名前/").is_ok());
+    // Invalid: Unicode chars are rejected (ASCII-only for URL safety and homoglyph prevention).
+    assert!(addressing::parse("agent://名前/").is_err());
 
     // Invalid: empty name.
     assert!(addressing::parse("agent:///").is_err());

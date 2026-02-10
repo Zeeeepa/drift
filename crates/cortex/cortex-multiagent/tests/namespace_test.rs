@@ -105,7 +105,7 @@ fn tmb_ns_03_default_permissions_per_scope() {
         assert!(NamespacePermissionManager::check(conn, &agent_ns, &agent.agent_id, NamespacePermission::Share)?);
         assert!(NamespacePermissionManager::check(conn, &agent_ns, &agent.agent_id, NamespacePermission::Admin)?);
 
-        // Team scope → owner gets read+write.
+        // Team scope → owner gets read+write explicitly, but implicit admin via ownership.
         let team_ns = NamespaceId {
             scope: NamespaceScope::Team("team-a".into()),
             name: "team-a".into(),
@@ -113,16 +113,42 @@ fn tmb_ns_03_default_permissions_per_scope() {
         NamespaceManager::create_namespace(conn, &team_ns, &agent.agent_id)?;
         assert!(NamespacePermissionManager::check(conn, &team_ns, &agent.agent_id, NamespacePermission::Read)?);
         assert!(NamespacePermissionManager::check(conn, &team_ns, &agent.agent_id, NamespacePermission::Write)?);
-        assert!(!NamespacePermissionManager::check(conn, &team_ns, &agent.agent_id, NamespacePermission::Admin)?);
+        // Owner has implicit admin via ownership (standard RBAC).
+        assert!(NamespacePermissionManager::check(conn, &team_ns, &agent.agent_id, NamespacePermission::Admin)?);
 
-        // Project scope → owner gets read only.
+        // But the explicit ACL should only have read+write (not admin).
+        let acl = NamespacePermissionManager::get_acl(conn, &team_ns)?;
+        let owner_perms: Vec<_> = acl.iter()
+            .find(|(id, _)| *id == agent.agent_id)
+            .map(|(_, perms)| perms.clone())
+            .unwrap_or_default();
+        assert!(owner_perms.contains(&NamespacePermission::Read), "explicit ACL should have read");
+        assert!(owner_perms.contains(&NamespacePermission::Write), "explicit ACL should have write");
+        assert!(!owner_perms.contains(&NamespacePermission::Admin), "explicit ACL should NOT have admin for team scope");
+
+        // Project scope → owner gets read explicitly, but implicit admin via ownership.
         let proj_ns = NamespaceId {
             scope: NamespaceScope::Project("proj-x".into()),
             name: "proj-x".into(),
         };
         NamespaceManager::create_namespace(conn, &proj_ns, &agent.agent_id)?;
         assert!(NamespacePermissionManager::check(conn, &proj_ns, &agent.agent_id, NamespacePermission::Read)?);
-        assert!(!NamespacePermissionManager::check(conn, &proj_ns, &agent.agent_id, NamespacePermission::Write)?);
+        // Owner has implicit write+admin via ownership (standard RBAC).
+        assert!(NamespacePermissionManager::check(conn, &proj_ns, &agent.agent_id, NamespacePermission::Write)?);
+
+        // But the explicit ACL should only have read.
+        let acl = NamespacePermissionManager::get_acl(conn, &proj_ns)?;
+        let owner_perms: Vec<_> = acl.iter()
+            .find(|(id, _)| *id == agent.agent_id)
+            .map(|(_, perms)| perms.clone())
+            .unwrap_or_default();
+        assert!(owner_perms.contains(&NamespacePermission::Read), "explicit ACL should have read");
+        assert!(!owner_perms.contains(&NamespacePermission::Write), "explicit ACL should NOT have write for project scope");
+
+        // Verify a NON-owner does NOT get implicit permissions.
+        let guest = AgentRegistry::register(conn, "guest-agent", vec![])?;
+        assert!(!NamespacePermissionManager::check(conn, &team_ns, &guest.agent_id, NamespacePermission::Read)?,
+            "non-owner should not have implicit access");
 
         Ok(())
     }).unwrap();

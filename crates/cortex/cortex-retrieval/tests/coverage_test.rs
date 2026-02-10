@@ -554,7 +554,9 @@ fn scorer_weights_still_sum_to_one() {
         + w.recency
         + w.confidence
         + w.importance
-        + w.intent_type_match;
+        + w.intent_type_match
+        + w.evidence_freshness
+        + w.epistemic_status;
     assert!(
         (sum - 1.0).abs() < 0.01,
         "weights must sum to 1.0, got {sum}"

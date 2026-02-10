@@ -8,14 +8,14 @@ import { formatOutput, type OutputFormat } from '../output/index.js';
 
 export function registerImpactCommand(program: Command): void {
   program
-    .command('impact <functionId>')
-    .description('Analyze change blast radius for a function')
+    .command('impact [path]')
+    .description('Analyze change blast radius and dead code for a project')
     .option('-f, --format <format>', 'Output format: table, json, sarif', 'table')
     .option('-q, --quiet', 'Suppress all output except errors')
-    .action(async (functionId: string, opts: { format: OutputFormat; quiet?: boolean }) => {
+    .action(async (path: string | undefined, opts: { format: OutputFormat; quiet?: boolean }) => {
       const napi = loadNapi();
       try {
-        const result = napi.drift_impact(functionId);
+        const result = napi.driftImpactAnalysis(path ?? process.cwd());
         if (!opts.quiet) {
           process.stdout.write(formatOutput(result, opts.format));
         }

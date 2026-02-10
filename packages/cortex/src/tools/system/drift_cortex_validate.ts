@@ -21,19 +21,12 @@ export function driftCortexValidate(client: CortexClient): McpToolDefinition {
       },
     },
     handler: async (args) => {
-      const candidates = await client.getValidationCandidates(
+      // E-02: Run real 4-dimension validation instead of just listing candidates.
+      const result = await client.validationRun(
         0.0,
         (args.min_confidence as number) ?? 1.0,
       );
-      return {
-        total_checked: candidates.length,
-        candidates: candidates.map((m) => ({
-          id: m.id,
-          memory_type: m.memory_type,
-          confidence: m.confidence,
-          summary: m.summary,
-        })),
-      };
+      return result;
     },
   };
 }

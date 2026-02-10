@@ -196,8 +196,11 @@ pub fn get_agent_context(conn: &Connection) -> WorkspaceResult<AgentProjectConte
 }
 
 /// Safely check if a table exists and has data.
+/// Table name is validated to prevent SQL injection (only alphanumeric + underscore allowed).
 fn table_has_data(conn: &Connection, table: &str) -> bool {
-    // Use a safe approach: try querying, return false on any error
+    if !table.chars().all(|c| c.is_alphanumeric() || c == '_') {
+        return false;
+    }
     conn.query_row(
         &format!("SELECT COUNT(*) > 0 FROM {}", table),
         [],

@@ -5,6 +5,7 @@ use rusqlite::{params, Connection};
 
 // ─── Simulations ───
 
+#[allow(clippy::too_many_arguments)]
 pub fn insert_simulation(
     conn: &Connection,
     task_category: &str,
@@ -66,6 +67,7 @@ pub struct SimulationRow {
 
 // ─── Decisions ───
 
+#[allow(clippy::too_many_arguments)]
 pub fn insert_decision(
     conn: &Connection,
     category: &str,
@@ -114,9 +116,6 @@ pub fn create_migration_project(
     source_framework: Option<&str>,
     target_framework: Option<&str>,
 ) -> Result<i64, StorageError> {
-    // Ensure tables exist (auto-create on first use)
-    ensure_migration_tables(conn)?;
-
     conn.execute(
         "INSERT INTO migration_projects (name, source_language, target_language, source_framework, target_framework)
          VALUES (?1, ?2, ?3, ?4, ?5)",
@@ -209,40 +208,3 @@ pub struct CorrectionRow {
     pub created_at: i64,
 }
 
-/// Ensure migration tables exist (auto-create on first use).
-fn ensure_migration_tables(conn: &Connection) -> Result<(), StorageError> {
-    conn.execute_batch(
-        "CREATE TABLE IF NOT EXISTS migration_projects (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            source_language TEXT NOT NULL,
-            target_language TEXT NOT NULL,
-            source_framework TEXT,
-            target_framework TEXT,
-            status TEXT NOT NULL DEFAULT 'active',
-            created_at INTEGER NOT NULL DEFAULT (unixepoch())
-        ) STRICT;
-
-        CREATE TABLE IF NOT EXISTS migration_modules (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            project_id INTEGER NOT NULL REFERENCES migration_projects(id),
-            module_name TEXT NOT NULL,
-            status TEXT NOT NULL DEFAULT 'pending',
-            spec_content TEXT,
-            created_at INTEGER NOT NULL DEFAULT (unixepoch()),
-            updated_at INTEGER NOT NULL DEFAULT (unixepoch())
-        ) STRICT;
-
-        CREATE TABLE IF NOT EXISTS migration_corrections (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            module_id INTEGER NOT NULL REFERENCES migration_modules(id),
-            section TEXT NOT NULL,
-            original_text TEXT NOT NULL,
-            corrected_text TEXT NOT NULL,
-            reason TEXT,
-            created_at INTEGER NOT NULL DEFAULT (unixepoch())
-        ) STRICT;"
-    ).map_err(|e| StorageError::SqliteError { message: e.to_string() })?;
-
-    Ok(())
-}

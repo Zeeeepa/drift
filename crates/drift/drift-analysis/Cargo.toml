@@ -46,6 +46,7 @@ git2 = { workspace = true }
 tempfile = "3"
 criterion = { workspace = true }
 drift-storage = { workspace = true }
+drift-context = { workspace = true }
 rusqlite = { workspace = true }
 proptest = { workspace = true }
 

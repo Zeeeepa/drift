@@ -10,23 +10,36 @@ impl SchemaParser for GraphqlParser {
     fn parse(&self, content: &str, file_path: &str) -> Vec<Contract> {
         let mut endpoints = Vec::new();
 
+        // CE-GQL-02: Pre-parse input types for field resolution.
+        let _input_types = parse_input_types(content);
+
         // Parse type definitions for Query, Mutation, Subscription
         let operation_types = ["Query", "Mutation", "Subscription"];
 
         for op_type in &operation_types {
-            let type_pattern = format!("type {} {{", op_type);
-            if let Some(start) = content.find(&type_pattern) {
-                let block = extract_block(content, start + type_pattern.len());
-                let fields = parse_graphql_fields(&block, file_path);
-                for field in fields {
-                    endpoints.push(Endpoint {
-                        method: op_type.to_string(),
-                        path: field.0,
-                        request_fields: field.1,
-                        response_fields: field.2,
-                        file: file_path.to_string(),
-                        line: 0,
-                    });
+            // CE-GQL-01: Search for both `type X {` and `extend type X {`.
+            let patterns = [
+                format!("type {} {{", op_type),
+                format!("extend type {} {{", op_type),
+            ];
+
+            for pattern in &patterns {
+                let mut search_from = 0;
+                while let Some(start) = content[search_from..].find(pattern.as_str()) {
+                    let abs_start = search_from + start;
+                    let block = extract_block(content, abs_start + pattern.len());
+                    let fields = parse_graphql_fields(&block, file_path);
+                    for field in fields {
+                        endpoints.push(Endpoint {
+                            method: op_type.to_string(),
+                            path: field.0,
+                            request_fields: field.1,
+                            response_fields: field.2,
+                            file: file_path.to_string(),
+                            line: 0,
+                        });
+                    }
+                    search_from = abs_start + pattern.len();
                 }
             }
         }
@@ -142,4 +155,63 @@ fn parse_graphql_args(args_str: &str) -> Vec<FieldSpec> {
             }
         })
         .collect()
+}
+
+/// CE-GQL-02: Parse `input TypeName { ... }` definitions.
+/// Returns a map of input type name to their fields.
+fn parse_input_types(content: &str) -> Vec<(String, Vec<FieldSpec>)> {
+    let mut results = Vec::new();
+    let mut search_from = 0;
+    let pattern = "input ";
+
+    while let Some(pos) = content[search_from..].find(pattern) {
+        let abs_pos = search_from + pos;
+        let rest = &content[abs_pos + pattern.len()..];
+
+        // Extract type name
+        if let Some(brace_pos) = rest.find('{') {
+            let type_name = rest[..brace_pos].trim().to_string();
+            if !type_name.is_empty() && !type_name.contains(' ') {
+                let block = extract_block(content, abs_pos + pattern.len() + brace_pos + 1);
+                let fields = parse_input_fields(&block);
+                results.push((type_name, fields));
+            }
+            search_from = abs_pos + pattern.len() + brace_pos + 1;
+        } else {
+            break;
+        }
+    }
+    results
+}
+
+/// Parse fields from an input type block.
+fn parse_input_fields(block: &str) -> Vec<FieldSpec> {
+    let mut fields = Vec::new();
+    for line in block.lines() {
+        let trimmed = line.trim();
+        if trimmed.is_empty() || trimmed.starts_with('#') {
+            continue;
+        }
+        // Parse: fieldName: Type! or fieldName: Type
+        if let Some(colon_pos) = trimmed.find(':') {
+            let name = trimmed[..colon_pos].trim().to_string();
+            let type_str = trimmed[colon_pos + 1..].trim();
+            let required = type_str.ends_with('!');
+            let field_type = type_str
+                .trim_end_matches('!')
+                .trim_start_matches('[')
+                .trim_end_matches(']')
+                .trim_end_matches('!')
+                .to_string();
+            if !name.is_empty() {
+                fields.push(FieldSpec {
+                    name,
+                    field_type,
+                    required,
+                    nullable: !required,
+                });
+            }
+        }
+    }
+    fields
 }

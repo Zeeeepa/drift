@@ -24,6 +24,13 @@ impl QualityGate for SecurityBoundariesGate {
     }
 
     fn evaluate(&self, input: &GateInput) -> GateResult {
+        if input.security_findings.is_empty() {
+            return GateResult::skipped(
+                GateId::SecurityBoundaries,
+                "No security analysis data available".to_string(),
+            );
+        }
+
         let mut violations = Vec::new();
 
         for finding in &input.security_findings {

@@ -255,8 +255,18 @@ fn test_sarif_cwe_owasp_references() {
     assert!(sql_result.is_some(), "Should have SQL injection result");
 
     let sql = sql_result.unwrap();
-    // Should have taxa references
-    assert!(sql["taxa"].is_array(), "Should have taxa references");
-    let taxa = sql["taxa"].as_array().unwrap();
-    assert!(taxa.iter().any(|t| t["id"].as_str().unwrap().contains("CWE-89")));
+    // CWE reference is in properties (per-result) and in rules[*].relationships + taxonomies (per-run)
+    assert!(sql["properties"]["cweId"].as_str().unwrap().contains("CWE-89"),
+        "Result properties should contain CWE ID");
+
+    // Taxonomies are at runs[0].taxonomies (SARIF 2.1.0 §3.14.8)
+    let taxonomies = run["taxonomies"].as_array().unwrap();
+    assert!(taxonomies.iter().any(|t| t["name"] == "CWE"), "Should have CWE taxonomy");
+
+    // Rules should have relationships referencing CWE
+    let rules = run["tool"]["driver"]["rules"].as_array().unwrap();
+    let sql_rule = rules.iter().find(|r| r["id"] == "security/sql-injection");
+    assert!(sql_rule.is_some(), "Should have SQL injection rule");
+    let relationships = sql_rule.unwrap()["relationships"].as_array().unwrap();
+    assert!(relationships.iter().any(|r| r["target"]["id"].as_str().unwrap().contains("CWE-89")));
 }

@@ -16,10 +16,15 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 
 use drift_analysis::scanner::Scanner;
+use drift_analysis::scanner::language_detect::Language;
+use drift_analysis::scanner::types::{CachedFileMetadata, ScanDiff};
 use drift_core::config::ScanConfig;
 use drift_core::events::handler::DriftEventHandler;
 use drift_core::events::types::{ScanProgressEvent, ScanStartedEvent};
 use drift_core::types::collections::FxHashMap;
+use drift_storage::batch::commands::{
+    BatchCommand, FileMetadataRow as BatchFileMetadataRow,
+};
 use napi::bindgen_prelude::*;
 use napi::threadsafe_function::{ThreadsafeFunction, ThreadsafeFunctionCallMode};
 use napi_derive::napi;
@@ -55,13 +60,13 @@ impl Task for ScanTask {
             SCAN_CANCELLED.store(false, Ordering::SeqCst);
         }
 
-        // No cached metadata for now — full scan
-        // TODO: Phase 2 will load cached metadata from drift.db for incremental scans
-        let cached = FxHashMap::default();
+        let cached = load_cached_metadata(&rt)?;
 
         let diff = scanner
             .scan(&self.root, &cached, &NoOpHandler)
             .map_err(error_codes::scan_error)?;
+
+        persist_scan_diff(&rt, &diff, &self.root.to_string_lossy())?;
 
         Ok(ScanSummary::from(&diff))
     }
@@ -109,11 +114,13 @@ impl Task for ScanWithProgressTask {
         // Create progress handler that bridges DriftEventHandler → ThreadsafeFunction
         let progress_handler = NapiProgressHandler::new(self.on_progress.clone());
 
-        let cached = FxHashMap::default();
+        let cached = load_cached_metadata(&rt)?;
 
         let diff = scanner
             .scan(&self.root, &cached, &progress_handler)
             .map_err(error_codes::scan_error)?;
+
+        persist_scan_diff(&rt, &diff, &self.root.to_string_lossy())?;
 
         Ok(ScanSummary::from(&diff))
     }
@@ -200,6 +207,166 @@ impl DriftEventHandler for NapiProgressHandler {
 struct NoOpHandler;
 impl DriftEventHandler for NoOpHandler {}
 
+// ---- Storage loading ----
+
+/// Load cached file metadata from drift.db for incremental scan comparison.
+fn load_cached_metadata(
+    rt: &crate::runtime::DriftRuntime,
+) -> napi::Result<FxHashMap<PathBuf, CachedFileMetadata>> {
+    let records = rt.db.with_reader(|conn| {
+        drift_storage::queries::files::load_all_file_metadata(conn)
+    }).map_err(|e| {
+        napi::Error::from_reason(format!(
+            "[{}] Failed to load cached metadata: {e}",
+            error_codes::STORAGE_ERROR
+        ))
+    })?;
+
+    let mut cached = FxHashMap::default();
+    for record in records {
+        let path = PathBuf::from(&record.path);
+        let content_hash = if record.content_hash.len() == 8 {
+            u64::from_le_bytes(record.content_hash.try_into().unwrap())
+        } else {
+            0
+        };
+        let language = record.language.as_deref().and_then(language_from_name);
+        cached.insert(
+            path.clone(),
+            CachedFileMetadata {
+                path,
+                content_hash,
+                mtime_secs: record.mtime_secs,
+                mtime_nanos: record.mtime_nanos as u32,
+                file_size: record.file_size as u64,
+                language,
+            },
+        );
+    }
+    Ok(cached)
+}
+
+/// Convert a language display name back to a Language enum.
+fn language_from_name(name: &str) -> Option<Language> {
+    match name {
+        "TypeScript" => Some(Language::TypeScript),
+        "JavaScript" => Some(Language::JavaScript),
+        "Python" => Some(Language::Python),
+        "Java" => Some(Language::Java),
+        "C#" => Some(Language::CSharp),
+        "Go" => Some(Language::Go),
+        "Rust" => Some(Language::Rust),
+        "Ruby" => Some(Language::Ruby),
+        "PHP" => Some(Language::Php),
+        "Kotlin" => Some(Language::Kotlin),
+        "C++" => Some(Language::Cpp),
+        "C" => Some(Language::C),
+        "Swift" => Some(Language::Swift),
+        "Scala" => Some(Language::Scala),
+        _ => None,
+    }
+}
+
+// ---- Storage persistence ----
+
+/// Persist scan results to drift.db via the batch writer.
+/// Converts ScanEntry records to file_metadata rows and handles deletions.
+fn persist_scan_diff(
+    rt: &crate::runtime::DriftRuntime,
+    diff: &ScanDiff,
+    root_path: &str,
+) -> napi::Result<()> {
+    // Convert entries to batch rows
+    let rows: Vec<BatchFileMetadataRow> = diff
+        .entries
+        .values()
+        .map(|entry| BatchFileMetadataRow {
+            path: entry.path.to_string_lossy().to_string(),
+            language: entry.language.as_ref().map(|l| l.to_string()),
+            file_size: entry.file_size as i64,
+            content_hash: entry.content_hash.to_le_bytes().to_vec(),
+            mtime_secs: entry.mtime_secs,
+            mtime_nanos: entry.mtime_nanos as i64,
+            last_scanned_at: std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_secs() as i64,
+            scan_duration_us: Some(entry.scan_duration_us as i64),
+        })
+        .collect();
+
+    if !rows.is_empty() {
+        rt.batch_writer
+            .send(BatchCommand::UpsertFileMetadata(rows))
+            .map_err(|e| {
+                napi::Error::from_reason(format!(
+                    "[{}] Failed to persist file metadata: {e}",
+                    error_codes::STORAGE_ERROR
+                ))
+            })?;
+    }
+
+    // Delete removed files
+    if !diff.removed.is_empty() {
+        let paths: Vec<String> = diff
+            .removed
+            .iter()
+            .map(|p| p.to_string_lossy().to_string())
+            .collect();
+        rt.batch_writer
+            .send(BatchCommand::DeleteFileMetadata(paths))
+            .map_err(|e| {
+                napi::Error::from_reason(format!(
+                    "[{}] Failed to delete removed files: {e}",
+                    error_codes::STORAGE_ERROR
+                ))
+            })?;
+    }
+
+    // PH7-01: Record completed scan in scan_history.
+    // We insert + immediately update to 'completed' since persist_scan_diff runs
+    // AFTER the scan finishes (the batch writer's InsertScanHistory only inserts
+    // with status='running', which would leave it stuck forever).
+    {
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_secs() as i64;
+        let root = root_path.to_string();
+        let added = diff.added.len() as i64;
+        let modified = diff.modified.len() as i64;
+        let removed = diff.removed.len() as i64;
+        let unchanged = diff.unchanged.len() as i64;
+        let total = added + modified + removed + unchanged;
+        let duration_ms = diff.stats.discovery_ms as i64
+            + diff.stats.hashing_ms as i64
+            + diff.stats.diff_ms as i64;
+
+        rt.db.with_writer(|conn| {
+            let scan_id = drift_storage::queries::scan_history::insert_scan_start(conn, now, &root)?;
+            drift_storage::queries::scan_history::update_scan_complete(
+                conn, scan_id, now, total, added, modified, removed, unchanged,
+                duration_ms, "completed", None,
+            )
+        }).map_err(|e| {
+            napi::Error::from_reason(format!(
+                "[{}] Failed to record scan history: {e}",
+                error_codes::STORAGE_ERROR
+            ))
+        })?;
+    }
+
+    // Flush to ensure data is committed before returning summary
+    rt.batch_writer.flush().map_err(|e| {
+        napi::Error::from_reason(format!(
+            "[{}] Failed to flush batch writer: {e}",
+            error_codes::STORAGE_ERROR
+        ))
+    })?;
+
+    Ok(())
+}
+
 // ---- Helpers ----
 
 /// Build a `ScanConfig` by merging runtime config with per-call options.
@@ -220,4 +387,54 @@ fn build_scan_config(base: &ScanConfig, opts: &ScanOptions) -> ScanConfig {
     }
 
     config
+}
+
+// ---- PH7-02: Scan history NAPI binding ----
+
+#[napi(object)]
+#[derive(Debug, Clone)]
+pub struct JsScanHistoryEntry {
+    pub id: i64,
+    pub started_at: i64,
+    pub completed_at: Option<i64>,
+    pub root_path: String,
+    pub total_files: Option<i64>,
+    pub added_files: Option<i64>,
+    pub modified_files: Option<i64>,
+    pub removed_files: Option<i64>,
+    pub unchanged_files: Option<i64>,
+    pub duration_ms: Option<i64>,
+    pub status: String,
+    pub error: Option<String>,
+}
+
+/// Query recent scan history entries.
+#[napi(js_name = "driftScanHistory")]
+pub fn drift_scan_history(limit: Option<u32>) -> napi::Result<Vec<JsScanHistoryEntry>> {
+    let rt = runtime::get()?;
+    let limit = limit.unwrap_or(20) as usize;
+
+    let rows = rt.db.with_reader(|conn| {
+        drift_storage::queries::scan_history::query_recent(conn, limit)
+    }).map_err(|e| {
+        napi::Error::from_reason(format!(
+            "[{}] Failed to query scan history: {e}",
+            error_codes::STORAGE_ERROR
+        ))
+    })?;
+
+    Ok(rows.into_iter().map(|r| JsScanHistoryEntry {
+        id: r.id,
+        started_at: r.started_at,
+        completed_at: r.completed_at,
+        root_path: r.root_path,
+        total_files: r.total_files,
+        added_files: r.added_files,
+        modified_files: r.modified_files,
+        removed_files: r.removed_files,
+        unchanged_files: r.unchanged_files,
+        duration_ms: r.duration_ms,
+        status: r.status,
+        error: r.error,
+    }).collect())
 }

@@ -55,30 +55,16 @@ impl SarifReporter {
                     }]
                 });
 
-                // Add CWE taxonomy reference
+                // Add properties (is_new, CWE, OWASP)
+                let mut properties = serde_json::Map::new();
+                properties.insert("isNew".to_string(), json!(violation.is_new));
                 if let Some(cwe_id) = violation.cwe_id {
-                    result["taxa"] = json!([{
-                        "id": format!("CWE-{cwe_id}"),
-                        "toolComponent": {
-                            "name": "CWE",
-                            "index": 0
-                        }
-                    }]);
+                    properties.insert("cweId".to_string(), json!(format!("CWE-{cwe_id}")));
                 }
-
-                // Add OWASP taxonomy reference
                 if let Some(ref owasp) = violation.owasp_category {
-                    let taxa = result.get("taxa").cloned().unwrap_or(json!([]));
-                    let mut taxa_arr = taxa.as_array().cloned().unwrap_or_default();
-                    taxa_arr.push(json!({
-                        "id": owasp,
-                        "toolComponent": {
-                            "name": "OWASP",
-                            "index": 1
-                        }
-                    }));
-                    result["taxa"] = Value::Array(taxa_arr);
+                    properties.insert("owaspCategory".to_string(), json!(owasp));
                 }
+                result["properties"] = Value::Object(properties);
 
                 // Add quick fix if available
                 if let Some(ref fix) = violation.quick_fix {
@@ -132,10 +118,37 @@ impl SarifReporter {
                         }
                     });
 
+                    // Add taxonomy relationships on the rule (SARIF 2.1.0 §3.49.3)
+                    let mut relationships = Vec::new();
                     if let Some(cwe_id) = violation.cwe_id {
+                        relationships.push(json!({
+                            "target": {
+                                "id": format!("CWE-{cwe_id}"),
+                                "toolComponent": {
+                                    "name": "CWE",
+                                    "index": 0
+                                }
+                            },
+                            "kinds": ["superset"]
+                        }));
                         rule["properties"] = json!({
                             "tags": [format!("CWE-{cwe_id}")]
                         });
+                    }
+                    if let Some(ref owasp) = violation.owasp_category {
+                        relationships.push(json!({
+                            "target": {
+                                "id": owasp,
+                                "toolComponent": {
+                                    "name": "OWASP",
+                                    "index": 1
+                                }
+                            },
+                            "kinds": ["superset"]
+                        }));
+                    }
+                    if !relationships.is_empty() {
+                        rule["relationships"] = Value::Array(relationships);
                     }
 
                     rules.push(rule);

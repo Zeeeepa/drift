@@ -35,14 +35,16 @@ pub fn insert_audit_entry(conn: &Connection, entry: &AuditEntry) -> CortexResult
         "details": entry.details,
     });
     let actor_id = actor_str.trim_matches('"').to_string();
-    let _ = crate::temporal_events::emit_event(
+    if let Err(e) = crate::temporal_events::emit_event(
         conn,
         &entry.memory_id,
         operation_str.trim_matches('"'),
         &delta,
         "audit",
         &actor_id,
-    );
+    ) {
+        tracing::warn!(memory_id = %entry.memory_id, error = %e, "failed to emit audit event");
+    }
 
     Ok(())
 }

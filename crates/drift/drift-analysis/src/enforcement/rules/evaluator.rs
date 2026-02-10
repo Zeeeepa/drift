@@ -1,5 +1,7 @@
 //! Rules evaluator — maps detected patterns + outliers to actionable violations.
 
+use std::collections::{HashMap, HashSet};
+
 use super::quick_fixes::QuickFixGenerator;
 use super::suppression::SuppressionChecker;
 use super::types::*;
@@ -8,6 +10,8 @@ use super::types::*;
 pub struct RulesEvaluator {
     fix_generator: QuickFixGenerator,
     suppression_checker: SuppressionChecker,
+    /// FP rates per detector/pattern_id (0.0-1.0). If > 0.20, severity is downgraded.
+    fp_rates: HashMap<String, f64>,
 }
 
 impl RulesEvaluator {
@@ -15,7 +19,14 @@ impl RulesEvaluator {
         Self {
             fix_generator: QuickFixGenerator::new(),
             suppression_checker: SuppressionChecker::new(),
+            fp_rates: HashMap::new(),
         }
+    }
+
+    /// Set FP rates per pattern_id for severity adjustment.
+    pub fn with_fp_rates(mut self, fp_rates: HashMap<String, f64>) -> Self {
+        self.fp_rates = fp_rates;
+        self
     }
 
     /// Evaluate all patterns and produce violations.
@@ -38,13 +49,29 @@ impl RulesEvaluator {
                     &input.source_lines,
                 );
 
+                // Downgrade severity if FP rate > 20% for this pattern
+                let severity = if let Some(&fp_rate) = self.fp_rates.get(&pattern.pattern_id) {
+                    if fp_rate > 0.20 {
+                        Self::downgrade_severity(severity)
+                    } else {
+                        severity
+                    }
+                } else {
+                    severity
+                };
+
+                // Determine is_new from baseline
+                let violation_key = format!("{}:{}:{}", outlier.file, outlier.line, rule_id);
+                let is_new = !input.baseline_violation_ids.is_empty()
+                    && !input.baseline_violation_ids.contains(&violation_key);
+
                 violations.push(Violation {
                     id,
                     file: outlier.file.clone(),
                     line: outlier.line,
                     column: outlier.column,
-                    end_line: None,
-                    end_column: None,
+                    end_line: outlier.end_line,
+                    end_column: outlier.end_column,
                     severity,
                     pattern_id: pattern.pattern_id.clone(),
                     rule_id,
@@ -53,7 +80,7 @@ impl RulesEvaluator {
                     cwe_id: pattern.cwe_ids.first().copied(),
                     owasp_category: pattern.owasp_categories.first().cloned(),
                     suppressed,
-                    is_new: false,
+                    is_new,
                 });
             }
         }
@@ -110,6 +137,18 @@ impl RulesEvaluator {
             let key = format!("{}:{}:{}", v.file, v.line, v.rule_id);
             seen.insert(key)
         });
+    }
+}
+
+impl RulesEvaluator {
+    /// Downgrade severity by one level.
+    fn downgrade_severity(severity: Severity) -> Severity {
+        match severity {
+            Severity::Error => Severity::Warning,
+            Severity::Warning => Severity::Info,
+            Severity::Info => Severity::Hint,
+            Severity::Hint => Severity::Hint,
+        }
     }
 }
 

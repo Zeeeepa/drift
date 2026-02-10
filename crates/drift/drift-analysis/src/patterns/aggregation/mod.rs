@@ -14,6 +14,6 @@ pub mod incremental;
 pub mod pipeline;
 
 pub use types::{AggregatedPattern, PatternLocation, MergeCandidate, MergeDecision, PatternHierarchy};
-pub use pipeline::AggregationPipeline;
+pub use pipeline::{AggregationPipeline, AggregationResult, AggregationDiagnostics};
 pub use similarity::{jaccard_similarity, MinHashIndex};
 pub use grouper::PatternGrouper;

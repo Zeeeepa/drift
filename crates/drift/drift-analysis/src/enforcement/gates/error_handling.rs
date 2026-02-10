@@ -20,6 +20,13 @@ impl QualityGate for ErrorHandlingGate {
     }
 
     fn evaluate(&self, input: &GateInput) -> GateResult {
+        if input.error_gaps.is_empty() {
+            return GateResult::skipped(
+                GateId::ErrorHandling,
+                "No error handling data available".to_string(),
+            );
+        }
+
         let mut violations = Vec::new();
 
         for gap in &input.error_gaps {

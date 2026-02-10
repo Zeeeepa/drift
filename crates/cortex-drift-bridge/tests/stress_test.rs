@@ -43,7 +43,7 @@ fn make_memory(id: &str, conf: f64, pat_conf: f64) -> MemoryForGrounding {
         error_handling_gaps: None,
         decision_evidence: None,
         boundary_data: None,
-    }
+        evidence_context: None,    }
 }
 
 // =============================================================================
@@ -69,7 +69,7 @@ fn stress_nan_pattern_confidence_does_not_corrupt_score() {
         error_handling_gaps: None,
         decision_evidence: None,
         boundary_data: None,
-    };
+        evidence_context: None,    };
     let result = runner.ground_single(&memory, None, None).unwrap();
     // NaN in evidence should NOT make the final score NaN
     assert!(
@@ -96,7 +96,7 @@ fn stress_nan_occurrence_rate_does_not_corrupt_score() {
         error_handling_gaps: None,
         decision_evidence: None,
         boundary_data: None,
-    };
+        evidence_context: None,    };
     let result = runner.ground_single(&memory, None, None).unwrap();
     assert!(
         !result.grounding_score.is_nan(),
@@ -121,7 +121,7 @@ fn stress_infinity_in_evidence_does_not_corrupt_score() {
         error_handling_gaps: None,
         decision_evidence: None,
         boundary_data: None,
-    };
+        evidence_context: None,    };
     let result = runner.ground_single(&memory, None, None).unwrap();
     assert!(
         result.grounding_score.is_finite(),
@@ -793,7 +793,7 @@ fn stress_weighted_average_accumulation_error() {
         "PRODUCTION BUG: Score became non-finite with 1000 evidence items"
     );
     assert!(
-        score >= 0.0 && score <= 1.0,
+        (0.0..=1.0).contains(&score),
         "PRODUCTION BUG: Score {} out of [0,1] range with 1000 evidence items",
         score,
     );
@@ -855,7 +855,7 @@ fn stress_db_closed_connection_handling() {
 fn stress_retention_with_empty_tables() {
     let db = setup_bridge_db();
     // Apply retention on empty tables — should not error
-    let result = cortex_drift_bridge::storage::tables::apply_retention(&db, true);
+    let result = cortex_drift_bridge::storage::apply_retention(&db, true);
     assert!(
         result.is_ok(),
         "PRODUCTION BUG: Retention on empty tables failed: {:?}",
@@ -874,7 +874,7 @@ fn stress_retention_with_future_timestamps() {
     )
     .unwrap();
 
-    let result = cortex_drift_bridge::storage::tables::apply_retention(&db, true);
+    let result = cortex_drift_bridge::storage::apply_retention(&db, true);
     assert!(result.is_ok());
 
     // Future records should NOT be deleted
@@ -1137,10 +1137,8 @@ fn stress_snapshot_counts_add_up() {
             memory_id: format!("snap_{}", i),
             memory_type: if i % 5 == 0 {
                 cortex_core::MemoryType::Procedural // not groundable
-            } else if i % 7 == 0 {
-                cortex_core::MemoryType::PatternRationale // groundable but no evidence
             } else {
-                cortex_core::MemoryType::PatternRationale
+                cortex_core::MemoryType::PatternRationale // groundable (no evidence if i%7==0)
             },
             current_confidence: 0.7,
             pattern_confidence: if i % 7 == 0 && i % 5 != 0 { None } else { Some(0.3 + (i as f64 * 0.007)) },
@@ -1153,7 +1151,7 @@ fn stress_snapshot_counts_add_up() {
             error_handling_gaps: None,
             decision_evidence: None,
             boundary_data: None,
-        });
+        evidence_context: None,        });
     }
 
     let snapshot = runner
@@ -1181,4 +1179,635 @@ fn stress_snapshot_counts_add_up() {
         sum,
         snapshot.total_checked,
     );
+}
+
+// =============================================================================
+// SECTION 12: DEDUP — Race conditions, TTL edge cases, capacity overflow
+// =============================================================================
+
+#[test]
+fn stress_dedup_1m_events_no_oom() {
+    use cortex_drift_bridge::event_mapping::dedup::EventDeduplicator;
+    use std::time::Duration;
+
+    // Max capacity 10K with 60s TTL — 1M events should evict correctly
+    let mut dedup = EventDeduplicator::with_config(Duration::from_secs(60), 10_000);
+
+    let start = std::time::Instant::now();
+    for i in 0..1_000_000 {
+        dedup.is_duplicate("on_pattern_approved", &i.to_string(), "");
+    }
+    let elapsed = start.elapsed();
+
+    assert!(
+        dedup.len() <= 10_000,
+        "PRODUCTION BUG: Dedup cache grew to {} entries (max 10K). \
+         Unbounded growth would OOM the process.",
+        dedup.len(),
+    );
+    assert!(
+        elapsed.as_secs() < 10,
+        "PRODUCTION BUG: 1M dedup checks took {}s. Would block event processing.",
+        elapsed.as_secs(),
+    );
+}
+
+#[test]
+fn stress_dedup_adversarial_hashes() {
+    use cortex_drift_bridge::event_mapping::dedup::EventDeduplicator;
+    use std::time::Duration;
+
+    let mut dedup = EventDeduplicator::with_config(Duration::from_secs(60), 1000);
+
+    // Adversarial inputs that might collide in weak hash functions
+    let payloads = vec![
+        ("", "", ""),
+        ("\0", "\0", "\0"),
+        ("a", "b", "c"),
+        ("a", "c", "b"),
+        ("b", "a", "c"),
+        ("🔥", "🔥", "🔥"),
+        ("'; DROP TABLE", "test", ""),
+    ];
+
+    // None of these should be considered duplicates of each other
+    for (et, eid, extra) in &payloads {
+        let is_dup = dedup.is_duplicate(et, eid, extra);
+        // First occurrence should never be a duplicate
+        assert!(
+            !is_dup || et.is_empty(),
+            "PRODUCTION BUG: First occurrence of ({}, {}, {}) detected as duplicate. \
+             Hash collision would silently drop events.",
+            et, eid, extra,
+        );
+    }
+}
+
+#[test]
+fn stress_dedup_concurrent_via_runtime() {
+    use std::sync::Arc;
+    use cortex_drift_bridge::{BridgeConfig, BridgeRuntime};
+
+    let runtime = Arc::new(BridgeRuntime::new(BridgeConfig::default()));
+    let barrier = Arc::new(std::sync::Barrier::new(8));
+    let mut handles = vec![];
+
+    for thread_id in 0..8 {
+        let runtime = Arc::clone(&runtime);
+        let barrier = Arc::clone(&barrier);
+        handles.push(std::thread::spawn(move || {
+            barrier.wait();
+            let mut duplicates = 0u32;
+            for i in 0..1000 {
+                // Each thread uses unique event IDs → should never be duplicate
+                let id = format!("t{}_{}", thread_id, i);
+                if runtime.is_duplicate_event("test", &id, "") {
+                    duplicates += 1;
+                }
+            }
+            duplicates
+        }));
+    }
+
+    let total_false_dupes: u32 = handles
+        .into_iter()
+        .map(|h| h.join().expect("Thread panicked — Mutex poisoned"))
+        .sum();
+
+    assert_eq!(
+        total_false_dupes, 0,
+        "PRODUCTION BUG: {} false duplicate detections under concurrency. \
+         Mutex contention is corrupting dedup state.",
+        total_false_dupes,
+    );
+}
+
+// =============================================================================
+// SECTION 13: WEIGHT DECAY & BOUNDS — NaN propagation, extreme values
+// =============================================================================
+
+#[test]
+fn stress_weight_decay_nan_chain() {
+    use cortex_drift_bridge::specification::weights::decay;
+
+    // NaN stored → returns static_default
+    assert_eq!(decay::decay_weight(f64::NAN, 1.0, 100.0), 1.0);
+
+    // NaN default_weight → NaN propagates through arithmetic (known behavior)
+    let result_nan_default = decay::decay_weight(2.0, f64::NAN, 100.0);
+    // This is a documentation test: NaN default WILL propagate.
+    // The bounds module must catch this downstream.
+    let _ = result_nan_default; // acknowledged
+
+    // NaN days → returns stored unchanged (early return)
+    assert_eq!(decay::decay_weight(2.0, 1.0, f64::NAN), 2.0);
+
+    // Verify the valid case still works
+    let result = decay::decay_weight(2.0, 1.0, 365.0);
+    assert!(
+        result.is_finite() && (1.0..=2.0).contains(&result),
+        "PRODUCTION BUG: Valid decay produced bad result: {}",
+        result,
+    );
+}
+
+#[test]
+fn stress_weight_bounds_extreme_values() {
+    use cortex_drift_bridge::specification::weights::bounds;
+
+    let extremes = vec![
+        f64::NAN,
+        f64::INFINITY,
+        f64::NEG_INFINITY,
+        f64::MAX,
+        f64::MIN,
+        f64::MIN_POSITIVE,
+        -0.0,
+        0.0,
+    ];
+
+    for val in extremes {
+        let clamped = bounds::clamp_weight(val, 1.0);
+        assert!(
+            clamped.is_finite(),
+            "PRODUCTION BUG: clamp_weight({}) produced non-finite: {}",
+            val, clamped,
+        );
+        assert!(
+            (0.0..=5.0).contains(&clamped),
+            "PRODUCTION BUG: clamp_weight({}) = {} out of [0, 5] range",
+            val, clamped,
+        );
+    }
+}
+
+#[test]
+fn stress_weight_normalize_all_extreme() {
+    use cortex_drift_bridge::specification::weights::bounds;
+
+    let extremes = vec![f64::NAN, f64::INFINITY, f64::NEG_INFINITY, -1.0, 100.0];
+    let defaults = vec![1.0, 1.0, 1.0, 1.0, 1.0];
+    let result = bounds::normalize_weights(&extremes, &defaults);
+
+    for (i, w) in result.iter().enumerate() {
+        assert!(
+            w.is_finite(),
+            "PRODUCTION BUG: normalize_weights produced non-finite at index {}: {}",
+            i, w,
+        );
+        assert!(
+            *w >= 0.0,
+            "PRODUCTION BUG: normalize_weights produced negative at index {}: {}",
+            i, w,
+        );
+    }
+}
+
+// =============================================================================
+// SECTION 14: CAUSAL — Graph operations under stress
+// =============================================================================
+
+#[test]
+fn stress_causal_counterfactual_nonexistent_memory() {
+    let engine = CausalEngine::new();
+    // SQL injection in memory_id should not affect causal engine
+    let result = cortex_drift_bridge::causal::what_if_removed(
+        &engine,
+        "'; DROP TABLE causal_edges; --",
+    );
+    assert!(
+        result.is_ok(),
+        "PRODUCTION BUG: Adversarial memory_id crashed counterfactual: {:?}",
+        result.err(),
+    );
+}
+
+#[test]
+fn stress_causal_intervention_nonexistent_memory() {
+    let engine = CausalEngine::new();
+    let result = cortex_drift_bridge::causal::what_if_changed(&engine, "");
+    assert!(
+        result.is_ok(),
+        "PRODUCTION BUG: Empty memory_id crashed intervention: {:?}",
+        result.err(),
+    );
+}
+
+#[test]
+fn stress_causal_prune_zero_threshold() {
+    let engine = CausalEngine::new();
+    // Threshold 0.0 should prune nothing (all edges have strength ≥ 0)
+    let result = cortex_drift_bridge::causal::prune_weak_edges(&engine, 0.0);
+    assert!(result.is_ok());
+    assert_eq!(result.unwrap().edges_removed, 0);
+}
+
+#[test]
+fn stress_causal_prune_max_threshold() {
+    let engine = CausalEngine::new();
+    // Threshold 1.0 should prune everything (no edge has strength > 1.0)
+    let result = cortex_drift_bridge::causal::prune_weak_edges(&engine, 1.0);
+    assert!(result.is_ok());
+}
+
+#[test]
+fn stress_causal_narrative_adversarial_ids() {
+    let engine = CausalEngine::new();
+    let emoji_flood = "🔥".repeat(10000);
+    let long_str = "a".repeat(1_000_000);
+    let adversarial: Vec<&str> = vec![
+        "",
+        "\0",
+        "'; DROP TABLE memories; --",
+        &emoji_flood,
+        &long_str,
+    ];
+
+    for id in adversarial {
+        let result = cortex_drift_bridge::causal::build_narrative(&engine, id);
+        assert!(
+            result.is_ok(),
+            "PRODUCTION BUG: Adversarial memory_id '{}' crashed narrative builder",
+            &id[..id.len().min(50)],
+        );
+    }
+}
+
+// =============================================================================
+// SECTION 15: FEATURE MATRIX & USAGE TRACKING — Tier boundary, overflow
+// =============================================================================
+
+#[test]
+fn stress_feature_matrix_tier_boundaries() {
+    use cortex_drift_bridge::license::{self, LicenseTier};
+
+    // Every feature should have a consistent tier ordering:
+    // Community ≤ Team ≤ Enterprise
+    for entry in license::FEATURE_MATRIX {
+        let community = license::is_allowed(entry.name, &LicenseTier::Community);
+        let team = license::is_allowed(entry.name, &LicenseTier::Team);
+        let enterprise = license::is_allowed(entry.name, &LicenseTier::Enterprise);
+
+        // If community allows it, team and enterprise must too
+        if community {
+            assert!(
+                team && enterprise,
+                "PRODUCTION BUG: Feature '{}' allowed at Community but blocked at Team/Enterprise",
+                entry.name,
+            );
+        }
+        // If team allows it, enterprise must too
+        if team {
+            assert!(
+                enterprise,
+                "PRODUCTION BUG: Feature '{}' allowed at Team but blocked at Enterprise",
+                entry.name,
+            );
+        }
+    }
+}
+
+#[test]
+fn stress_usage_tracker_u64_overflow() {
+    use cortex_drift_bridge::license::UsageTracker;
+
+    let tracker = UsageTracker::new();
+    // Record many times for an unlimited feature — total_invocations should not overflow
+    for _ in 0..100_000 {
+        let _ = tracker.record("unlimited_feature");
+    }
+    assert_eq!(
+        tracker.total_invocations(),
+        100_000,
+        "PRODUCTION BUG: total_invocations lost count"
+    );
+}
+
+#[test]
+fn stress_usage_tracker_concurrent_limit_enforcement() {
+    use std::collections::HashMap;
+    use std::sync::Arc;
+    use cortex_drift_bridge::license::usage_tracking::{UsageLimits, UsageTracker};
+
+    let mut limits = HashMap::new();
+    limits.insert("test_feature", 100u64);
+    let tracker = Arc::new(UsageTracker::with_config(
+        UsageLimits { limits },
+        std::time::Duration::from_secs(86400),
+    ));
+    let barrier = Arc::new(std::sync::Barrier::new(8));
+    let mut handles = vec![];
+
+    for _ in 0..8 {
+        let tracker = Arc::clone(&tracker);
+        let barrier = Arc::clone(&barrier);
+        handles.push(std::thread::spawn(move || {
+            barrier.wait();
+            let mut ok_count = 0u64;
+            let mut err_count = 0u64;
+            for _ in 0..50 {
+                match tracker.record("test_feature") {
+                    Ok(()) => ok_count += 1,
+                    Err(_) => err_count += 1,
+                }
+            }
+            (ok_count, err_count)
+        }));
+    }
+
+    let (total_ok, total_err): (u64, u64) = handles
+        .into_iter()
+        .map(|h| h.join().unwrap())
+        .fold((0, 0), |(a1, a2), (b1, b2)| (a1 + b1, a2 + b2));
+
+    // 8 threads × 50 = 400 attempts, limit is 100
+    // Due to race conditions, we allow some slack but total_ok should be ≤ limit + thread_count
+    assert!(
+        total_ok <= 108, // 100 + 8 (one per thread that might race past the check)
+        "PRODUCTION BUG: {} invocations succeeded (limit 100). \
+         Race condition allows unlimited usage past the limit.",
+        total_ok,
+    );
+    assert!(
+        total_ok + total_err == 400,
+        "PRODUCTION BUG: Lost {} invocations (expected 400 total)",
+        400 - total_ok - total_err,
+    );
+}
+
+// =============================================================================
+// SECTION 16: MCP TOOLS — Adversarial inputs to new tools
+// =============================================================================
+
+#[test]
+fn stress_tool_counterfactual_adversarial() {
+    let engine = CausalEngine::new();
+    let long_str = "x".repeat(1_000_000);
+    let emoji_flood = "🔥".repeat(10000);
+    let payloads: Vec<&str> = vec![
+        "",
+        "'; DROP TABLE memories; --",
+        "\0\0\0",
+        &long_str,
+        &emoji_flood,
+    ];
+
+    for payload in payloads {
+        let result = cortex_drift_bridge::tools::handle_drift_counterfactual(
+            payload,
+            Some(&engine),
+        );
+        assert!(
+            result.is_ok(),
+            "PRODUCTION BUG: drift_counterfactual crashed on adversarial input: '{}'",
+            &payload[..payload.len().min(50)],
+        );
+    }
+}
+
+#[test]
+fn stress_tool_intervention_adversarial() {
+    let engine = CausalEngine::new();
+    let long_str = "a".repeat(1_000_000);
+    let payloads: Vec<&str> = vec!["", "\0", &long_str];
+
+    for payload in &payloads {
+        let result = cortex_drift_bridge::tools::handle_drift_intervention(
+            payload,
+            Some(&engine),
+        );
+        assert!(
+            result.is_ok(),
+            "PRODUCTION BUG: drift_intervention crashed on input len={}",
+            payload.len(),
+        );
+    }
+}
+
+#[test]
+fn stress_tool_health_repeated_calls() {
+    // Health tool should be idempotent — calling it 1000 times should not leak resources
+    let conn = rusqlite::Connection::open_in_memory().unwrap();
+    let mutex = Mutex::new(conn);
+
+    let start = std::time::Instant::now();
+    for _ in 0..1000 {
+        let result = cortex_drift_bridge::tools::handle_drift_health(
+            Some(&mutex),
+            None,
+            None,
+        );
+        assert!(result.is_ok());
+    }
+    let elapsed = start.elapsed();
+
+    assert!(
+        elapsed.as_secs() < 5,
+        "PRODUCTION BUG: 1000 health checks took {}s — possible resource leak",
+        elapsed.as_secs(),
+    );
+}
+
+// =============================================================================
+// SECTION 17: NAPI NEW FUNCTIONS — Adversarial inputs
+// =============================================================================
+
+#[test]
+fn stress_napi_counterfactual_no_engine() {
+    let result = cortex_drift_bridge::napi::bridge_counterfactual("test", None);
+    assert!(result.is_ok(), "bridge_counterfactual(None) should not panic");
+    let val = result.unwrap();
+    assert!(val.get("error").is_some() || val.get("affected_count").is_some());
+}
+
+#[test]
+fn stress_napi_intervention_no_engine() {
+    let result = cortex_drift_bridge::napi::bridge_intervention("test", None);
+    assert!(result.is_ok(), "bridge_intervention(None) should not panic");
+}
+
+#[test]
+fn stress_napi_health_all_none() {
+    let result = cortex_drift_bridge::napi::bridge_health(None, None, None);
+    assert!(result.is_ok(), "bridge_health(None, None, None) should not panic");
+}
+
+#[test]
+fn stress_napi_unified_narrative_empty_graph() {
+    let engine = CausalEngine::new();
+    let result = cortex_drift_bridge::napi::bridge_unified_narrative("", &engine);
+    assert!(result.is_ok(), "bridge_unified_narrative('') should not panic");
+}
+
+#[test]
+fn stress_napi_prune_nan_threshold() {
+    let engine = CausalEngine::new();
+    let result = cortex_drift_bridge::napi::bridge_prune_causal(&engine, f64::NAN);
+    // NaN threshold should not crash
+    assert!(result.is_ok(), "bridge_prune_causal(NaN) should not panic");
+}
+
+#[test]
+fn stress_napi_prune_negative_threshold() {
+    let engine = CausalEngine::new();
+    let result = cortex_drift_bridge::napi::bridge_prune_causal(&engine, -1.0);
+    assert!(result.is_ok(), "bridge_prune_causal(-1.0) should not panic");
+}
+
+// =============================================================================
+// SECTION 18: HEALTH MODULE — Concurrent checks, degradation tracker stress
+// =============================================================================
+
+#[test]
+fn stress_health_concurrent_checks() {
+    use std::sync::Arc;
+    use cortex_drift_bridge::health;
+
+    let conn = Arc::new(Mutex::new(rusqlite::Connection::open_in_memory().unwrap()));
+    let barrier = Arc::new(std::sync::Barrier::new(8));
+    let mut handles = vec![];
+
+    for _ in 0..8 {
+        let conn = Arc::clone(&conn);
+        let barrier = Arc::clone(&barrier);
+        handles.push(std::thread::spawn(move || {
+            barrier.wait();
+            for _ in 0..100 {
+                let check = health::checks::check_cortex_db(Some(&conn));
+                assert!(check.healthy);
+            }
+        }));
+    }
+
+    let mut panicked = 0;
+    for h in handles {
+        if h.join().is_err() {
+            panicked += 1;
+        }
+    }
+    assert_eq!(
+        panicked, 0,
+        "PRODUCTION BUG: {} threads panicked during concurrent health checks",
+        panicked,
+    );
+}
+
+#[test]
+fn stress_degradation_tracker_1000_features() {
+    use cortex_drift_bridge::health::DegradationTracker;
+
+    let mut tracker = DegradationTracker::new();
+
+    // Add 1000 degraded features
+    for i in 0..1000 {
+        tracker.mark_degraded(format!("feature_{}", i), format!("reason_{}", i));
+    }
+    assert_eq!(tracker.degraded_count(), 1000);
+
+    // Recover all
+    for i in 0..1000 {
+        tracker.mark_recovered(&format!("feature_{}", i));
+    }
+    assert!(!tracker.has_degradations());
+
+    // Double recovery should not crash
+    tracker.mark_recovered("nonexistent_feature");
+    assert!(!tracker.has_degradations());
+}
+
+// =============================================================================
+// SECTION 19: ERROR CHAIN — Stress the multi-step error collector
+// =============================================================================
+
+#[test]
+fn stress_error_chain_10k_errors() {
+    use cortex_drift_bridge::errors::{BridgeError, ErrorChain};
+
+    let mut chain = ErrorChain::new();
+    for i in 0..10_000 {
+        chain.push(i, BridgeError::Config(format!("error_{}", i)));
+    }
+
+    assert_eq!(chain.len(), 10_000);
+
+    let first = chain.into_first();
+    assert!(first.is_some());
+}
+
+#[test]
+fn stress_error_context_with_metadata() {
+    use cortex_drift_bridge::errors::ErrorContext;
+
+    let ctx = ErrorContext::new("batch_grounding")
+        .at("loop_runner.rs", 141)
+        .in_span("grounding_loop")
+        .with("memory_id", "m1")
+        .with("batch_size", "500")
+        .with("thread", "worker-3");
+
+    let display = format!("{}", ctx);
+    assert!(display.contains("batch_grounding"));
+    assert!(display.contains("loop_runner.rs"));
+    assert!(display.contains("memory_id=m1"));
+}
+
+// =============================================================================
+// SECTION 20: BRIDGE RUNTIME — Full lifecycle stress
+// =============================================================================
+
+#[test]
+fn stress_runtime_rapid_init_shutdown() {
+    use cortex_drift_bridge::{BridgeConfig, BridgeRuntime};
+
+    // Rapid init/shutdown cycles should not leak resources
+    for _ in 0..100 {
+        let config = BridgeConfig {
+            enabled: false,
+            ..BridgeConfig::default()
+        };
+        let mut runtime = BridgeRuntime::new(config);
+        let _ = runtime.initialize();
+        runtime.shutdown();
+    }
+}
+
+#[test]
+fn stress_runtime_dedup_under_pressure() {
+    use cortex_drift_bridge::{BridgeConfig, BridgeRuntime};
+
+    let runtime = BridgeRuntime::new(BridgeConfig::default());
+
+    // 100K dedup checks should not OOM
+    let start = std::time::Instant::now();
+    for i in 0..100_000 {
+        runtime.is_duplicate_event("test", &i.to_string(), "");
+    }
+    let elapsed = start.elapsed();
+
+    assert!(
+        elapsed.as_secs() < 10,
+        "PRODUCTION BUG: 100K dedup checks took {}s",
+        elapsed.as_secs(),
+    );
+}
+
+#[test]
+fn stress_runtime_usage_exhaustion() {
+    use cortex_drift_bridge::{BridgeConfig, BridgeRuntime};
+
+    let runtime = BridgeRuntime::new(BridgeConfig::default());
+
+    // Exhaust the grounding_basic limit (50)
+    for _ in 0..50 {
+        assert!(runtime.record_usage("grounding_basic").is_ok());
+    }
+
+    // 51st should fail
+    assert!(
+        runtime.record_usage("grounding_basic").is_err(),
+        "PRODUCTION BUG: Usage limit not enforced at runtime level"
+    );
+
+    // Other features should still work
+    assert!(runtime.record_usage("unlimited_feature").is_ok());
 }

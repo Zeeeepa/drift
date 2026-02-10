@@ -1,7 +1,7 @@
 /**
  * drift_scan — trigger analysis on the project.
  *
- * Calls NAPI drift_scan() to run the full analysis pipeline.
+ * Calls NAPI driftScan() to run the full analysis pipeline.
  * Supports incremental mode for faster re-scans.
  */
 
@@ -26,13 +26,36 @@ export const DRIFT_SCAN_SCHEMA = {
 };
 
 /**
- * Execute drift_scan — triggers analysis pipeline.
+ * Execute drift_scan — triggers scan + analysis pipeline.
+ *
+ * 1. Runs driftScan() to persist file metadata
+ * 2. Runs drift_analyze() to populate detections, patterns, call graph, boundaries
+ * 3. Returns real pattern/violation counts from analysis results
  */
 export async function handleDriftScan(
   params: DriftScanParams,
 ): Promise<ScanResult> {
   const napi = loadNapi();
   const scanPath = params.path ?? process.cwd();
-  const options = params.incremental ? { incremental: true } : undefined;
-  return napi.drift_scan(scanPath, options);
+  const options = params.incremental ? { forceFull: false } : undefined;
+
+  // Step 1: Scan files
+  const summary = await napi.driftScan(scanPath, options);
+
+  // Step 2: Run full analysis pipeline (populates DB with detections, patterns, etc.)
+  const analysisResults = await napi.driftAnalyze();
+  const totalPatterns = analysisResults.reduce(
+    (sum, r) => sum + r.matches.length,
+    0,
+  );
+
+  // Step 3: Query violations from DB (populated by analysis)
+  const violations = napi.driftViolations('.');
+
+  return {
+    filesScanned: summary.filesTotal,
+    patternsDetected: totalPatterns,
+    violationsFound: violations.length,
+    durationMs: summary.durationMs,
+  };
 }

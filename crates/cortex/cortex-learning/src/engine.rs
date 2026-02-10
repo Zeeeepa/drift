@@ -1,9 +1,11 @@
 //! LearningEngine: implements ILearner, orchestrates full pipeline.
 
+use std::sync::Arc;
+
 use cortex_core::errors::CortexResult;
-use cortex_core::memory::BaseMemory;
+use cortex_core::memory::{BaseMemory, Confidence};
 use cortex_core::models::LearningResult;
-use cortex_core::traits::{Correction, ILearner};
+use cortex_core::traits::{Correction, ILearner, IMemoryStorage};
 use tracing::info;
 
 use crate::analysis;
@@ -16,6 +18,8 @@ use crate::extraction;
 /// Orchestrates: diff analysis → categorization → principle extraction →
 /// dedup → memory creation.
 pub struct LearningEngine {
+    /// Persistent storage for creating/querying memories.
+    storage: Option<Arc<dyn IMemoryStorage>>,
     /// Existing memories for dedup checking.
     existing_memories: Vec<BaseMemory>,
     /// LLM extractor (optional).
@@ -26,6 +30,16 @@ impl LearningEngine {
     /// Create a new learning engine.
     pub fn new() -> Self {
         Self {
+            storage: None,
+            existing_memories: Vec::new(),
+            llm_extractor: Box::new(extraction::NoOpExtractor),
+        }
+    }
+
+    /// Create a new learning engine with storage for persistence.
+    pub fn with_storage(storage: Arc<dyn IMemoryStorage>) -> Self {
+        Self {
+            storage: Some(storage),
             existing_memories: Vec::new(),
             llm_extractor: Box::new(extraction::NoOpExtractor),
         }
@@ -34,14 +48,67 @@ impl LearningEngine {
     /// Create with an LLM extractor.
     pub fn with_llm(llm_extractor: Box<dyn extraction::LlmExtractor>) -> Self {
         Self {
+            storage: None,
             existing_memories: Vec::new(),
             llm_extractor,
         }
     }
 
+    /// Set the storage backend (can be called after construction).
+    pub fn set_storage(&mut self, storage: Arc<dyn IMemoryStorage>) {
+        self.storage = Some(storage);
+    }
+
+    /// Load existing memories from storage for dedup checking.
+    /// Called during init or before each learn() if storage is available.
+    pub fn refresh_existing_memories(&mut self) -> CortexResult<()> {
+        if let Some(storage) = &self.storage {
+            // Load all non-archived memories for dedup. We query a broad
+            // confidence range to catch everything.
+            self.existing_memories = storage.query_by_confidence_range(0.0, 1.0)?;
+        }
+        Ok(())
+    }
+
     /// Set existing memories for dedup checking.
     pub fn set_existing_memories(&mut self, memories: Vec<BaseMemory>) {
         self.existing_memories = memories;
+    }
+
+    /// Build a BaseMemory from the learning pipeline output.
+    fn build_memory(
+        id: &str,
+        summary: &str,
+        content_hash: &str,
+        mapping: &analysis::CategoryMapping,
+        confidence: f64,
+    ) -> CortexResult<BaseMemory> {
+        let content = analysis::build_typed_content(mapping.memory_type, summary)?;
+        let now = chrono::Utc::now();
+        Ok(BaseMemory {
+            id: id.to_string(),
+            memory_type: mapping.memory_type,
+            content,
+            summary: summary.to_string(),
+            transaction_time: now,
+            valid_time: now,
+            valid_until: None,
+            confidence: Confidence::new(confidence),
+            importance: mapping.importance,
+            last_accessed: now,
+            access_count: 0,
+            linked_patterns: vec![],
+            linked_constraints: vec![],
+            linked_files: vec![],
+            linked_functions: vec![],
+            tags: vec![],
+            archived: false,
+            superseded_by: None,
+            supersedes: None,
+            content_hash: content_hash.to_string(),
+            namespace: Default::default(),
+            source_agent: Default::default(),
+        })
     }
 
     /// Full learning pipeline.
@@ -68,7 +135,7 @@ impl LearningEngine {
         let dedup_action =
             deduplication::check_dedup(&content_hash, &summary, &self.existing_memories);
 
-        // Step 5: Determine result.
+        // Step 5: Determine result and persist.
         let memory_created = match dedup_action {
             DedupAction::Add => {
                 // Calibrate confidence.
@@ -80,6 +147,7 @@ impl LearningEngine {
                     validation: 0.0,
                 };
                 let confidence = calibration::calibrate(&factors);
+                let id = uuid::Uuid::new_v4().to_string();
 
                 info!(
                     memory_type = ?mapping.memory_type,
@@ -88,10 +156,26 @@ impl LearningEngine {
                     "creating new memory from correction"
                 );
 
-                Some(uuid::Uuid::new_v4().to_string())
+                // Build and persist the real BaseMemory.
+                let memory = Self::build_memory(&id, &summary, &content_hash, &mapping, confidence)?;
+                if let Some(storage) = &self.storage {
+                    storage.create(&memory)?;
+                }
+
+                Some(id)
             }
             DedupAction::Update(id) => {
                 info!(id = %id, "updating existing memory from correction");
+                // Update the existing memory with the new summary/content.
+                if let Some(storage) = &self.storage {
+                    if let Some(mut existing) = storage.get(&id)? {
+                        existing.summary = summary.clone();
+                        existing.content_hash = content_hash.clone();
+                        existing.last_accessed = chrono::Utc::now();
+                        existing.access_count += 1;
+                        storage.update(&existing)?;
+                    }
+                }
                 Some(id)
             }
             DedupAction::Noop => {

@@ -188,7 +188,7 @@ fn slack_bot_token_sanitized() {
     // Construct token at runtime to avoid triggering GitHub secret scanning
     let input = format!(
         "SLACK_TOKEN=xoxb-{}-{}-{}",
-        "0000000000", "0000000000", "FakeTokenFakeTokenFake"
+        "0000000000", "0000000000", "FakeTokenFakeTokenFak000"
     );
     let result = engine.sanitize(&input).unwrap();
     assert!(

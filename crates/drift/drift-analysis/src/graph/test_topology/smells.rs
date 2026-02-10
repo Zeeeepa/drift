@@ -170,7 +170,28 @@ fn count_assertions(func: &FunctionInfo, pr: &ParseResult) -> usize {
         .count()
 }
 
-fn count_source_calls(func: &FunctionInfo, pr: &ParseResult, _graph: &CallGraph) -> usize {
+fn count_source_calls(func: &FunctionInfo, pr: &ParseResult, graph: &CallGraph) -> usize {
+    // CG-COV-02: Use call graph edges when available
+    let func_key = format!("{}::{}", pr.file, func.name);
+    if let Some(node_idx) = graph.get_node(&func_key) {
+        // Count outgoing edges that go to non-test, non-assertion functions
+        let graph_count = graph.graph
+            .neighbors_directed(node_idx, petgraph::Direction::Outgoing)
+            .filter(|&target| {
+                let target_node = &graph.graph[target];
+                let name_lower = target_node.name.to_lowercase();
+                !name_lower.contains("assert")
+                    && !name_lower.contains("expect")
+                    && !name_lower.contains("mock")
+                    && !name_lower.contains("spy")
+            })
+            .count();
+        if graph_count > 0 {
+            return graph_count;
+        }
+    }
+
+    // Fall back to raw call site counting if no graph edges
     pr.call_sites
         .iter()
         .filter(|cs| {

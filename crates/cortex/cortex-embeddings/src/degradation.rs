@@ -49,6 +49,24 @@ impl DegradationChain {
         self.chain.push(ChainEntry { provider });
     }
 
+    /// D-02: Try to embed using the chain without mutation (no event tracking).
+    /// Used by the `IEmbeddingProvider` trait impl which requires `&self`.
+    pub fn embed_readonly(&self, text: &str) -> CortexResult<Vec<f32>> {
+        for entry in &self.chain {
+            if !entry.provider.is_available() {
+                continue;
+            }
+            match entry.provider.embed(text) {
+                Ok(embedding) => return Ok(embedding),
+                Err(_) => continue,
+            }
+        }
+        Err(EmbeddingError::ProviderUnavailable {
+            provider: format!("all {} providers failed", self.chain.len()),
+        }
+        .into())
+    }
+
     /// Try to embed text using the fallback chain.
     ///
     /// Returns the embedding from the first successful provider.

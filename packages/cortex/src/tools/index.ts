@@ -1,5 +1,5 @@
 /**
- * Tool registry — registers all 43 MCP tools.
+ * Tool registry — registers all 61 MCP tools.
  *
  * Each tool is a thin JSON-RPC wrapper over CortexClient methods.
  * Tools are grouped by domain and registered in a flat map for MCP dispatch.
@@ -17,17 +17,19 @@ import { driftMemoryDelete } from "./memory/drift_memory_delete.js";
 import { driftMemoryList } from "./memory/drift_memory_list.js";
 import { driftMemoryLink } from "./memory/drift_memory_link.js";
 import { driftMemoryUnlink } from "./memory/drift_memory_unlink.js";
+import { driftMemoryRestore } from "./memory/drift_memory_restore.js";
 
 // Retrieval (3)
 import { driftContext } from "./retrieval/drift_context.js";
 import { driftSearch } from "./retrieval/drift_search.js";
 import { driftRelated } from "./retrieval/drift_related.js";
 
-// Why (4)
+// Why (5)
 import { driftWhy } from "./why/drift_why.js";
 import { driftExplain } from "./why/drift_explain.js";
 import { driftCounterfactual } from "./why/drift_counterfactual.js";
 import { driftIntervention } from "./why/drift_intervention.js";
+import { driftCausalInfer } from "./why/drift_causal_infer.js";
 
 // Learning (3)
 import { driftMemoryLearn } from "./learning/drift_memory_learn.js";
@@ -38,7 +40,7 @@ import { driftValidate } from "./learning/drift_validate.js";
 import { driftGenContext } from "./generation/drift_gen_context.js";
 import { driftGenOutcome } from "./generation/drift_gen_outcome.js";
 
-// System (8)
+// System (15)
 import { driftCortexStatus } from "./system/drift_cortex_status.js";
 import { driftCortexMetrics } from "./system/drift_cortex_metrics.js";
 import { driftCortexConsolidate } from "./system/drift_cortex_consolidate.js";
@@ -47,28 +49,47 @@ import { driftCortexGc } from "./system/drift_cortex_gc.js";
 import { driftCortexExport } from "./system/drift_cortex_export.js";
 import { driftCortexImport } from "./system/drift_cortex_import.js";
 import { driftCortexReembed } from "./system/drift_cortex_reembed.js";
+import { driftPrivacySanitize } from "./system/drift_privacy_sanitize.js";
+import { driftPrivacyStats } from "./system/drift_privacy_stats.js";
+import { driftCloudSync } from "./system/drift_cloud_sync.js";
+import { driftCloudStatus } from "./system/drift_cloud_status.js";
+import { driftCloudResolve } from "./system/drift_cloud_resolve.js";
+import { driftSessionCreate } from "./system/drift_session_create.js";
+import { driftSessionGet } from "./system/drift_session_get.js";
+import { driftSessionAnalytics } from "./system/drift_session_analytics.js";
 
 // Prediction (2)
 import { driftPredict } from "./prediction/drift_predict.js";
 import { driftPreload } from "./prediction/drift_preload.js";
 
-// Temporal (5)
+// Temporal (10)
 import { driftTimeTravel } from "./temporal/drift_time_travel.js";
 import { driftTimeDiff } from "./temporal/drift_time_diff.js";
 import { driftTimeReplay } from "./temporal/drift_time_replay.js";
 import { driftKnowledgeHealth } from "./temporal/drift_knowledge_health.js";
 import { driftKnowledgeTimeline } from "./temporal/drift_knowledge_timeline.js";
+import { driftTimeRange } from "./temporal/drift_time_range.js";
+import { driftTemporalCausal } from "./temporal/drift_temporal_causal.js";
+import { driftViewCreate } from "./temporal/drift_view_create.js";
+import { driftViewGet } from "./temporal/drift_view_get.js";
+import { driftViewList } from "./temporal/drift_view_list.js";
 
-// Multi-Agent (5)
+// Multi-Agent (11)
 import { driftAgentRegister } from "./multiagent/drift_agent_register.js";
 import { driftAgentShare } from "./multiagent/drift_agent_share.js";
 import { driftAgentProject } from "./multiagent/drift_agent_project.js";
 import { driftAgentProvenance } from "./multiagent/drift_agent_provenance.js";
 import { driftAgentTrust } from "./multiagent/drift_agent_trust.js";
+import { driftAgentDeregister } from "./multiagent/drift_agent_deregister.js";
+import { driftAgentGet } from "./multiagent/drift_agent_get.js";
+import { driftAgentList } from "./multiagent/drift_agent_list.js";
+import { driftAgentNamespace } from "./multiagent/drift_agent_namespace.js";
+import { driftAgentRetract } from "./multiagent/drift_agent_retract.js";
+import { driftAgentSync } from "./multiagent/drift_agent_sync.js";
 
-/** All 43 tool factory functions. */
+/** All 61 tool factory functions. */
 const TOOL_FACTORIES: ((client: CortexClient) => McpToolDefinition)[] = [
-  // Memory (8)
+  // Memory (9)
   driftMemoryAdd,
   driftMemorySearch,
   driftMemoryGet,
@@ -77,15 +98,17 @@ const TOOL_FACTORIES: ((client: CortexClient) => McpToolDefinition)[] = [
   driftMemoryList,
   driftMemoryLink,
   driftMemoryUnlink,
+  driftMemoryRestore,
   // Retrieval (3)
   driftContext,
   driftSearch,
   driftRelated,
-  // Why (4)
+  // Why (5)
   driftWhy,
   driftExplain,
   driftCounterfactual,
   driftIntervention,
+  driftCausalInfer,
   // Learning (3)
   driftMemoryLearn,
   driftFeedback,
@@ -93,7 +116,7 @@ const TOOL_FACTORIES: ((client: CortexClient) => McpToolDefinition)[] = [
   // Generation (2)
   driftGenContext,
   driftGenOutcome,
-  // System (8)
+  // System (15)
   driftCortexStatus,
   driftCortexMetrics,
   driftCortexConsolidate,
@@ -102,28 +125,47 @@ const TOOL_FACTORIES: ((client: CortexClient) => McpToolDefinition)[] = [
   driftCortexExport,
   driftCortexImport,
   driftCortexReembed,
+  driftPrivacySanitize,
+  driftPrivacyStats,
+  driftCloudSync,
+  driftCloudStatus,
+  driftCloudResolve,
+  driftSessionCreate,
+  driftSessionGet,
+  driftSessionAnalytics,
   // Prediction (2)
   driftPredict,
   driftPreload,
-  // Temporal (5)
+  // Temporal (10)
   driftTimeTravel,
   driftTimeDiff,
   driftTimeReplay,
   driftKnowledgeHealth,
   driftKnowledgeTimeline,
-  // Multi-Agent (5)
+  driftTimeRange,
+  driftTemporalCausal,
+  driftViewCreate,
+  driftViewGet,
+  driftViewList,
+  // Multi-Agent (11)
   driftAgentRegister,
   driftAgentShare,
   driftAgentProject,
   driftAgentProvenance,
   driftAgentTrust,
+  driftAgentDeregister,
+  driftAgentGet,
+  driftAgentList,
+  driftAgentNamespace,
+  driftAgentRetract,
+  driftAgentSync,
 ];
 
 /** Immutable map of tool name → tool definition. */
 export type ToolRegistry = ReadonlyMap<string, McpToolDefinition>;
 
 /**
- * Register all 43 MCP tools for a given CortexClient instance.
+ * Register all 61 MCP tools for a given CortexClient instance.
  * Returns an immutable map of tool name → definition.
  */
 export function registerTools(client: CortexClient): ToolRegistry {

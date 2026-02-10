@@ -8,10 +8,19 @@ pub const MIN_AGE_DAYS: i64 = 7;
 /// Minimum confidence for consolidation eligibility.
 pub const MIN_CONFIDENCE: f64 = 0.3;
 
+/// Memory types eligible for consolidation.
+/// Episodic memories are the primary consolidation target.
+/// Procedural memories (how-to knowledge) can also benefit from consolidation
+/// when multiple overlapping procedures exist.
+const CONSOLIDATION_ELIGIBLE: &[MemoryType] = &[
+    MemoryType::Episodic,
+    MemoryType::Procedural,
+];
+
 /// Select memories eligible for consolidation.
 ///
 /// Criteria:
-/// - Memory type is Episodic
+/// - Memory type is Episodic or Procedural
 /// - Age > 7 days (based on valid_time)
 /// - Confidence > 0.3
 /// - Not archived
@@ -22,7 +31,7 @@ pub fn select_candidates(memories: &[BaseMemory]) -> Vec<&BaseMemory> {
     memories
         .iter()
         .filter(|m| {
-            m.memory_type == MemoryType::Episodic
+            CONSOLIDATION_ELIGIBLE.contains(&m.memory_type)
                 && m.valid_time < cutoff
                 && m.confidence.value() > MIN_CONFIDENCE
                 && !m.archived

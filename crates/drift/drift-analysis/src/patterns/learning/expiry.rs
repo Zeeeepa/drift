@@ -59,6 +59,8 @@ mod tests {
             discovery_date: 0,
             last_seen,
             promotion_status: PromotionStatus::Discovered,
+            observation_count: 10,
+            scan_count: 3,
         }
     }
 

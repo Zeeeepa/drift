@@ -18,6 +18,8 @@ pub fn detect_handlers(parse_results: &[ParseResult]) -> Vec<ErrorHandler> {
                 ErrorHandlingKind::AsyncAwaitTry => HandlerType::TryCatch,
                 ErrorHandlingKind::Rescue => HandlerType::Rescue,
                 ErrorHandlingKind::Defer => HandlerType::DeferRecover,
+                ErrorHandlingKind::DeferRecover => HandlerType::DeferRecover,
+                ErrorHandlingKind::WithStatement => HandlerType::TryCatch,
                 // Throw/QuestionMark/Unwrap are not handlers
                 ErrorHandlingKind::Throw
                 | ErrorHandlingKind::QuestionMark

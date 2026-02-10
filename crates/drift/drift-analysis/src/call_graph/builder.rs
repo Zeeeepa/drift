@@ -8,7 +8,8 @@ use rayon::prelude::*;
 
 use crate::parsers::types::{CallSite, FunctionInfo, ParseResult};
 
-use super::resolution::resolve_call;
+use super::di_support;
+use super::resolution::{resolve_call, ResolutionDiagnostics};
 use super::types::{CallEdge, CallGraph, CallGraphStats, FunctionNode, Resolution};
 
 /// Builder for constructing a call graph from parse results.
@@ -41,21 +42,55 @@ impl CallGraphBuilder {
         let mut graph = CallGraph::new();
 
         // Phase 1: Add all function nodes
-        // Collect function nodes from all files in parallel
+        // CG-RES-08: Build qualified names for module-level functions
         let all_nodes: Vec<FunctionNode> = parse_results
             .par_iter()
             .flat_map_iter(|pr| {
-                pr.functions.iter().map(move |f| FunctionNode {
-                    file: pr.file.clone(),
-                    name: f.name.clone(),
-                    qualified_name: f.qualified_name.clone(),
-                    language: pr.language.name().to_string(),
-                    line: f.line,
-                    end_line: f.end_line,
-                    is_entry_point: false, // Detected later
-                    is_exported: f.is_exported,
-                    signature_hash: f.signature_hash,
-                    body_hash: f.body_hash,
+                let module_name = module_name_from_file(&pr.file);
+                // Top-level functions
+                let top_level = pr.functions.iter().map(move |f| {
+                    let qn = f.qualified_name.clone().or_else(|| {
+                        Some(format!("{}.{}", module_name, f.name))
+                    });
+                    FunctionNode {
+                        file: pr.file.clone(),
+                        name: f.name.clone(),
+                        qualified_name: qn,
+                        language: pr.language.name().to_string(),
+                        line: f.line,
+                        end_line: f.end_line,
+                        is_entry_point: false, // Detected later
+                        is_exported: f.is_exported,
+                        signature_hash: f.signature_hash,
+                        body_hash: f.body_hash,
+                    }
+                });
+                top_level
+            })
+            .collect();
+
+        // Also add class methods as graph nodes
+        let class_method_nodes: Vec<FunctionNode> = parse_results
+            .par_iter()
+            .flat_map_iter(|pr| {
+                pr.classes.iter().flat_map(move |class| {
+                    class.methods.iter().map(move |m| {
+                        let qn = m.qualified_name.clone().or_else(|| {
+                            Some(format!("{}.{}", class.name, m.name))
+                        });
+                        FunctionNode {
+                            file: pr.file.clone(),
+                            name: format!("{}.{}", class.name, m.name),
+                            qualified_name: qn,
+                            language: pr.language.name().to_string(),
+                            line: m.line,
+                            end_line: m.end_line,
+                            is_entry_point: false,
+                            is_exported: m.is_exported || class.is_exported,
+                            signature_hash: m.signature_hash,
+                            body_hash: m.body_hash,
+                        }
+                    })
                 })
             })
             .collect();
@@ -63,24 +98,53 @@ impl CallGraphBuilder {
         for node in all_nodes {
             graph.add_function(node);
         }
+        for node in class_method_nodes {
+            graph.add_function(node);
+        }
 
         // Build lookup indices for resolution
         let mut name_index: FxHashMap<String, Vec<String>> = FxHashMap::default();
         let mut qualified_index: FxHashMap<String, String> = FxHashMap::default();
         let mut export_index: FxHashMap<String, Vec<String>> = FxHashMap::default();
+        let mut language_index: FxHashMap<String, String> = FxHashMap::default();
 
         for pr in parse_results {
+            let lang = pr.language.name().to_string();
             for func in &pr.functions {
                 let key = format!("{}::{}", pr.file, func.name);
                 name_index.entry(func.name.clone()).or_default().push(key.clone());
+                language_index.insert(key.clone(), lang.clone());
                 if let Some(ref qn) = func.qualified_name {
                     qualified_index.insert(qn.clone(), key.clone());
                 }
+                // CG-RES-08: Also index module_name.function_name
+                let module_qn = format!("{}.{}", module_name_from_file(&pr.file), func.name);
+                qualified_index.entry(module_qn).or_insert_with(|| key.clone());
                 if func.is_exported {
                     export_index.entry(func.name.clone()).or_default().push(key);
                 }
             }
+            // Index class methods (key includes class name to avoid collisions)
+            for class in &pr.classes {
+                for method in &class.methods {
+                    let key = format!("{}::{}.{}", pr.file, class.name, method.name);
+                    name_index.entry(method.name.clone()).or_default().push(key.clone());
+                    language_index.insert(key.clone(), lang.clone());
+                    // Qualified: ClassName.methodName
+                    let class_qn = format!("{}.{}", class.name, method.name);
+                    qualified_index.insert(class_qn, key.clone());
+                    if let Some(ref qn) = method.qualified_name {
+                        qualified_index.insert(qn.clone(), key.clone());
+                    }
+                    if method.is_exported || class.is_exported {
+                        export_index.entry(method.name.clone()).or_default().push(key);
+                    }
+                }
+            }
         }
+
+        // CG-RES-05: Detect DI frameworks for DI resolution
+        let detected_frameworks = di_support::detect_di_frameworks(parse_results);
 
         // Phase 2: Resolve call sites into edges
         // Collect all (caller_key, call_site, file) tuples
@@ -100,18 +164,44 @@ impl CallGraphBuilder {
             .collect();
 
         let mut resolution_counts: FxHashMap<String, usize> = FxHashMap::default();
+        let mut diagnostics = ResolutionDiagnostics::new();
         let mut resolved = 0usize;
 
         for (caller_key, call_site, pr) in &call_entries {
+            let caller_language = pr.language.name();
             if let Some(caller_idx) = graph.get_node(caller_key) {
-                if let Some((callee_key, resolution)) = resolve_call(
+                // Try standard resolution chain first
+                let resolution_result = resolve_call(
                     call_site,
                     &pr.file,
+                    caller_language,
                     &pr.imports,
                     &name_index,
                     &qualified_index,
                     &export_index,
-                ) {
+                    &language_index,
+                );
+
+                // CG-RES-05: If standard resolution fails, try DI resolution
+                let resolution_result = resolution_result.or_else(|| {
+                    if !detected_frameworks.is_empty() {
+                        // Check if the callee name matches a DI-injected type
+                        di_support::resolve_di_injection(
+                            &call_site.callee_name,
+                            &name_index,
+                        )
+                    } else {
+                        None
+                    }
+                });
+
+                // CG-RES-12: Record diagnostics
+                diagnostics.record(
+                    resolution_result.as_ref().map(|(_, r)| r),
+                    caller_language,
+                );
+
+                if let Some((callee_key, resolution)) = resolution_result {
                     if let Some(callee_idx) = graph.get_node(&callee_key) {
                         let edge = CallEdge {
                             resolution,
@@ -124,6 +214,11 @@ impl CallGraphBuilder {
                     }
                 }
             }
+        }
+
+        // CG-RES-12: Emit warnings for low resolution rates
+        for warning in diagnostics.low_resolution_warnings() {
+            tracing::warn!("{}", warning);
         }
 
         // Detect entry points
@@ -144,6 +239,7 @@ impl CallGraphBuilder {
             },
             build_duration: start.elapsed(),
             cycles_detected: 0,
+            diagnostics,
         };
 
         Ok((graph, stats))
@@ -154,4 +250,19 @@ impl Default for CallGraphBuilder {
     fn default() -> Self {
         Self::new()
     }
+}
+
+/// Extract a module name from a file path.
+/// e.g., "src/utils/format.ts" → "format"
+/// e.g., "controllers/user.controller.ts" → "user.controller"
+fn module_name_from_file(file: &str) -> String {
+    let normalized = file.replace('\\', "/");
+    let filename = normalized.rsplit('/').next().unwrap_or(&normalized);
+    // Strip extension
+    for ext in &[".ts", ".tsx", ".js", ".jsx", ".py", ".java", ".go", ".rs", ".rb", ".php", ".cs", ".kt"] {
+        if let Some(stripped) = filename.strip_suffix(ext) {
+            return stripped.to_string();
+        }
+    }
+    filename.to_string()
 }

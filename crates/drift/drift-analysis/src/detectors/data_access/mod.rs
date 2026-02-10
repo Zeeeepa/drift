@@ -18,11 +18,27 @@ impl Detector for DataAccessDetector {
 
         // Detect ORM method calls
         let orm_methods = [
+            // Generic ORM
             "findOne", "findAll", "findMany", "findById", "findByPk",
             "create", "update", "delete", "destroy", "save",
             "query", "execute", "raw", "rawQuery",
             "where", "select", "insert", "bulkCreate",
             "aggregate", "count", "sum", "avg",
+            // Python (Django/SQLAlchemy)
+            "filter", "get_or_create", "bulk_create", "objects",
+            // Java (JPA/Hibernate)
+            "persist", "merge", "flush", "detach", "getResultList", "getSingleResult",
+            "createQuery", "createNativeQuery",
+            // Go (GORM)
+            "First", "Find", "Create", "Save", "Delete", "Where", "Preload",
+            // Ruby (ActiveRecord)
+            "find_by", "find_each", "find_in_batches", "where", "pluck", "joins",
+            // C# (Entity Framework)
+            "Include", "ThenInclude", "AsNoTracking", "FromSqlRaw", "ToListAsync",
+            // PHP (Eloquent)
+            "firstOrCreate", "updateOrCreate", "firstOrFail", "get", "paginate",
+            // Rust (Diesel/SQLx)
+            "load", "get_result", "get_results", "fetch_one", "fetch_all",
         ];
 
         for call in ctx.call_sites {
@@ -47,6 +63,12 @@ impl Detector for DataAccessDetector {
                 if let Some(ref receiver) = call.receiver {
                     if receiver.contains("db") || receiver.contains("conn") || receiver.contains("pool")
                         || receiver.contains("knex") || receiver.contains("sequelize")
+                        || receiver.contains("prisma") || receiver.contains("session")  // Python SQLAlchemy
+                        || receiver.contains("entityManager") || receiver.contains("jdbc")  // Java
+                        || receiver.contains("gorm") || receiver.contains("sqlx")  // Go/Rust
+                        || receiver.contains("ActiveRecord") || receiver.contains("connection")  // Ruby
+                        || receiver.contains("DB") || receiver.contains("PDO")  // PHP
+                        || receiver.contains("context") || receiver.contains("dbContext")  // C#
                     {
                         matches.push(PatternMatch {
                             file: ctx.file.to_string(),

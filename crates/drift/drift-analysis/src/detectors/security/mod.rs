@@ -34,9 +34,25 @@ impl Detector for SecurityDetector {
                 });
             }
 
-            // Detect exec/spawn for command injection
-            if matches!(call.callee_name.as_str(), "exec" | "execSync" | "spawn" | "execFile"
-                | "system" | "popen" | "subprocess.call" | "subprocess.run" | "os.system") {
+            // Detect exec/spawn for command injection (all languages)
+            if matches!(call.callee_name.as_str(),
+                // JS/TS
+                "exec" | "execSync" | "spawn" | "execFile" | "fork"
+                // Python
+                | "system" | "popen" | "call" | "run" | "check_output" | "check_call"
+                // Java
+                | "getRuntime" | "ProcessBuilder"
+                // C#
+                | "Start"  // Process.Start
+                // Go
+                | "Command" | "CombinedOutput" | "Output"  // exec.Command
+                // Ruby
+                | "system" | "backtick" | "Open3"
+                // PHP
+                | "shell_exec" | "passthru" | "proc_open"
+                // Rust
+                | "Command" | "output" | "spawn"  // std::process::Command
+            ) {
                 matches.push(PatternMatch {
                     file: ctx.file.to_string(),
                     line: call.line,
@@ -51,8 +67,16 @@ impl Detector for SecurityDetector {
                 });
             }
 
-            // Detect innerHTML/dangerouslySetInnerHTML for XSS
-            if call.callee_name.contains("innerHTML") || call.callee_name.contains("dangerouslySetInnerHTML") {
+            // Detect XSS patterns (expanded beyond innerHTML)
+            if call.callee_name.contains("innerHTML") || call.callee_name.contains("dangerouslySetInnerHTML")
+                || call.callee_name.contains("outerHTML") || call.callee_name == "document.write"
+                || call.callee_name == "document.writeln"
+                || call.callee_name == "html_safe"  // Ruby
+                || call.callee_name == "raw"  // Ruby/PHP
+                || call.callee_name == "mark_safe"  // Python Django
+                || call.callee_name == "HtmlString"  // C#
+                || call.callee_name == "Markup"  // Python Jinja2
+            {
                 matches.push(PatternMatch {
                     file: ctx.file.to_string(),
                     line: call.line,

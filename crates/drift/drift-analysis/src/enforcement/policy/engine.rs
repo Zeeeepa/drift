@@ -63,7 +63,7 @@ impl PolicyEngine {
             results
                 .iter()
                 .find(|r| r.gate_id == *required_id)
-                .map_or(true, |r| r.passed)
+                .is_some_and(|r| r.passed)
         })
     }
 

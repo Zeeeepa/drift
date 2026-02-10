@@ -92,30 +92,21 @@ impl TaintRegistry {
     }
 
     /// Check if an expression matches a source pattern.
+    /// CG-TAINT-04/05: Anchored matching — no bidirectional substring.
     pub fn match_source(&self, expression: &str) -> Option<&SourcePattern> {
-        let expr_lower = expression.to_lowercase();
-        self.sources.iter().find(|p| {
-            let pattern_lower = p.pattern.to_lowercase();
-            expr_lower.contains(&pattern_lower) || pattern_lower.contains(&expr_lower)
-        })
+        self.sources.iter().find(|p| pattern_matches(expression, &p.pattern))
     }
 
     /// Check if an expression matches a sink pattern.
+    /// CG-TAINT-04/05: Anchored matching — no bidirectional substring.
     pub fn match_sink(&self, expression: &str) -> Option<&SinkPattern> {
-        let expr_lower = expression.to_lowercase();
-        self.sinks.iter().find(|p| {
-            let pattern_lower = p.pattern.to_lowercase();
-            expr_lower.contains(&pattern_lower) || pattern_lower.contains(&expr_lower)
-        })
+        self.sinks.iter().find(|p| pattern_matches(expression, &p.pattern))
     }
 
     /// Check if an expression matches a sanitizer pattern.
+    /// CG-TAINT-04/05: Anchored matching — no bidirectional substring.
     pub fn match_sanitizer(&self, expression: &str) -> Option<&SanitizerPattern> {
-        let expr_lower = expression.to_lowercase();
-        self.sanitizers.iter().find(|p| {
-            let pattern_lower = p.pattern.to_lowercase();
-            expr_lower.contains(&pattern_lower) || pattern_lower.contains(&expr_lower)
-        })
+        self.sanitizers.iter().find(|p| pattern_matches(expression, &p.pattern))
     }
 
     /// Add a custom source pattern.
@@ -236,6 +227,59 @@ impl TaintRegistry {
             });
         }
     }
+}
+
+/// CG-TAINT-04/05/06: Anchored pattern matching.
+///
+/// Matches if:
+/// 1. Exact match (case-insensitive): `expression == pattern`
+/// 2. Expression ends with `.pattern` (dotted suffix): `foo.req.body` matches `req.body`
+/// 3. Expression contains pattern as a dotted segment: `obj.open.file` matches `open`
+///
+/// Does NOT match if pattern is merely a substring of a longer identifier:
+/// `openDialog` does NOT match `open`
+fn pattern_matches(expression: &str, pattern: &str) -> bool {
+    let expr = expression.to_lowercase();
+    let pat = pattern.to_lowercase();
+
+    // 1. Exact match
+    if expr == pat {
+        return true;
+    }
+
+    // 2. Expression ends with the pattern after a dot separator
+    let dotted = format!(".{}", pat);
+    if expr.ends_with(&dotted) {
+        return true;
+    }
+
+    // 3. Expression starts with the pattern followed by a dot (prefix match)
+    let prefix = format!("{}.", pat);
+    if expr.starts_with(&prefix) {
+        return true;
+    }
+
+    // 4. Pattern appears as a complete dotted segment in the expression
+    let segment = format!(".{}.", pat);
+    if expr.contains(&segment) {
+        return true;
+    }
+
+    // 5. Reverse suffix: pattern ends with the expression after a dot
+    //    e.g., expression "query" matches pattern "req.query"
+    let rev_dotted = format!(".{}", expr);
+    if pat.ends_with(&rev_dotted) {
+        return true;
+    }
+
+    // 6. Reverse prefix: pattern starts with expression followed by dot
+    //    e.g., expression "req" matches pattern "req.query"
+    let rev_prefix = format!("{}.", expr);
+    if pat.starts_with(&rev_prefix) {
+        return true;
+    }
+
+    false
 }
 
 /// TOML configuration structure for the registry.

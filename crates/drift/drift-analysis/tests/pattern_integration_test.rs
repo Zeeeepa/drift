@@ -59,8 +59,9 @@ fn t3_int_01_full_round_trip() {
     let scorer = ConfidenceScorer::new(ScorerConfig {
         total_files: 100,
         default_age_days: 14,
+    default_data_quality: None,
     });
-    let scores = scorer.score_batch(&agg_result.patterns);
+    let scores = scorer.score_batch(&agg_result.patterns, None);
     assert_eq!(scores.len(), agg_result.patterns.len());
 
     // Step 3: Detect outliers on confidence values
@@ -248,6 +249,7 @@ fn t3_int_04_performance_10k() {
     let scorer = ConfidenceScorer::new(ScorerConfig {
         total_files: 1000,
         default_age_days: 14,
+    default_data_quality: None,
     });
 
     // Generate 10K patterns
@@ -286,7 +288,7 @@ fn t3_int_04_performance_10k() {
         .collect();
 
     let start = std::time::Instant::now();
-    let scores = scorer.score_batch(&patterns);
+    let scores = scorer.score_batch(&patterns, None);
     let elapsed = start.elapsed();
 
     assert_eq!(scores.len(), 10_000);
@@ -302,8 +304,8 @@ fn t3_int_06_convention_per_repo() {
     let matches1 = generate_test_repo(50);
     let pipeline = AggregationPipeline::with_defaults();
     let agg1 = pipeline.run(&matches1);
-    let scorer = ConfidenceScorer::new(ScorerConfig { total_files: 50, default_age_days: 14 });
-    let scores1 = scorer.score_batch(&agg1.patterns);
+    let scorer = ConfidenceScorer::new(ScorerConfig { total_files: 50, default_age_days: 14, default_data_quality: None });
+    let scores1 = scorer.score_batch(&agg1.patterns, None);
     let discoverer = ConventionDiscoverer::new();
     let conv1 = discoverer.discover(&agg1.patterns, &scores1, 50, 1000);
     assert!(!conv1.is_empty(), "Repo 1 should discover at least 1 convention");
@@ -311,16 +313,16 @@ fn t3_int_06_convention_per_repo() {
     // Test repo 2: 200 files
     let matches2 = generate_test_repo(200);
     let agg2 = pipeline.run(&matches2);
-    let scorer2 = ConfidenceScorer::new(ScorerConfig { total_files: 200, default_age_days: 14 });
-    let scores2 = scorer2.score_batch(&agg2.patterns);
+    let scorer2 = ConfidenceScorer::new(ScorerConfig { total_files: 200, default_age_days: 14, default_data_quality: None });
+    let scores2 = scorer2.score_batch(&agg2.patterns, None);
     let conv2 = discoverer.discover(&agg2.patterns, &scores2, 200, 1000);
     assert!(!conv2.is_empty(), "Repo 2 should discover at least 1 convention");
 
     // Test repo 3: 500 files
     let matches3 = generate_test_repo(500);
     let agg3 = pipeline.run(&matches3);
-    let scorer3 = ConfidenceScorer::new(ScorerConfig { total_files: 500, default_age_days: 14 });
-    let scores3 = scorer3.score_batch(&agg3.patterns);
+    let scorer3 = ConfidenceScorer::new(ScorerConfig { total_files: 500, default_age_days: 14, default_data_quality: None });
+    let scores3 = scorer3.score_batch(&agg3.patterns, None);
     let conv3 = discoverer.discover(&agg3.patterns, &scores3, 500, 1000);
     assert!(!conv3.is_empty(), "Repo 3 should discover at least 1 convention");
 }
@@ -343,10 +345,10 @@ fn t3_int_07_universal_convention() {
     let agg = pipeline.run(&matches);
 
     // Use scorer with Rising momentum to boost confidence
-    let scorer = ConfidenceScorer::new(ScorerConfig { total_files: 100, default_age_days: 30 });
+    let scorer = ConfidenceScorer::new(ScorerConfig { total_files: 100, default_age_days: 30, default_data_quality: None });
     // Score with Rising momentum for the dominant pattern
     let scores: Vec<(String, _)> = agg.patterns.iter().map(|p| {
-        let score = scorer.score(p, MomentumDirection::Rising, 30);
+        let score = scorer.score(p, MomentumDirection::Rising, 30, None, None);
         (p.pattern_id.clone(), score)
     }).collect();
 
@@ -406,8 +408,8 @@ fn t3_int_08_idempotent() {
 
     // Scores should be identical
     let scorer = ConfidenceScorer::with_defaults();
-    let scores1 = scorer.score_batch(&result1.patterns);
-    let scores2 = scorer.score_batch(&result2.patterns);
+    let scores1 = scorer.score_batch(&result1.patterns, None);
+    let scores2 = scorer.score_batch(&result2.patterns, None);
 
     for (s1, s2) in scores1.iter().zip(scores2.iter()) {
         assert!((s1.1.posterior_mean - s2.1.posterior_mean).abs() < 1e-10,
@@ -422,6 +424,7 @@ fn t3_int_09_memory_pressure() {
     let scorer = ConfidenceScorer::new(ScorerConfig {
         total_files: 10_000,
         default_age_days: 14,
+    default_data_quality: None,
     });
 
     // Score 100K patterns — verify no panic and reasonable time
@@ -455,7 +458,7 @@ fn t3_int_09_memory_pressure() {
         .collect();
 
     let start = std::time::Instant::now();
-    let scores = scorer.score_batch(&patterns);
+    let scores = scorer.score_batch(&patterns, None);
     let elapsed = start.elapsed();
 
     assert_eq!(scores.len(), 100_000);

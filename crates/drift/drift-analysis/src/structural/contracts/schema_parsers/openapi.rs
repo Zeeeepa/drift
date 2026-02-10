@@ -29,8 +29,9 @@ impl SchemaParser for OpenApiParser {
                             continue;
                         }
 
-                        let request_fields = extract_request_fields(operation);
-                        let response_fields = extract_response_fields(operation);
+                        // CE-OA-01: Pass root document for $ref resolution.
+                        let request_fields = extract_request_fields(operation, &value);
+                        let response_fields = extract_response_fields(operation, &value);
 
                         endpoints.push(Endpoint {
                             method: method.to_uppercase(),
@@ -68,15 +69,17 @@ impl SchemaParser for OpenApiParser {
     }
 }
 
-fn extract_request_fields(operation: &serde_json::Value) -> Vec<FieldSpec> {
+fn extract_request_fields(operation: &serde_json::Value, root: &serde_json::Value) -> Vec<FieldSpec> {
     let mut fields = Vec::new();
 
     // Extract from parameters
     if let Some(params) = operation.get("parameters").and_then(|p| p.as_array()) {
         for param in params {
-            let name = param.get("name").and_then(|n| n.as_str()).unwrap_or("");
-            let required = param.get("required").and_then(|r| r.as_bool()).unwrap_or(false);
-            let field_type = param
+            // CE-OA-01: Resolve $ref on parameters.
+            let resolved = resolve_ref(param, root);
+            let name = resolved.get("name").and_then(|n| n.as_str()).unwrap_or("");
+            let required = resolved.get("required").and_then(|r| r.as_bool()).unwrap_or(false);
+            let field_type = resolved
                 .get("schema")
                 .and_then(|s| s.get("type"))
                 .and_then(|t| t.as_str())
@@ -95,10 +98,13 @@ fn extract_request_fields(operation: &serde_json::Value) -> Vec<FieldSpec> {
 
     // Extract from requestBody
     if let Some(body) = operation.get("requestBody") {
-        if let Some(content) = body.get("content") {
+        // CE-OA-01: Resolve $ref on requestBody.
+        let resolved_body = resolve_ref(body, root);
+        if let Some(content) = resolved_body.get("content") {
             if let Some(json) = content.get("application/json") {
                 if let Some(schema) = json.get("schema") {
-                    extract_schema_fields(schema, &mut fields);
+                    let resolved_schema = resolve_ref(schema, root);
+                    extract_schema_fields(&resolved_schema, &mut fields, root);
                 }
             }
         }
@@ -107,17 +113,19 @@ fn extract_request_fields(operation: &serde_json::Value) -> Vec<FieldSpec> {
     fields
 }
 
-fn extract_response_fields(operation: &serde_json::Value) -> Vec<FieldSpec> {
+fn extract_response_fields(operation: &serde_json::Value, root: &serde_json::Value) -> Vec<FieldSpec> {
     let mut fields = Vec::new();
 
     if let Some(responses) = operation.get("responses").and_then(|r| r.as_object()) {
         // Check 200/201 responses
         for code in &["200", "201"] {
             if let Some(response) = responses.get(*code) {
-                if let Some(content) = response.get("content") {
+                let resolved_resp = resolve_ref(response, root);
+                if let Some(content) = resolved_resp.get("content") {
                     if let Some(json) = content.get("application/json") {
                         if let Some(schema) = json.get("schema") {
-                            extract_schema_fields(schema, &mut fields);
+                            let resolved_schema = resolve_ref(schema, root);
+                            extract_schema_fields(&resolved_schema, &mut fields, root);
                         }
                     }
                 }
@@ -128,7 +136,34 @@ fn extract_response_fields(operation: &serde_json::Value) -> Vec<FieldSpec> {
     fields
 }
 
-fn extract_schema_fields(schema: &serde_json::Value, fields: &mut Vec<FieldSpec>) {
+/// CE-OA-01: Resolve a `$ref` pointer within the same document.
+/// Supports JSON Pointer paths like `#/components/schemas/User`.
+fn resolve_ref<'a>(value: &'a serde_json::Value, root: &'a serde_json::Value) -> std::borrow::Cow<'a, serde_json::Value> {
+    if let Some(ref_str) = value.get("$ref").and_then(|r| r.as_str()) {
+        if let Some(pointer) = ref_str.strip_prefix('#') {
+            // Convert from JSON Reference path to JSON Pointer
+            // e.g., "/components/schemas/User"
+            if let Some(resolved) = root.pointer(pointer) {
+                return std::borrow::Cow::Borrowed(resolved);
+            }
+        }
+    }
+    std::borrow::Cow::Borrowed(value)
+}
+
+fn extract_schema_fields(schema: &serde_json::Value, fields: &mut Vec<FieldSpec>, root: &serde_json::Value) {
+    // CE-OA-02: Handle allOf/oneOf/anyOf composed schemas.
+    for compose_key in &["allOf", "oneOf", "anyOf"] {
+        if let Some(schemas) = schema.get(*compose_key).and_then(|s| s.as_array()) {
+            for sub_schema in schemas {
+                let resolved = resolve_ref(sub_schema, root);
+                extract_schema_fields(&resolved, fields, root);
+            }
+            // For allOf, all properties are merged. For oneOf/anyOf, we take the union.
+            // After processing composed schemas, also check for direct properties on this schema.
+        }
+    }
+
     let required_set: Vec<String> = schema
         .get("required")
         .and_then(|r| r.as_array())
@@ -141,22 +176,27 @@ fn extract_schema_fields(schema: &serde_json::Value, fields: &mut Vec<FieldSpec>
 
     if let Some(properties) = schema.get("properties").and_then(|p| p.as_object()) {
         for (name, prop) in properties {
-            let field_type = prop
+            // CE-OA-01: Resolve $ref on individual property schemas.
+            let resolved_prop = resolve_ref(prop, root);
+            let field_type = resolved_prop
                 .get("type")
                 .and_then(|t| t.as_str())
                 .unwrap_or("object")
                 .to_string();
-            let nullable = prop
+            let nullable = resolved_prop
                 .get("nullable")
                 .and_then(|n| n.as_bool())
                 .unwrap_or(false);
 
-            fields.push(FieldSpec {
-                name: name.clone(),
-                field_type,
-                required: required_set.contains(name),
-                nullable,
-            });
+            // Avoid duplicate fields from composed schemas.
+            if !fields.iter().any(|f| f.name == *name) {
+                fields.push(FieldSpec {
+                    name: name.clone(),
+                    field_type,
+                    required: required_set.contains(name),
+                    nullable,
+                });
+            }
         }
     }
 }

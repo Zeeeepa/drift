@@ -14,12 +14,16 @@ import { registerTools } from './tools/index.js';
 import { loadNapi } from './napi.js';
 import type { McpConfig, InternalTool } from './types.js';
 import { DEFAULT_MCP_CONFIG } from './types.js';
+import { InfrastructureLayer } from './infrastructure/index.js';
+import { initCortex, shutdownCortex } from './cortex.js';
 
 export interface DriftMcpServer {
   /** The underlying MCP server instance. */
   server: McpServer;
   /** Internal tool catalog for drift_tool dispatch. */
   catalog: Map<string, InternalTool>;
+  /** Infrastructure layer (cache, rate limiter, error handler, etc.). */
+  infrastructure: InfrastructureLayer;
   /** Connect to a transport and start serving. */
   connect(transport: Transport): Promise<void>;
   /** Graceful shutdown. */
@@ -37,16 +41,29 @@ export function createDriftMcpServer(
 ): DriftMcpServer {
   const mergedConfig = { ...DEFAULT_MCP_CONFIG, ...config };
 
+  // Initialize infrastructure layer
+  const infrastructure = new InfrastructureLayer({
+    projectRoot: mergedConfig.projectRoot,
+    maxResponseTokens: mergedConfig.maxResponseTokens,
+  });
+
   // Initialize NAPI bindings
   const napi = loadNapi();
   try {
-    napi.drift_init(
-      mergedConfig.projectRoot
-        ? { projectRoot: mergedConfig.projectRoot }
-        : undefined,
+    napi.driftInitialize(
+      undefined,
+      mergedConfig.projectRoot,
     );
   } catch {
     // Non-fatal — NAPI may already be initialized or not available
+  }
+
+  // Initialize Cortex if enabled
+  if (mergedConfig.cortexEnabled !== false) {
+    const cortexDbPath = mergedConfig.cortexDbPath ?? '.cortex/cortex.db';
+    initCortex(cortexDbPath).catch(() => {
+      // Non-fatal — Cortex may not be available
+    });
   }
 
   // Create MCP server
@@ -55,12 +72,13 @@ export function createDriftMcpServer(
     version: '2.0.0',
   });
 
-  // Register all tools (progressive disclosure)
-  const catalog = registerTools(server);
+  // Register all tools (progressive disclosure) with infrastructure layer
+  const catalog = registerTools(server, infrastructure);
 
   return {
     server,
     catalog,
+    infrastructure,
     async connect(transport: Transport): Promise<void> {
       await server.connect(transport);
     },
@@ -69,7 +87,12 @@ export function createDriftMcpServer(
         await server.close();
       } finally {
         try {
-          napi.drift_shutdown();
+          napi.driftShutdown();
+        } catch {
+          // Non-fatal
+        }
+        try {
+          await shutdownCortex();
         } catch {
           // Non-fatal
         }

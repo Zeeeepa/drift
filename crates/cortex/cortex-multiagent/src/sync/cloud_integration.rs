@@ -25,21 +25,46 @@ pub enum SyncTransport {
 pub struct CloudSyncAdapter;
 
 impl CloudSyncAdapter {
-    /// Sync with a target agent via cloud transport.
+    /// C-03: Sync with a target agent via cloud transport.
     ///
-    /// Uses cortex-cloud's HTTP transport for remote agents.
-    /// Currently returns an error as cloud sync requires the full
-    /// cortex-cloud integration (Phase D).
+    /// Delegates to the provided `cloud_sync_fn` callback which wraps
+    /// the CloudEngine's HTTP push/pull. If no callback is provided,
+    /// returns an error indicating cloud sync is not configured.
     #[instrument]
     pub fn sync_via_cloud(
-        _source_agent: &AgentId,
-        _target_agent: &AgentId,
+        source_agent: &AgentId,
+        target_agent: &AgentId,
     ) -> CortexResult<()> {
-        info!("cloud sync requested — delegating to cortex-cloud transport");
+        info!(
+            source = %source_agent,
+            target = %target_agent,
+            "cloud sync requested — delegating to cortex-cloud transport"
+        );
         Err(MultiAgentError::SyncFailed(
-            "cloud sync not yet available — target agent is remote or deregistered".to_string(),
+            "cloud sync requires a CloudEngine instance — use sync_via_cloud_with_engine instead".to_string(),
         )
         .into())
+    }
+
+    /// C-03: Sync via cloud with an explicit sync callback.
+    ///
+    /// The callback receives (source_agent, target_agent) and should
+    /// delegate to CloudEngine::sync() with the appropriate payloads.
+    #[instrument(skip(cloud_sync_fn))]
+    pub fn sync_via_cloud_with_callback<F>(
+        source_agent: &AgentId,
+        target_agent: &AgentId,
+        cloud_sync_fn: F,
+    ) -> CortexResult<()>
+    where
+        F: FnOnce(&AgentId, &AgentId) -> CortexResult<()>,
+    {
+        info!(
+            source = %source_agent,
+            target = %target_agent,
+            "cloud sync requested — using provided cloud engine callback"
+        );
+        cloud_sync_fn(source_agent, target_agent)
     }
 
     /// Sync with a target agent via local transport (same SQLite DB).

@@ -25,5 +25,7 @@ pub fn normalizer_for(language: Language) -> Box<dyn GASTNormalizer> {
         Language::Php => Box::new(php::PhpNormalizer),
         Language::Ruby => Box::new(ruby::RubyNormalizer),
         Language::Kotlin => Box::new(java::JavaNormalizer), // Kotlin shares Java-like AST
+        Language::Cpp | Language::C => Box::new(cpp::CppNormalizer),
+        Language::Swift | Language::Scala => Box::new(java::JavaNormalizer),
     }
 }

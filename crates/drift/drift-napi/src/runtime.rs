@@ -12,7 +12,7 @@ use std::sync::{Arc, OnceLock};
 use drift_core::config::DriftConfig;
 use drift_core::events::dispatcher::EventDispatcher;
 use drift_core::events::handler::DriftEventHandler;
-use drift_storage::DatabaseManager;
+use drift_storage::{BatchWriter, DatabaseManager};
 
 use crate::conversions::error_codes;
 
@@ -27,6 +27,7 @@ static RUNTIME: OnceLock<Arc<DriftRuntime>> = OnceLock::new();
 /// so no additional Mutex wrappers are needed here.
 pub struct DriftRuntime {
     pub db: DatabaseManager,
+    pub batch_writer: BatchWriter,
     pub config: DriftConfig,
     pub dispatcher: EventDispatcher,
     pub project_root: Option<PathBuf>,
@@ -107,10 +108,20 @@ impl DriftRuntime {
             }
         };
 
+        // Create a dedicated connection for the batch writer
+        let batch_conn = db.open_batch_connection().map_err(|e| {
+            napi::Error::from_reason(format!(
+                "[{}] Failed to open batch writer connection: {e}",
+                error_codes::STORAGE_ERROR
+            ))
+        })?;
+        let batch_writer = BatchWriter::new(batch_conn);
+
         let dispatcher = EventDispatcher::new();
 
         Ok(Self {
             db,
+            batch_writer,
             config,
             dispatcher,
             project_root: opts.project_root,

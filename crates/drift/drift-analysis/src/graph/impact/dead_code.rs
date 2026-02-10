@@ -11,8 +11,19 @@ use super::types::{DeadCodeExclusion, DeadCodeReason, DeadCodeResult};
 ///
 /// A function is considered dead if it has no callers AND is not excluded
 /// by any of the 10 false-positive categories.
+/// CG-DC-01: Results include confidence gated on resolution rate.
+/// CG-DC-04: Results include confidence scoring.
 pub fn detect_dead_code(graph: &CallGraph) -> Vec<DeadCodeResult> {
+    detect_dead_code_with_resolution_rate(graph, None)
+}
+
+/// Detect dead code with optional resolution rate for confidence gating (CG-DC-01).
+pub fn detect_dead_code_with_resolution_rate(
+    graph: &CallGraph,
+    resolution_rate: Option<f64>,
+) -> Vec<DeadCodeResult> {
     let mut results = Vec::new();
+    let low_resolution = resolution_rate.map(|r| r < 0.40).unwrap_or(false);
 
     for idx in graph.graph.node_indices() {
         let node = &graph.graph[idx];
@@ -25,16 +36,52 @@ pub fn detect_dead_code(graph: &CallGraph) -> Vec<DeadCodeResult> {
             let exclusion = check_exclusions(node);
             let is_dead = exclusion.is_none();
 
+            // CG-DC-04: Confidence scoring
+            let confidence = if !is_dead {
+                0.0 // Excluded — not dead
+            } else if low_resolution {
+                // CG-DC-01: Low confidence when resolution rate is poor
+                0.3
+            } else {
+                compute_dead_code_confidence(node)
+            };
+
             results.push(DeadCodeResult {
                 function_id: idx,
                 reason: DeadCodeReason::NoCallers,
                 exclusion,
                 is_dead,
+                confidence,
             });
         }
     }
 
     results
+}
+
+/// CG-DC-04: Compute confidence that a function is truly dead.
+fn compute_dead_code_confidence(node: &FunctionNode) -> f32 {
+    let mut confidence = 0.9f32;
+
+    // Common names are less likely to be truly dead (might be called dynamically)
+    let common_names = ["handler", "callback", "listener", "hook", "middleware",
+        "plugin", "factory", "provider", "service"];
+    let name_lower = node.name.to_lowercase();
+    if common_names.iter().any(|n| name_lower.contains(n)) {
+        confidence -= 0.2;
+    }
+
+    // Short names are more likely false positives
+    if node.name.len() <= 3 {
+        confidence -= 0.15;
+    }
+
+    // Functions in test files less relevant for dead code detection
+    if node.file.to_lowercase().contains("test") {
+        confidence -= 0.1;
+    }
+
+    confidence.clamp(0.1, 1.0)
 }
 
 /// Detect functions with no path from any entry point.
@@ -72,12 +119,14 @@ pub fn detect_unreachable(graph: &CallGraph) -> Vec<DeadCodeResult> {
             let node = &graph.graph[idx];
             let exclusion = check_exclusions(node);
             let is_dead = exclusion.is_none();
+            let confidence = if is_dead { compute_dead_code_confidence(node) } else { 0.0 };
 
             results.push(DeadCodeResult {
                 function_id: idx,
                 reason: DeadCodeReason::NoEntryPath,
                 exclusion,
                 is_dead,
+                confidence,
             });
         }
     }
@@ -234,10 +283,25 @@ fn is_decorator_target(node: &FunctionNode) -> bool {
 }
 
 fn is_interface_impl(node: &FunctionNode) -> bool {
-    // Functions that implement an interface method
+    // Functions that implement an interface method.
+    // Match "ClassName.method" where ClassName starts with uppercase (class/interface).
+    // Do NOT match "moduleName.funcName" which is set on all functions by the builder.
     node.qualified_name
         .as_ref()
-        .map(|qn| qn.contains("::") || qn.contains("."))
+        .map(|qn| {
+            // Must have a dot separator
+            if let Some(dot_pos) = qn.find('.') {
+                let prefix = &qn[..dot_pos];
+                // The prefix must start with uppercase (ClassName, not moduleName)
+                // and must not contain path separators (which would indicate a file module)
+                prefix.chars().next().map(|c| c.is_uppercase()).unwrap_or(false)
+                    && !prefix.contains('/')
+                    && !prefix.contains('\\')
+            } else {
+                // Rust-style Class::method
+                qn.contains("::")
+            }
+        })
         .unwrap_or(false)
 }
 

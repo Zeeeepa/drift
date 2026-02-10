@@ -5,6 +5,7 @@ use smallvec::SmallVec;
 use crate::detectors::traits::{Detector, DetectorCategory, DetectorVariant};
 use crate::engine::types::{DetectionMethod, PatternCategory, PatternMatch};
 use crate::engine::visitor::DetectionContext;
+use crate::scanner::language_detect::Language;
 
 pub struct StylingDetector;
 
@@ -14,6 +15,11 @@ impl Detector for StylingDetector {
     fn variant(&self) -> DetectorVariant { DetectorVariant::Base }
 
     fn detect(&self, ctx: &DetectionContext) -> Vec<PatternMatch> {
+        // DP-FE-02: Only run for frontend languages
+        if !matches!(ctx.language, Language::TypeScript | Language::JavaScript) {
+            return Vec::new();
+        }
+
         let mut matches = Vec::new();
 
         // Detect CSS-in-JS / styling library imports

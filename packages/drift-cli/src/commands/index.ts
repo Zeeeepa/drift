@@ -1,5 +1,5 @@
 /**
- * Command registration — registers all 13 CLI commands.
+ * Command registration — registers all 27 CLI commands.
  */
 
 import type { Command } from 'commander';
@@ -16,22 +16,58 @@ import { registerDoctorCommand } from './doctor.js';
 import { registerExportCommand } from './export.js';
 import { registerExplainCommand } from './explain.js';
 import { registerFixCommand } from './fix.js';
+import { registerAnalyzeCommand } from './analyze.js';
+import { registerReportCommand } from './report.js';
+import { registerGcCommand } from './gc.js';
+import { registerSecurityCommand } from './security.js';
+import { registerContractsCommand } from './contracts.js';
+import { registerCouplingCommand } from './coupling.js';
+import { registerDnaCommand } from './dna.js';
+import { registerContextCommand } from './context.js';
+import { registerDismissCommand } from './dismiss.js';
+import { registerSuppressCommand } from './suppress.js';
+import { registerTaintCommand } from './taint.js';
+import { registerErrorsCommand } from './errors.js';
+import { registerTestQualityCommand } from './test-quality.js';
+import { registerCortexCommand } from './cortex.js';
 
 /**
  * Register all CLI commands on the program.
  */
 export function registerAllCommands(program: Command): void {
+  // Core pipeline
   registerScanCommand(program);
+  registerAnalyzeCommand(program);
   registerCheckCommand(program);
   registerStatusCommand(program);
+  registerReportCommand(program);
+  // Exploration
   registerPatternsCommand(program);
   registerViolationsCommand(program);
+  registerSecurityCommand(program);
+  registerContractsCommand(program);
+  registerCouplingCommand(program);
+  registerDnaCommand(program);
+  registerTaintCommand(program);
+  registerErrorsCommand(program);
+  registerTestQualityCommand(program);
   registerImpactCommand(program);
+  // Feedback
+  registerFixCommand(program);
+  registerDismissCommand(program);
+  registerSuppressCommand(program);
+  registerExplainCommand(program);
+  // Advanced
   registerSimulateCommand(program);
+  registerContextCommand(program);
   registerAuditCommand(program);
+  registerExportCommand(program);
+  // Operational
+  registerGcCommand(program);
   registerSetupCommand(program);
   registerDoctorCommand(program);
-  registerExportCommand(program);
-  registerExplainCommand(program);
-  registerFixCommand(program);
+  // Cortex memory system
+  registerCortexCommand(program);
 }
+
+export { registerAnalyzeCommand } from './analyze.js';

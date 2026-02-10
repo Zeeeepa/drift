@@ -7,9 +7,10 @@ use cortex_core::config::MultiAgentConfig;
 use cortex_core::errors::{ConsolidationError, CortexError, CortexResult};
 use cortex_core::memory::BaseMemory;
 use cortex_core::models::ConsolidationResult;
-use cortex_core::traits::{IConsolidator, IEmbeddingProvider};
+use cortex_core::traits::{IConsolidator, IEmbeddingProvider, IMemoryStorage};
 use tracing::info;
 
+use crate::llm_polish::{LlmPolisher, NoOpPolisher};
 use crate::monitoring::{self, ConsolidationDashboard, TunableThresholds};
 use crate::pipeline;
 
@@ -22,6 +23,8 @@ pub struct ConsolidationEngine {
     is_running: Arc<AtomicBool>,
     /// Embedding provider for similarity computations.
     embedding_provider: Box<dyn IEmbeddingProvider>,
+    /// Persistent storage for creating/archiving memories.
+    storage: Option<Arc<dyn IMemoryStorage>>,
     /// Quality monitoring dashboard.
     dashboard: ConsolidationDashboard,
     /// Tunable thresholds (adjusted by auto-tuning).
@@ -30,6 +33,8 @@ pub struct ConsolidationEngine {
     recent_assessments: Vec<monitoring::QualityAssessment>,
     /// Multi-agent configuration (None = single-agent mode).
     multiagent_config: Option<MultiAgentConfig>,
+    /// D-02: LLM polisher for summary refinement (NoOp by default).
+    polisher: Box<dyn LlmPolisher>,
 }
 
 impl ConsolidationEngine {
@@ -38,11 +43,41 @@ impl ConsolidationEngine {
         Self {
             is_running: Arc::new(AtomicBool::new(false)),
             embedding_provider,
+            storage: None,
             dashboard: ConsolidationDashboard::new(),
             thresholds: TunableThresholds::default(),
             recent_assessments: Vec::new(),
             multiagent_config: None,
+            polisher: Box::new(NoOpPolisher),
         }
+    }
+
+    /// Set storage for persisting consolidation results.
+    pub fn with_storage(mut self, storage: Arc<dyn IMemoryStorage>) -> Self {
+        self.storage = Some(storage);
+        self
+    }
+
+    /// D-02: Inject a real LLM polisher for summary refinement.
+    /// If not called, the engine uses NoOpPolisher (returns None, no LLM calls).
+    pub fn with_polisher(mut self, polisher: Box<dyn LlmPolisher>) -> Self {
+        self.polisher = polisher;
+        self
+    }
+
+    /// D-02: Set the polisher after construction.
+    pub fn set_polisher(&mut self, polisher: Box<dyn LlmPolisher>) {
+        self.polisher = polisher;
+    }
+
+    /// D-02: Get a reference to the current polisher.
+    pub fn polisher(&self) -> &dyn LlmPolisher {
+        self.polisher.as_ref()
+    }
+
+    /// Set storage after construction.
+    pub fn set_storage(&mut self, storage: Arc<dyn IMemoryStorage>) {
+        self.storage = Some(storage);
     }
 
     /// Enable multi-agent consolidation with the given config.
@@ -99,7 +134,7 @@ impl ConsolidationEngine {
             ));
         }
 
-        let result = pipeline::run_pipeline(
+        let output = pipeline::run_pipeline(
             candidates,
             self.embedding_provider.as_ref(),
             existing_semantics,
@@ -108,7 +143,14 @@ impl ConsolidationEngine {
         // Release the guard.
         self.is_running.store(false, Ordering::SeqCst);
 
-        let result = result?;
+        let output = output?;
+
+        // Persist results to storage if available.
+        if let Some(storage) = &self.storage {
+            Self::persist_results(storage, &output)?;
+        }
+
+        let result = output.result;
 
         // Assess quality and record.
         let assessment = monitoring::assess_quality(&result.metrics);
@@ -131,6 +173,34 @@ impl ConsolidationEngine {
 
         Ok(result)
     }
+
+    /// Persist created memories and archive source episodes.
+    fn persist_results(
+        storage: &Arc<dyn IMemoryStorage>,
+        output: &pipeline::PipelineOutput,
+    ) -> CortexResult<()> {
+        // Create new semantic memories.
+        for mem in &output.created_memories {
+            storage.create(mem)?;
+            info!(id = %mem.id, "persisted consolidated semantic memory");
+        }
+
+        // Archive source episodes and set superseded_by.
+        for (source_id, superseding_id) in &output.archive_map {
+            if let Some(mut source) = storage.get(source_id)? {
+                source.archived = true;
+                source.superseded_by = Some(superseding_id.clone());
+                storage.update(&source)?;
+                info!(
+                    source_id = %source_id,
+                    superseded_by = %superseding_id,
+                    "archived source episode"
+                );
+            }
+        }
+
+        Ok(())
+    }
 }
 
 impl IConsolidator for ConsolidationEngine {
@@ -148,7 +218,7 @@ impl IConsolidator for ConsolidationEngine {
             ));
         }
 
-        let result = pipeline::run_pipeline(
+        let output = pipeline::run_pipeline(
             candidates,
             self.embedding_provider.as_ref(),
             &[], // No existing semantics in the basic trait interface.
@@ -157,7 +227,14 @@ impl IConsolidator for ConsolidationEngine {
         // Release the guard.
         self.is_running.store(false, Ordering::SeqCst);
 
-        result
+        let output = output?;
+
+        // Persist results to storage if available.
+        if let Some(storage) = &self.storage {
+            Self::persist_results(storage, &output)?;
+        }
+
+        Ok(output.result)
     }
 }
 

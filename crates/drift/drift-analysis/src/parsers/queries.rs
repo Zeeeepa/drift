@@ -27,6 +27,8 @@ pub fn structure_query_for(lang: Language) -> &'static str {
         Language::Ruby => RUBY_STRUCTURE_QUERY,
         Language::Php => PHP_STRUCTURE_QUERY,
         Language::Kotlin => KOTLIN_STRUCTURE_QUERY,
+        Language::Cpp | Language::C => CSHARP_STRUCTURE_QUERY,
+        Language::Swift | Language::Scala => JAVA_STRUCTURE_QUERY,
     }
 }
 
@@ -42,6 +44,8 @@ pub fn calls_query_for(lang: Language) -> &'static str {
         Language::Ruby => RUBY_CALLS_QUERY,
         Language::Php => PHP_CALLS_QUERY,
         Language::Kotlin => KOTLIN_CALLS_QUERY,
+        Language::Cpp | Language::C => CSHARP_CALLS_QUERY,
+        Language::Swift | Language::Scala => JAVA_CALLS_QUERY,
     }
 }
 

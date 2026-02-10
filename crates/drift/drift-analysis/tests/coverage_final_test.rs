@@ -21,7 +21,7 @@ use drift_analysis::scanner::language_detect::Language;
 #[test]
 fn cpp_normalizer_full_coverage() {
     let normalizer = CppNormalizer;
-    assert_eq!(normalizer.language(), Language::Rust); // placeholder
+    assert_eq!(normalizer.language(), Language::Cpp); // PH3-03 fixed: was Rust placeholder
 
     // C++ source exercising all match arms in CppNormalizer::normalize_node
     let source = br#"

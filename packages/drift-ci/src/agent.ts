@@ -1,7 +1,7 @@
 /**
  * CI Agent — orchestrates 9 parallel analysis passes.
  *
- * Passes: scan, patterns, call_graph, boundaries, security, tests, errors, contracts, constraints.
+ * Passes: scan, patterns, call_graph, boundaries, security, tests, errors, contracts, constraints, enforcement.
  * Supports PR-level incremental analysis (only changed files + transitive dependents).
  */
 
@@ -84,7 +84,7 @@ async function runPassSafe(
   }
 }
 
-/** The 9 analysis passes. */
+/** The 10 analysis passes. */
 function buildPasses(): AnalysisPass[] {
   return [
     {
@@ -92,22 +92,29 @@ function buildPasses(): AnalysisPass[] {
       run: async (files, config) => {
         const napi = loadNapi();
         const start = Date.now();
-        const result = napi.drift_scan(config.path, { incremental: config.incremental });
+        const scanOptions = files.length > 0 ? { changedFiles: files } : undefined;
+        const scanResult = await napi.driftScan(config.path, scanOptions);
+        // Run full analysis pipeline after scan (populates DB for all downstream passes)
+        const analysisResults = await napi.driftAnalyze();
+        const totalMatches = analysisResults.reduce(
+          (sum, r) => sum + r.matches.length,
+          0,
+        );
         return {
           name: 'scan',
           status: 'passed',
-          violations: result.violationsFound,
+          violations: totalMatches,
           durationMs: Date.now() - start,
-          data: result,
+          data: { scan: scanResult, analysisFiles: analysisResults.length, patterns: totalMatches },
         };
       },
     },
     {
       name: 'patterns',
-      run: async (_files, config) => {
+      run: async (_files, _config) => {
         const napi = loadNapi();
         const start = Date.now();
-        const result = napi.drift_patterns(config.path);
+        const result = napi.driftPatterns();
         return {
           name: 'patterns',
           status: 'passed',
@@ -119,10 +126,10 @@ function buildPasses(): AnalysisPass[] {
     },
     {
       name: 'call_graph',
-      run: async (_files, config) => {
+      run: async (_files, _config) => {
         const napi = loadNapi();
         const start = Date.now();
-        const result = napi.drift_call_graph(config.path);
+        const result = await napi.driftCallGraph();
         return {
           name: 'call_graph',
           status: 'passed',
@@ -134,10 +141,10 @@ function buildPasses(): AnalysisPass[] {
     },
     {
       name: 'boundaries',
-      run: async (_files, config) => {
+      run: async (_files, _config) => {
         const napi = loadNapi();
         const start = Date.now();
-        const result = napi.drift_boundaries(config.path);
+        const result = await napi.driftBoundaries();
         return {
           name: 'boundaries',
           status: 'passed',
@@ -152,11 +159,11 @@ function buildPasses(): AnalysisPass[] {
       run: async (_files, config) => {
         const napi = loadNapi();
         const start = Date.now();
-        const result = napi.drift_check(config.path, 'security');
+        const result = napi.driftOwaspAnalysis(config.path);
         return {
           name: 'security',
-          status: result.passed ? 'passed' : 'failed',
-          violations: result.violations.length,
+          status: result.findings.length === 0 ? 'passed' : 'failed',
+          violations: result.findings.length,
           durationMs: Date.now() - start,
           data: result,
         };
@@ -167,7 +174,7 @@ function buildPasses(): AnalysisPass[] {
       run: async (_files, config) => {
         const napi = loadNapi();
         const start = Date.now();
-        const result = napi.drift_test_topology(config.path);
+        const result = napi.driftTestTopology(config.path);
         return {
           name: 'tests',
           status: 'passed',
@@ -182,7 +189,7 @@ function buildPasses(): AnalysisPass[] {
       run: async (_files, config) => {
         const napi = loadNapi();
         const start = Date.now();
-        const result = napi.drift_analyze(config.path);
+        const result = napi.driftErrorHandling(config.path);
         return {
           name: 'errors',
           status: 'passed',
@@ -197,11 +204,11 @@ function buildPasses(): AnalysisPass[] {
       run: async (_files, config) => {
         const napi = loadNapi();
         const start = Date.now();
-        const result = napi.drift_check(config.path, 'contracts');
+        const result = napi.driftContractTracking(config.path);
         return {
           name: 'contracts',
-          status: result.passed ? 'passed' : 'failed',
-          violations: result.violations.length,
+          status: result.mismatches.length === 0 ? 'passed' : 'failed',
+          violations: result.mismatches.length,
           durationMs: Date.now() - start,
           data: result,
         };
@@ -212,11 +219,26 @@ function buildPasses(): AnalysisPass[] {
       run: async (_files, config) => {
         const napi = loadNapi();
         const start = Date.now();
-        const result = napi.drift_check(config.path, 'constraints');
+        const result = napi.driftConstraintVerification(config.path);
         return {
           name: 'constraints',
-          status: result.passed ? 'passed' : 'failed',
-          violations: result.violations.length,
+          status: result.failing === 0 ? 'passed' : 'failed',
+          violations: result.failing,
+          durationMs: Date.now() - start,
+          data: result,
+        };
+      },
+    },
+    {
+      name: 'enforcement',
+      run: async (_files, config) => {
+        const napi = loadNapi();
+        const start = Date.now();
+        const result = napi.driftCheck(config.path);
+        return {
+          name: 'enforcement',
+          status: result.overallPassed ? 'passed' : 'failed',
+          violations: result.totalViolations,
           durationMs: Date.now() - start,
           data: result,
         };
@@ -226,7 +248,7 @@ function buildPasses(): AnalysisPass[] {
 }
 
 /**
- * Run all 9 analysis passes in parallel.
+ * Run all 10 analysis passes in parallel.
  */
 export async function runAnalysis(
   config: Partial<CiAgentConfig> = {},
@@ -290,19 +312,20 @@ export async function runAnalysis(
 
 /**
  * Calculate quality score from pass results (0-100).
- * Weighted average: scan=20%, patterns=15%, security=20%, tests=15%, errors=10%, contracts=10%, constraints=10%.
+ * Weighted average: scan=15%, patterns=10%, security=20%, tests=15%, errors=10%, contracts=10%, constraints=5%, enforcement=15%.
  */
 function calculateScore(results: PassResult[]): number {
   const weights: Record<string, number> = {
-    scan: 0.20,
-    patterns: 0.15,
+    scan: 0.15,
+    patterns: 0.10,
     call_graph: 0.0, // informational
     boundaries: 0.0, // informational
     security: 0.20,
     tests: 0.15,
     errors: 0.10,
     contracts: 0.10,
-    constraints: 0.10,
+    constraints: 0.05,
+    enforcement: 0.15,
   };
 
   let totalWeight = 0;

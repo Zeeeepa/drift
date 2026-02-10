@@ -3,25 +3,41 @@
 //! The integration bridge between Cortex memory and Drift analysis.
 //! This is the ONLY crate that imports from both systems (D4: leaf, not spine).
 //!
-//! ## Responsibilities
-//! 1. Event Mapping — Drift events → Cortex memories (21 event types)
-//! 2. Link Translation — Drift PatternLink → Cortex EntityLink (5 constructors)
-//! 3. Grounding Logic — compare Cortex memories against Drift scan results
-//! 4. Grounding Feedback Loop — adjust confidence, detect contradictions
-//! 5. Intent Extensions — 10 code-specific intents for Cortex
-//! 6. Combined MCP Tools — drift_why, drift_memory_learn, drift_grounding_check
-//! 7. Specification Engine Bridge — causal corrections, adaptive weights, decomposition transfer
+//! ## Modules (15)
+//! - `causal` — typed edge creation, counterfactual/intervention analysis, pruning, narrative
+//! - `config` — BridgeConfig, GroundingConfig, EventConfig, EvidenceConfig, validation
+//! - `errors` — BridgeError, ErrorContext, RecoveryAction, ErrorChain
+//! - `event_mapping` — 21 event→memory mappings, dedup, memory builder
+//! - `grounding` — evidence collection, scoring, contradiction, scheduling
+//! - `health` — per-subsystem checks, readiness probes, degradation tracking
+//! - `intents` — 10 code-specific intents, intent→data source resolver
+//! - `license` — tier gating, feature matrix (25 features), usage tracking
+//! - `link_translation` — Drift PatternLink → Cortex EntityLink (5 constructors)
+//! - `napi` — 20 NAPI-ready bridge functions
+//! - `query` — ATTACH lifecycle, drift queries, cortex queries, cross-DB ops
+//! - `specification` — corrections, adaptive weights with decay/bounds, narrative
+//! - `storage` — SQLite PRAGMAs, migrations, schema, retention, tables
+//! - `tools` — 6 MCP tools (why, learn, grounding_check, counterfactual, intervention, health)
+//! - `types` — shared data structures (GroundingResult, GroundingVerdict, etc.)
 
+pub mod causal;
+pub mod config;
 pub mod errors;
 pub mod event_mapping;
 pub mod grounding;
+pub mod health;
 pub mod intents;
 pub mod license;
 pub mod link_translation;
 pub mod napi;
+pub mod query;
 pub mod specification;
 pub mod storage;
 pub mod tools;
+pub mod types;
+
+// Re-export BridgeConfig at crate root for backward compatibility.
+pub use config::BridgeConfig;
 
 use std::path::Path;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -41,34 +57,14 @@ pub struct BridgeRuntime {
     available: AtomicBool,
     /// Bridge configuration.
     config: BridgeConfig,
+    /// Event deduplicator (in-memory, TTL-based).
+    dedup: Mutex<event_mapping::EventDeduplicator>,
+    /// Usage tracker for metered features (Community tier).
+    usage_tracker: license::UsageTracker,
+    /// Degradation tracker.
+    degradation: Mutex<health::DegradationTracker>,
 }
 
-/// Bridge configuration from drift.toml [bridge] section.
-#[derive(Debug, Clone)]
-pub struct BridgeConfig {
-    /// Path to cortex.db.
-    pub cortex_db_path: Option<String>,
-    /// Path to drift.db.
-    pub drift_db_path: Option<String>,
-    /// Whether the bridge is enabled.
-    pub enabled: bool,
-    /// License tier.
-    pub license_tier: license::LicenseTier,
-    /// Grounding configuration.
-    pub grounding: grounding::GroundingConfig,
-}
-
-impl Default for BridgeConfig {
-    fn default() -> Self {
-        Self {
-            cortex_db_path: None,
-            drift_db_path: None,
-            enabled: true,
-            license_tier: license::LicenseTier::Community,
-            grounding: grounding::GroundingConfig::default(),
-        }
-    }
-}
 
 impl BridgeRuntime {
     /// Create a new bridge runtime with the given configuration.
@@ -79,6 +75,9 @@ impl BridgeRuntime {
             bridge_db: None,
             available: AtomicBool::new(false),
             config,
+            dedup: Mutex::new(event_mapping::EventDeduplicator::new()),
+            usage_tracker: license::UsageTracker::new(),
+            degradation: Mutex::new(health::DegradationTracker::new()),
         }
     }
 
@@ -100,6 +99,7 @@ impl BridgeRuntime {
 
         match rusqlite::Connection::open(cortex_path) {
             Ok(conn) => {
+                storage::configure_connection(&conn)?;
                 self.cortex_db = Some(Mutex::new(conn));
             }
             Err(e) => {
@@ -117,6 +117,9 @@ impl BridgeRuntime {
                 rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
             ) {
                 Ok(conn) => {
+                    if let Err(e) = storage::configure_readonly_connection(&conn) {
+                        warn!(error = %e, "Failed to configure drift.db PRAGMAs");
+                    }
                     self.drift_db = Some(Mutex::new(conn));
                 }
                 Err(e) => {
@@ -125,10 +128,10 @@ impl BridgeRuntime {
             }
         }
 
-        // Create bridge tables in cortex.db
+        // Run schema migrations (creates tables if needed, upgrades if outdated)
         if let Some(ref db) = self.cortex_db {
             let conn = db.lock().map_err(|e| errors::BridgeError::Config(e.to_string()))?;
-            storage::create_bridge_tables(&conn)?;
+            storage::migrate(&conn)?;
         }
 
         self.available.store(true, Ordering::SeqCst);
@@ -153,5 +156,32 @@ impl BridgeRuntime {
     /// Get the bridge configuration.
     pub fn config(&self) -> &BridgeConfig {
         &self.config
+    }
+
+    /// Run health checks on all subsystems.
+    pub fn health_check(&self) -> health::BridgeHealth {
+        let checks = vec![
+            health::checks::check_cortex_db(self.cortex_db.as_ref()),
+            health::checks::check_drift_db(self.drift_db.as_ref()),
+        ];
+        health::compute_health(&checks)
+    }
+
+    /// Check if a dedup hash has been seen recently.
+    pub fn is_duplicate_event(&self, event_type: &str, entity_id: &str, extra: &str) -> bool {
+        match self.dedup.lock() {
+            Ok(mut d) => d.is_duplicate(event_type, entity_id, extra),
+            Err(_) => false, // Poisoned lock — allow event through
+        }
+    }
+
+    /// Record a metered feature usage. Returns Err if limit exceeded.
+    pub fn record_usage(&self, feature: &str) -> Result<(), license::UsageLimitExceeded> {
+        self.usage_tracker.record(feature)
+    }
+
+    /// Get the degradation tracker.
+    pub fn degradation(&self) -> &Mutex<health::DegradationTracker> {
+        &self.degradation
     }
 }

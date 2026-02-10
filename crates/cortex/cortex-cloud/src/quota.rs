@@ -125,6 +125,12 @@ impl QuotaManager {
         Ok(())
     }
 
+    /// C-10: Record that a sync just completed — resets the sync interval timer.
+    /// Must be called after every successful sync to prevent permanent throttling.
+    pub fn record_sync_completed(&mut self) {
+        self.usage.secs_since_last_sync = 0;
+    }
+
     /// Get current usage.
     pub fn usage(&self) -> &QuotaUsage {
         &self.usage

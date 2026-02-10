@@ -13,10 +13,11 @@ use crate::grounding::{GroundingConfig, GroundingLoopRunner};
 pub fn handle_drift_grounding_check(
     memory: &MemoryForGrounding,
     config: &GroundingConfig,
+    drift_db: Option<&rusqlite::Connection>,
     bridge_db: Option<&rusqlite::Connection>,
 ) -> BridgeResult<serde_json::Value> {
     let runner = GroundingLoopRunner::new(config.clone());
-    let result = runner.ground_single(memory, None, bridge_db)?;
+    let result = runner.ground_single(memory, drift_db, bridge_db)?;
 
     let evidence_json: Vec<serde_json::Value> = result
         .evidence

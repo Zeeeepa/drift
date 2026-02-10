@@ -26,6 +26,22 @@ pub fn apply_pragmas(conn: &Connection) -> CortexResult<()> {
     Ok(())
 }
 
+/// Apply read-only pragmas to a read connection.
+/// Skips write-side settings (journal_mode, auto_vacuum, synchronous).
+pub fn apply_read_pragmas(conn: &Connection) -> CortexResult<()> {
+    conn.execute_batch(
+        "
+        PRAGMA query_only = ON;
+        PRAGMA mmap_size = 268435456;
+        PRAGMA cache_size = -64000;
+        PRAGMA busy_timeout = 5000;
+        PRAGMA temp_store = MEMORY;
+        ",
+    )
+    .map_err(|e| to_storage_err(e.to_string()))?;
+    Ok(())
+}
+
 /// Verify that WAL mode is active on a connection.
 pub fn verify_wal_mode(conn: &Connection) -> CortexResult<bool> {
     let mode: String = conn

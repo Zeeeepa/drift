@@ -20,11 +20,24 @@ export function registerCheckCommand(program: Command): void {
       const checkPath = path ?? process.cwd();
 
       try {
-        const result = napi.drift_check(checkPath, opts.policy);
-        if (!opts.quiet) {
-          process.stdout.write(formatOutput(result, opts.format));
+        const result = napi.driftCheck(checkPath);
+
+        // Detect empty DB — hint user to run analyze first
+        if (result.totalViolations === 0 && result.gates.length === 0 && !opts.quiet) {
+          process.stderr.write(
+            'Hint: No analysis data found. Run `drift scan && drift analyze` first.\n\n',
+          );
         }
-        process.exitCode = result.passed ? 0 : 1;
+
+        if (!opts.quiet) {
+          // Use driftReport for sarif format for richer output
+          if (opts.format === 'sarif') {
+            process.stdout.write(napi.driftReport('sarif'));
+          } else {
+            process.stdout.write(formatOutput(result, opts.format));
+          }
+        }
+        process.exitCode = result.overallPassed ? 0 : 1;
       } catch (err) {
         process.stderr.write(`Error: ${err instanceof Error ? err.message : err}\n`);
         process.exitCode = 2;

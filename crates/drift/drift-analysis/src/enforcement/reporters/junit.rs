@@ -58,7 +58,7 @@ impl Reporter for JUnitReporter {
             .iter()
             .map(|r| if r.violations.is_empty() { 1 } else { r.violations.len() })
             .sum();
-        let total_failures: usize = results
+        let total_errors: usize = results
             .iter()
             .map(|r| {
                 r.violations
@@ -67,7 +67,7 @@ impl Reporter for JUnitReporter {
                     .count()
             })
             .sum();
-        let total_warnings: usize = results
+        let total_failures: usize = results
             .iter()
             .map(|r| {
                 r.violations
@@ -80,7 +80,7 @@ impl Reporter for JUnitReporter {
 
         xml.push_str(&format!(
             "<testsuites name=\"Drift Quality Gates\" tests=\"{}\" failures=\"{}\" errors=\"{}\" time=\"{:.3}\">\n",
-            total_tests, total_failures, total_warnings, total_time
+            total_tests, total_failures, total_errors, total_time
         ));
 
         for result in results {
@@ -89,12 +89,12 @@ impl Reporter for JUnitReporter {
             } else {
                 result.violations.len()
             };
-            let suite_failures = result
+            let suite_errors = result
                 .violations
                 .iter()
                 .filter(|v| !v.suppressed && v.severity == Severity::Error)
                 .count();
-            let suite_errors = result
+            let suite_failures = result
                 .violations
                 .iter()
                 .filter(|v| !v.suppressed && v.severity == Severity::Warning)

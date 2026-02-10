@@ -15,42 +15,18 @@ use crate::runtime;
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-/// Get the multi-agent engine from the runtime, constructing it on the fly.
-fn get_engine() -> napi::Result<cortex_multiagent::MultiAgentEngine> {
+/// Get a lock on the shared multi-agent engine from the runtime.
+/// B-04: The engine is created once at runtime init with shared storage connections,
+/// eliminating per-call connection creation that broke in-memory mode.
+fn with_engine<F, T>(f: F) -> napi::Result<T>
+where
+    F: FnOnce(&cortex_multiagent::MultiAgentEngine) -> napi::Result<T>,
+{
     let rt = runtime::get()?;
-    let config = rt.config.multiagent.clone();
-    let (writer, readers) = open_multiagent_connections(&rt)?;
-    Ok(cortex_multiagent::MultiAgentEngine::new(
-        std::sync::Arc::new(writer),
-        std::sync::Arc::new(readers),
-        config,
-    ))
-}
-
-/// Open write + read connections for multi-agent operations.
-fn open_multiagent_connections(
-    rt: &std::sync::Arc<runtime::CortexRuntime>,
-) -> napi::Result<(
-    cortex_storage::pool::WriteConnection,
-    cortex_storage::pool::ReadPool,
-)> {
-    let db_path = rt.storage.pool().db_path.as_deref();
-    match db_path {
-        Some(path) => {
-            let w = cortex_storage::pool::WriteConnection::open(path)
-                .map_err(error_types::to_napi_error)?;
-            let r = cortex_storage::pool::ReadPool::open(path, 2)
-                .map_err(error_types::to_napi_error)?;
-            Ok((w, r))
-        }
-        None => {
-            let w = cortex_storage::pool::WriteConnection::open_in_memory()
-                .map_err(error_types::to_napi_error)?;
-            let r = cortex_storage::pool::ReadPool::open_in_memory(2)
-                .map_err(error_types::to_napi_error)?;
-            Ok((w, r))
-        }
-    }
+    let engine = rt.multiagent.lock().map_err(|e| {
+        napi::Error::from_reason(format!("Failed to acquire multi-agent engine lock: {e}"))
+    })?;
+    f(&engine)
 }
 
 /// Run an async closure on the tokio runtime, flattening CortexResult into napi::Result.
@@ -85,9 +61,10 @@ pub fn cortex_multiagent_register_agent(
         }
     }
 
-    let engine = get_engine()?;
-    let registration = block_on(engine.register_agent(&name, capabilities))?;
-    multiagent_types::agent_registration_to_json(&registration)
+    with_engine(|engine| {
+        let registration = block_on(engine.register_agent(&name, capabilities))?;
+        multiagent_types::agent_registration_to_json(&registration)
+    })
 }
 
 // ── 2. deregister_agent ──────────────────────────────────────────────────────
@@ -101,9 +78,10 @@ pub fn cortex_multiagent_deregister_agent(agent_id: String) -> napi::Result<()> 
         return Err(napi::Error::from_reason("Agent ID must be non-empty"));
     }
 
-    let engine = get_engine()?;
-    let aid = AgentId::from(agent_id.as_str());
-    block_on(engine.deregister_agent(&aid))
+    with_engine(|engine| {
+        let aid = AgentId::from(agent_id.as_str());
+        block_on(engine.deregister_agent(&aid))
+    })
 }
 
 // ── 3. get_agent ─────────────────────────────────────────────────────────────
@@ -117,14 +95,14 @@ pub fn cortex_multiagent_get_agent(agent_id: String) -> napi::Result<serde_json:
         return Err(napi::Error::from_reason("Agent ID must be non-empty"));
     }
 
-    let engine = get_engine()?;
-    let aid = AgentId::from(agent_id.as_str());
-    let result = block_on(engine.get_agent(&aid))?;
-
-    match result {
-        Some(reg) => multiagent_types::agent_registration_to_json(&reg),
-        None => Ok(serde_json::Value::Null),
-    }
+    with_engine(|engine| {
+        let aid = AgentId::from(agent_id.as_str());
+        let result = block_on(engine.get_agent(&aid))?;
+        match result {
+            Some(reg) => multiagent_types::agent_registration_to_json(&reg),
+            None => Ok(serde_json::Value::Null),
+        }
+    })
 }
 
 // ── 4. list_agents ───────────────────────────────────────────────────────────
@@ -136,10 +114,14 @@ pub fn cortex_multiagent_list_agents(
 ) -> napi::Result<serde_json::Value> {
     debug!(status_filter = ?status_filter, "NAPI: list_agents");
 
+    // F-01: Use sentinel timestamps instead of Utc::now() for filter-only enum variants.
+    // These timestamps are only used for pattern matching — the registry extracts
+    // the status string ("active"/"idle"/"deregistered") and ignores the timestamp.
+    let sentinel = chrono::DateTime::<chrono::Utc>::MIN_UTC;
     let filter: Option<AgentStatus> = match status_filter.as_deref() {
         Some("active") => Some(AgentStatus::Active),
-        Some("idle") => Some(AgentStatus::Idle { since: chrono::Utc::now() }),
-        Some("deregistered") => Some(AgentStatus::Deregistered { at: chrono::Utc::now() }),
+        Some("idle") => Some(AgentStatus::Idle { since: sentinel }),
+        Some("deregistered") => Some(AgentStatus::Deregistered { at: sentinel }),
         Some(other) => {
             return Err(napi::Error::from_reason(format!(
                 "Invalid status filter '{other}'. Expected: active, idle, deregistered"
@@ -148,9 +130,10 @@ pub fn cortex_multiagent_list_agents(
         None => None,
     };
 
-    let engine = get_engine()?;
-    let agents = block_on(engine.list_agents(filter))?;
-    multiagent_types::agent_registrations_to_json(&agents)
+    with_engine(|engine| {
+        let agents = block_on(engine.list_agents(filter))?;
+        multiagent_types::agent_registrations_to_json(&agents)
+    })
 }
 
 // ── 5. create_namespace ──────────────────────────────────────────────────────
@@ -176,9 +159,10 @@ pub fn cortex_multiagent_create_namespace(
         .map_err(|e| napi::Error::from_reason(format!("Invalid namespace: {e}")))?;
 
     let owner_id = AgentId::from(owner.as_str());
-    let engine = get_engine()?;
-    let ns = block_on(engine.create_namespace(namespace, &owner_id))?;
-    Ok(ns.to_uri())
+    with_engine(|engine| {
+        let ns = block_on(engine.create_namespace(namespace.clone(), &owner_id))?;
+        Ok(ns.to_uri())
+    })
 }
 
 // ── 6. share_memory ──────────────────────────────────────────────────────────
@@ -203,8 +187,7 @@ pub fn cortex_multiagent_share_memory(
         .map_err(|e| napi::Error::from_reason(format!("Invalid target namespace: {e}")))?;
     let aid = AgentId::from(agent_id.as_str());
 
-    let engine = get_engine()?;
-    block_on(engine.share_memory(&memory_id, &ns, &aid))?;
+    with_engine(|engine| block_on(engine.share_memory(&memory_id, &ns, &aid)))?;
 
     // Return a provenance hop representing the share action.
     let hop = cortex_core::models::provenance::ProvenanceHop {
@@ -229,9 +212,10 @@ pub fn cortex_multiagent_create_projection(
         serde_json::from_value(config_json)
             .map_err(|e| napi::Error::from_reason(format!("Invalid projection config: {e}")))?;
 
-    let engine = get_engine()?;
-    let projection_id = block_on(engine.create_projection(projection))?;
-    Ok(projection_id)
+    with_engine(|engine| {
+        let projection_id = block_on(engine.create_projection(projection.clone()))?;
+        Ok(projection_id)
+    })
 }
 
 // ── 8. retract_memory ────────────────────────────────────────────────────────
@@ -256,18 +240,11 @@ pub fn cortex_multiagent_retract_memory(
         .map_err(|e| napi::Error::from_reason(format!("Invalid namespace: {e}")))?;
     let aid = AgentId::from(agent_id.as_str());
 
-    // Open a direct connection for the retract operation.
+    // B-05: Use shared writer connection instead of raw rusqlite::Connection::open().
     let rt = runtime::get()?;
-    let db_path = rt.storage.pool().db_path.as_deref();
-    let conn = match db_path {
-        Some(path) => rusqlite::Connection::open(path)
-            .map_err(|e| napi::Error::from_reason(format!("Failed to open DB for retract: {e}")))?,
-        None => rusqlite::Connection::open_in_memory()
-            .map_err(|e| napi::Error::from_reason(format!("Failed to open in-memory DB: {e}")))?,
-    };
-
-    cortex_multiagent::share::actions::retract(&conn, &memory_id, &ns, &aid)
-        .map_err(error_types::to_napi_error)
+    rt.storage.pool().writer.with_conn_sync(|conn| {
+        cortex_multiagent::share::actions::retract(conn, &memory_id, &ns, &aid)
+    }).map_err(error_types::to_napi_error)
 }
 
 // ── 9. get_provenance ────────────────────────────────────────────────────────
@@ -281,13 +258,13 @@ pub fn cortex_multiagent_get_provenance(memory_id: String) -> napi::Result<serde
         return Err(napi::Error::from_reason("Memory ID must be non-empty"));
     }
 
-    let engine = get_engine()?;
-    let result = block_on(engine.get_provenance(&memory_id))?;
-
-    match result {
-        Some(record) => multiagent_types::provenance_record_to_json(&record),
-        None => Ok(serde_json::Value::Null),
-    }
+    with_engine(|engine| {
+        let result = block_on(engine.get_provenance(&memory_id))?;
+        match result {
+            Some(record) => multiagent_types::provenance_record_to_json(&record),
+            None => Ok(serde_json::Value::Null),
+        }
+    })
 }
 
 // ── 10. trace_cross_agent ────────────────────────────────────────────────────
@@ -361,9 +338,10 @@ pub fn cortex_multiagent_get_trust(
     }
 
     let target_id = AgentId::from(target);
-    let engine = get_engine()?;
-    let trust = block_on(engine.get_trust(&aid, &target_id))?;
-    multiagent_types::agent_trust_to_json(&trust)
+    with_engine(|engine| {
+        let trust = block_on(engine.get_trust(&aid, &target_id))?;
+        multiagent_types::agent_trust_to_json(&trust)
+    })
 }
 
 // ── 12. sync_agents ──────────────────────────────────────────────────────────
@@ -386,13 +364,15 @@ pub fn cortex_multiagent_sync_agents(
     let src = AgentId::from(source_agent.as_str());
     let tgt = AgentId::from(target_agent.as_str());
 
-    let engine = get_engine()?;
-    block_on(engine.sync_with(&src, &tgt))?;
-
-    let result = multiagent_types::NapiSyncResult {
-        applied_count: 0,
-        buffered_count: 0,
-        errors: vec![],
-    };
-    multiagent_types::sync_result_to_json(&result)
+    with_engine(|engine| {
+        // B-07: Use sync_with_counts to get real applied/buffered counts
+        // instead of the trait's sync_with which returns ().
+        let sync_result = block_on(engine.sync_with_counts(&src, &tgt))?;
+        let result = multiagent_types::NapiSyncResult {
+            applied_count: sync_result.deltas_applied,
+            buffered_count: sync_result.deltas_buffered,
+            errors: vec![],
+        };
+        multiagent_types::sync_result_to_json(&result)
+    })
 }

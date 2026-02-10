@@ -12,11 +12,17 @@ export interface McpConfig {
   port?: number;
   /** Project root path. */
   projectRoot?: string;
+  /** Enable Cortex memory system integration (default true). */
+  cortexEnabled?: boolean;
+  /** Path to Cortex SQLite database (default '.cortex/cortex.db'). */
+  cortexDbPath?: string;
 }
 
 export const DEFAULT_MCP_CONFIG: McpConfig = {
   maxResponseTokens: 8000,
   transport: 'stdio',
+  cortexEnabled: true,
+  cortexDbPath: '.cortex/cortex.db',
 };
 
 /** Parameters for drift_tool dynamic dispatch. */

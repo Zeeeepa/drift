@@ -91,4 +91,21 @@ impl DatabaseManager {
     pub fn path(&self) -> Option<&Path> {
         self.path.as_deref()
     }
+
+    /// Open a dedicated connection for the BatchWriter.
+    /// Returns a fresh Connection to the same database with pragmas applied.
+    /// For in-memory databases, returns an in-memory connection (batch writes
+    /// won't be visible to the main writer — use only for testing).
+    pub fn open_batch_connection(&self) -> Result<Connection, StorageError> {
+        let conn = match &self.path {
+            Some(path) => Connection::open(path).map_err(|e| StorageError::SqliteError {
+                message: format!("open batch connection: {e}"),
+            })?,
+            None => Connection::open_in_memory().map_err(|e| StorageError::SqliteError {
+                message: format!("open in-memory batch connection: {e}"),
+            })?,
+        };
+        apply_pragmas(&conn)?;
+        Ok(conn)
+    }
 }

@@ -37,12 +37,23 @@ pub fn search_vector(
         })
         .map_err(|e| to_storage_err(e.to_string()))?;
 
+    // D-06: Pre-compute query norm once for early-exit on zero-norm queries.
+    let query_norm_sq: f64 = query_embedding.iter().map(|x| (*x as f64) * (*x as f64)).sum();
+    if query_norm_sq == 0.0 {
+        return Ok(vec![]);
+    }
+    let query_len = query_embedding.len();
+
     let mut scored: Vec<(String, f64)> = Vec::new();
     for row in rows {
         let (memory_id, blob, dims) = row.map_err(|e| to_storage_err(e.to_string()))?;
+        // D-06: Skip dimension mismatches without deserializing full vector.
+        if dims as usize != query_len {
+            continue;
+        }
         let stored = bytes_to_f32_vec(&blob, dims as usize);
-        if stored.len() == query_embedding.len() {
-            let sim = cosine_similarity(query_embedding, &stored);
+        let sim = cosine_similarity(query_embedding, &stored);
+        if sim > 0.0 {
             scored.push((memory_id, sim));
         }
     }
@@ -63,7 +74,33 @@ pub fn search_vector(
 }
 
 /// Store an embedding for a memory, deduplicating by content hash.
+/// Wrapped in a SAVEPOINT for atomicity: upsert + lookup + link are all-or-nothing.
 pub fn store_embedding(
+    conn: &Connection,
+    memory_id: &str,
+    content_hash: &str,
+    embedding: &[f32],
+    model_name: &str,
+) -> CortexResult<()> {
+    conn.execute_batch("SAVEPOINT store_emb")
+        .map_err(|e| to_storage_err(format!("store_embedding savepoint: {e}")))?;
+
+    match store_embedding_inner(conn, memory_id, content_hash, embedding, model_name) {
+        Ok(()) => {
+            conn.execute_batch("RELEASE store_emb")
+                .map_err(|e| to_storage_err(format!("store_embedding release: {e}")))?;
+            Ok(())
+        }
+        Err(e) => {
+            let _ = conn.execute_batch("ROLLBACK TO store_emb");
+            let _ = conn.execute_batch("RELEASE store_emb");
+            Err(e)
+        }
+    }
+}
+
+/// Inner store_embedding logic.
+fn store_embedding_inner(
     conn: &Connection,
     memory_id: &str,
     content_hash: &str,

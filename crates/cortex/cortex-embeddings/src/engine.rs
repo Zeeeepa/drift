@@ -17,6 +17,17 @@ use crate::enrichment;
 use crate::matryoshka;
 use crate::providers;
 
+/// B-05: Cache statistics exposed from the EmbeddingEngine.
+#[derive(Debug, Clone, Default)]
+pub struct CacheStats {
+    /// Number of entries in the L1 (in-memory) cache.
+    pub l1_count: usize,
+    /// Number of entries in the L2 (SQLite) cache.
+    pub l2_count: usize,
+    /// Total cached entries across tiers.
+    pub total: usize,
+}
+
 /// The main embedding engine.
 ///
 /// Wraps provider selection, caching, enrichment, and fallback into a
@@ -52,6 +63,31 @@ impl EmbeddingEngine {
             dims = config.dimensions,
             search_dims = config.matryoshka_search_dims,
             "EmbeddingEngine initialized"
+        );
+
+        Self {
+            chain,
+            cache,
+            config,
+        }
+    }
+
+    /// D-01: Create an engine with a file-backed L2 embedding cache.
+    /// Embeddings persist across process restarts.
+    pub fn new_with_db_path(config: EmbeddingConfig, db_path: &std::path::Path) -> Self {
+        let mut chain = DegradationChain::new();
+        let primary = providers::create_provider(&config);
+        chain.push(primary);
+        chain.push(Box::new(providers::TfIdfFallback::new(config.dimensions)));
+
+        let cache = CacheCoordinator::new_with_db_path(config.l1_cache_size, db_path);
+
+        info!(
+            provider = chain.active_provider_name(),
+            dims = config.dimensions,
+            search_dims = config.matryoshka_search_dims,
+            db_path = %db_path.display(),
+            "EmbeddingEngine initialized with persistent L2 cache"
         );
 
         Self {
@@ -137,26 +173,81 @@ impl EmbeddingEngine {
     pub fn search_dimensions(&self) -> usize {
         self.config.matryoshka_search_dims
     }
+
+    /// B-05: Get cache statistics (L1 size, L2 size, total cached entries).
+    /// Returns (l1_count, l2_count, total).
+    pub fn cache_stats(&self) -> CacheStats {
+        let l1_count = self.cache.l1.len() as usize;
+        let l2_count = self.cache.l2.len();
+        CacheStats {
+            l1_count,
+            l2_count,
+            total: l1_count + l2_count,
+        }
+    }
+
+    /// B-03: Create a boxed IEmbeddingProvider that uses the same config and
+    /// provider chain setup as this engine. This avoids creating a duplicate
+    /// EmbeddingEngine with separate cache/state for subsystems like consolidation.
+    pub fn clone_provider(&self) -> Box<dyn IEmbeddingProvider> {
+        // Create a lightweight provider with the same config. It shares the
+        // same provider chain type (TF-IDF fallback) but in a separate instance.
+        // This is cheaper than a full EmbeddingEngine (no cache coordinator).
+        let mut chain = DegradationChain::new();
+        let primary = providers::create_provider(&self.config);
+        chain.push(primary);
+        chain.push(Box::new(providers::TfIdfFallback::new(self.config.dimensions)));
+        Box::new(SharedProvider {
+            chain,
+            dimensions: self.config.dimensions,
+        })
+    }
+}
+
+/// Lightweight provider that reuses the same provider chain configuration
+/// without duplicating the full EmbeddingEngine cache infrastructure.
+struct SharedProvider {
+    chain: DegradationChain,
+    dimensions: usize,
+}
+
+impl IEmbeddingProvider for SharedProvider {
+    fn embed(&self, text: &str) -> CortexResult<Vec<f32>> {
+        self.chain.embed_readonly(text)
+    }
+
+    fn embed_batch(&self, texts: &[String]) -> CortexResult<Vec<Vec<f32>>> {
+        texts.iter().map(|t| self.embed(t)).collect()
+    }
+
+    fn dimensions(&self) -> usize {
+        self.dimensions
+    }
+
+    fn name(&self) -> &str {
+        self.chain.active_provider_name()
+    }
+
+    fn is_available(&self) -> bool {
+        true
+    }
 }
 
 /// Implement `IEmbeddingProvider` so the engine can be used as a drop-in
 /// provider anywhere in the system.
+///
+/// D-02: Uses the real configured provider chain instead of always creating
+/// a fresh TF-IDF fallback. The chain is accessed via the degradation chain's
+/// `embed` method which tries providers in order.
 impl IEmbeddingProvider for EmbeddingEngine {
     fn embed(&self, text: &str) -> CortexResult<Vec<f32>> {
-        // For the trait impl we can't use &mut self, so we bypass caching
-        // and go straight to the chain. The `embed_query`/`embed_memory`
-        // methods are preferred for cached access.
-        //
-        // This is a design trade-off: the trait is defined as &self in
-        // cortex-core, but our chain needs &mut for event tracking.
-        // We use interior mutability workaround via a fresh TF-IDF fallback.
-        let fallback = providers::TfIdfFallback::new(self.config.dimensions);
-        fallback.embed(text)
+        // D-02: Try each provider in the chain (they implement &self embed).
+        // This avoids the old approach of always creating a fresh TF-IDF.
+        self.chain.embed_readonly(text)
     }
 
     fn embed_batch(&self, texts: &[String]) -> CortexResult<Vec<Vec<f32>>> {
-        let fallback = providers::TfIdfFallback::new(self.config.dimensions);
-        fallback.embed_batch(texts)
+        texts.iter().map(|t| self.embed(t)).collect()
     }
 
     fn dimensions(&self) -> usize {
@@ -164,7 +255,7 @@ impl IEmbeddingProvider for EmbeddingEngine {
     }
 
     fn name(&self) -> &str {
-        "cortex-embedding-engine"
+        self.chain.active_provider_name()
     }
 
     fn is_available(&self) -> bool {

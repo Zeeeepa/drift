@@ -671,6 +671,72 @@ pub fn purge_applied_deltas(conn: &Connection, older_than: &str) -> CortexResult
     Ok(count)
 }
 
+// ── Peer Clocks ─────────────────────────────────────────────────────────────
+
+/// Ensure the peer_clocks table exists (idempotent).
+pub fn ensure_peer_clocks_table(conn: &Connection) -> CortexResult<()> {
+    conn.execute_batch(
+        "CREATE TABLE IF NOT EXISTS peer_clocks (
+            agent_id TEXT NOT NULL,
+            peer_agent TEXT NOT NULL,
+            vector_clock_json TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            PRIMARY KEY (agent_id, peer_agent)
+        )",
+    )
+    .map_err(|e| to_storage_err(e.to_string()))?;
+    Ok(())
+}
+
+/// Upsert a peer's vector clock after sync acknowledgment.
+pub fn upsert_peer_clock(
+    conn: &Connection,
+    agent_id: &str,
+    peer_agent: &str,
+    vector_clock_json: &str,
+    updated_at: &str,
+) -> CortexResult<()> {
+    debug!(agent_id, peer_agent, "upserting peer clock");
+    ensure_peer_clocks_table(conn)?;
+    conn.execute(
+        "INSERT OR REPLACE INTO peer_clocks (agent_id, peer_agent, vector_clock_json, updated_at)
+         VALUES (?1, ?2, ?3, ?4)",
+        params![agent_id, peer_agent, vector_clock_json, updated_at],
+    )
+    .map_err(|e| to_storage_err(e.to_string()))?;
+    Ok(())
+}
+
+/// Get a peer's last-known vector clock.
+pub fn get_peer_clock(
+    conn: &Connection,
+    agent_id: &str,
+    peer_agent: &str,
+) -> CortexResult<Option<PeerClockRow>> {
+    debug!(agent_id, peer_agent, "getting peer clock");
+    ensure_peer_clocks_table(conn)?;
+    let mut stmt = conn
+        .prepare(
+            "SELECT agent_id, peer_agent, vector_clock_json, updated_at
+             FROM peer_clocks WHERE agent_id = ?1 AND peer_agent = ?2",
+        )
+        .map_err(|e| to_storage_err(e.to_string()))?;
+
+    let result = stmt
+        .query_row(params![agent_id, peer_agent], |row| {
+            Ok(PeerClockRow {
+                agent_id: row.get(0)?,
+                peer_agent: row.get(1)?,
+                vector_clock_json: row.get(2)?,
+                updated_at: row.get(3)?,
+            })
+        })
+        .optional()
+        .map_err(|e| to_storage_err(e.to_string()))?;
+
+    Ok(result)
+}
+
 // ── Memory namespace/agent queries ──────────────────────────────────────────
 
 /// Get memories by namespace.
@@ -802,6 +868,15 @@ pub struct DeltaRow {
     pub delta_json: String,
     pub vector_clock: String,
     pub created_at: String,
+}
+
+/// Raw row from peer_clocks.
+#[derive(Debug, Clone)]
+pub struct PeerClockRow {
+    pub agent_id: String,
+    pub peer_agent: String,
+    pub vector_clock_json: String,
+    pub updated_at: String,
 }
 
 /// Helper trait for optional query results.

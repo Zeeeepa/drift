@@ -116,6 +116,30 @@ pub fn looks_like_placeholder(matched_text: &str) -> bool {
     full_match_placeholders.iter().any(|p| lower.starts_with(p))
 }
 
+/// E-07: Detect if a match offset is inside a code comment.
+/// Checks for `//`, `/* ... */`, `#`, and `--` comment syntax.
+pub fn is_in_comment(text: &str, match_start: usize) -> bool {
+    // Find the start of the line containing this match.
+    let line_start = text[..match_start].rfind('\n').map_or(0, |p| p + 1);
+    let line_prefix = &text[line_start..match_start];
+
+    // Check for single-line comment markers in the prefix.
+    if line_prefix.contains("//") || line_prefix.contains('#') || line_prefix.contains("--") {
+        return true;
+    }
+
+    // Check for block comment: find the last /* before match_start
+    // and verify there's no */ between it and the match.
+    if let Some(block_start) = text[..match_start].rfind("/*") {
+        let block_end = text[block_start..match_start].find("*/");
+        if block_end.is_none() {
+            return true;
+        }
+    }
+
+    false
+}
+
 /// Detect if the surrounding text suggests a sensitive variable assignment.
 pub fn has_sensitive_variable_context(text: &str, match_start: usize) -> bool {
     // Look at the ~60 chars before the match for variable name hints.

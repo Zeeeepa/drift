@@ -39,11 +39,13 @@ impl NamespaceManager {
         multiagent_ops::insert_namespace(conn, &uri, scope_str, Some(&owner.0), &now_str)?;
 
         // Grant default permissions based on scope.
-        // Owner always gets full control. Scope-based restrictions apply to OTHER agents.
+        // Agent scope: owner gets full control (all 4).
+        // Team scope: owner gets read + write (collaborate, but not admin others).
+        // Project scope: owner gets read only (broad visibility, controlled writes).
         let default_perms = match &namespace.scope {
             NamespaceScope::Agent(_) => vec!["read", "write", "share", "admin"],
-            NamespaceScope::Team(_) => vec!["read", "write", "share", "admin"],
-            NamespaceScope::Project(_) => vec!["read", "write", "share", "admin"],
+            NamespaceScope::Team(_) => vec!["read", "write"],
+            NamespaceScope::Project(_) => vec!["read"],
         };
         let perms_json = serde_json::to_string(&default_perms)
             .map_err(cortex_core::CortexError::SerializationError)?;

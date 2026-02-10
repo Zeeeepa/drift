@@ -309,6 +309,14 @@ fn cg_resolve_call() {
     let mut export_index: FxHashMap<String, Vec<String>> = FxHashMap::default();
     export_index.insert("uniqueExport".to_string(), vec!["lib.ts::uniqueExport".to_string()]);
 
+    let mut language_index: FxHashMap<String, String> = FxHashMap::default();
+    language_index.insert("main.ts::helper".to_string(), "TypeScript".to_string());
+    language_index.insert("utils.ts::format".to_string(), "TypeScript".to_string());
+    language_index.insert("a.ts::ambiguous".to_string(), "TypeScript".to_string());
+    language_index.insert("b.ts::ambiguous".to_string(), "TypeScript".to_string());
+    language_index.insert("lib.ts::uniqueExport".to_string(), "TypeScript".to_string());
+    language_index.insert("models.ts::User.findAll".to_string(), "TypeScript".to_string());
+
     let imports = vec![ImportInfo {
         source: "./utils".to_string(),
         specifiers: SmallVec::from_vec(vec![ImportSpecifier { name: "format".to_string(), alias: None }]),
@@ -317,33 +325,33 @@ fn cg_resolve_call() {
 
     // Same-file resolution
     let cs = CallSite { callee_name: "helper".to_string(), receiver: None, file: "main.ts".to_string(), line: 5, column: 4, argument_count: 0, is_await: false };
-    let result = cg_resolution::resolve_call(&cs, "main.ts", &imports, &name_index, &qualified_index, &export_index);
+    let result = cg_resolution::resolve_call(&cs, "main.ts", "TypeScript", &imports, &name_index, &qualified_index, &export_index, &language_index);
     assert!(result.is_some());
     let (key, res) = result.unwrap();
     assert_eq!(res, Resolution::SameFile);
 
     // Method call resolution
     let cs = CallSite { callee_name: "findAll".to_string(), receiver: Some("User".to_string()), file: "main.ts".to_string(), line: 10, column: 4, argument_count: 1, is_await: true };
-    let result = cg_resolution::resolve_call(&cs, "main.ts", &imports, &name_index, &qualified_index, &export_index);
+    let result = cg_resolution::resolve_call(&cs, "main.ts", "TypeScript", &imports, &name_index, &qualified_index, &export_index, &language_index);
     assert!(result.is_some());
     let (_, res) = result.unwrap();
     assert_eq!(res, Resolution::MethodCall);
 
     // Import-based resolution
     let cs = CallSite { callee_name: "format".to_string(), receiver: None, file: "main.ts".to_string(), line: 15, column: 4, argument_count: 1, is_await: false };
-    let result = cg_resolution::resolve_call(&cs, "main.ts", &imports, &name_index, &qualified_index, &export_index);
+    let result = cg_resolution::resolve_call(&cs, "main.ts", "TypeScript", &imports, &name_index, &qualified_index, &export_index, &language_index);
     assert!(result.is_some());
 
     // Export-based resolution
     let cs = CallSite { callee_name: "uniqueExport".to_string(), receiver: None, file: "main.ts".to_string(), line: 20, column: 4, argument_count: 0, is_await: false };
-    let result = cg_resolution::resolve_call(&cs, "main.ts", &[], &name_index, &qualified_index, &export_index);
+    let result = cg_resolution::resolve_call(&cs, "main.ts", "TypeScript", &[], &name_index, &qualified_index, &export_index, &language_index);
     assert!(result.is_some());
     let (_, res) = result.unwrap();
     assert_eq!(res, Resolution::ExportBased);
 
     // No resolution (ambiguous)
     let cs = CallSite { callee_name: "ambiguous".to_string(), receiver: None, file: "other.ts".to_string(), line: 25, column: 4, argument_count: 0, is_await: false };
-    let result = cg_resolution::resolve_call(&cs, "other.ts", &[], &name_index, &qualified_index, &export_index);
+    let result = cg_resolution::resolve_call(&cs, "other.ts", "TypeScript", &[], &name_index, &qualified_index, &export_index, &language_index);
     assert!(result.is_none());
 
     // Constructor resolution

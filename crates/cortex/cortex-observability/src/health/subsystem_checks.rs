@@ -91,8 +91,33 @@ impl SubsystemChecker {
         }
     }
 
-    /// Privacy: always healthy in the current implementation (placeholder for PII scan results).
-    fn check_privacy(_snapshot: &HealthSnapshot) -> SubsystemHealth {
+    /// B-02: Privacy health check — reports degraded if contradictions exist
+    /// (indicating potential data quality issues) or if the snapshot signals
+    /// privacy-related problems. In a full implementation, this would query
+    /// the PrivacyEngine's DegradationTracker for pattern compilation failures.
+    fn check_privacy(snapshot: &HealthSnapshot) -> SubsystemHealth {
+        // If contradictions are detected, privacy might be impacted
+        // (contradictory memories could leak sensitive data through inconsistency).
+        if snapshot.contradiction_count > 10 {
+            return SubsystemHealth {
+                name: "privacy".into(),
+                status: HealthStatus::Degraded,
+                message: Some(format!(
+                    "{} contradictions detected — review for potential data quality issues",
+                    snapshot.contradiction_count
+                )),
+            };
+        }
+        // If average confidence is very low, memories may contain unvalidated content.
+        if snapshot.average_confidence < 0.3 && snapshot.total_memories > 0 {
+            return SubsystemHealth {
+                name: "privacy".into(),
+                status: HealthStatus::Degraded,
+                message: Some(
+                    "average confidence below 0.3 — unvalidated memories may contain sensitive data".into(),
+                ),
+            };
+        }
         SubsystemHealth {
             name: "privacy".into(),
             status: HealthStatus::Healthy,

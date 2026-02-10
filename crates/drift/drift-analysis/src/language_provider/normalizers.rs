@@ -147,7 +147,7 @@ impl LanguageNormalizer for RubyNormalizer {
 pub struct CppNormalizer;
 
 impl LanguageNormalizer for CppNormalizer {
-    fn language(&self) -> Language { Language::Kotlin } // Placeholder — C++ not in Language enum
+    fn language(&self) -> Language { Language::Cpp }
     fn extract_chains(&self, pr: &ParseResult) -> Vec<UnifiedCallChain> {
         pr.call_sites.iter()
             .filter(|cs| cs.receiver.is_some())
@@ -183,5 +183,7 @@ pub fn normalizer_for(language: Language) -> Box<dyn LanguageNormalizer> {
         Language::Rust => Box::new(RustNormalizer),
         Language::Ruby => Box::new(RubyNormalizer),
         Language::Kotlin => Box::new(CppNormalizer),
+        Language::Cpp | Language::C => Box::new(CppNormalizer),
+        Language::Swift | Language::Scala => Box::new(JavaNormalizer),
     }
 }
